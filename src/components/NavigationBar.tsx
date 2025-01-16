@@ -4,7 +4,7 @@ import React from 'react';
 import type { MenuProps } from 'antd';
 import { Menu, Col, Row } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
-import CustomButton from '@/components/CustomButton'
+import CustomButton from '@/components/CustomButton';
 
 
 
