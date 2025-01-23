@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import type { MenuProps } from 'antd';
 import { Menu, Col, Row } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
@@ -31,6 +32,12 @@ const items: MenuItem[] = [
 
 const NavigationBar: React.FC = () => {
     const windowWidth = useWindowWidth();
+    const router = useRouter();
+
+    const handleButtonLoginClick = () => {
+        router.push('/auth/login');
+    };
+
     return (
         <div>
             <Row
@@ -86,6 +93,7 @@ const NavigationBar: React.FC = () => {
                             defaultSelectedKeys={['trangchu']}
                             items={items}
                             style={{ flex: 1 }}
+                        // hidden={windowWidth < 768}
                         />
                     </div>
                 </Col>
@@ -107,7 +115,7 @@ const NavigationBar: React.FC = () => {
                     >
                         <CustomButton
                             text="Đăng nhập"
-                            onClick={() => alert('Đăng nhập')}
+                            onClick={handleButtonLoginClick}
                             backgroundColor="blue"
                             hoverColor="darkblue"
                             textColor="white"
