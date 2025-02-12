@@ -136,8 +136,8 @@ const Page = () => {
                 marginBottom: '10px'
             }}>
                 {/* Tiêu đề */}
-                <div style={{ maxWidth: "900px", width: "100%", textAlign: "left", marginBottom:"10px"}}>
-                    <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginLeft: "140px"}}>
+                <div style={{ maxWidth: "900px", width: "100%", textAlign: "left", marginBottom:"10px", marginLeft: "140px"}}>
+                    <h2 style={{ fontSize: '24px', fontWeight: 'bold', }}>
                         Tìm kiếm <span style={{ background: '#D4421E', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}>Việc làm</span>
                     </h2>
                 </div>
@@ -145,7 +145,7 @@ const Page = () => {
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>
                     {/* Ô tìm kiếm */}
                     <div style={{ maxWidth: "1200px", width: "100%", textAlign: "center", marginBottom: "10px" }}>
-                        <Row gutter={[12, 12]} justify="center">
+                        <Row gutter={[12, 12]} justify="center" align="middle" style={{ width: "100%" }} >
                             <Col flex="auto">
                                 <Input 
                                     placeholder="Tìm kiếm theo các Kỹ năng, Vị trí, Công ty,..." 
@@ -180,7 +180,7 @@ const Page = () => {
 
                     {/* Bộ lọc */}
                     <div style={{ maxWidth: "1200px", width: "100%" }}>
-                        <Row gutter={[12, 12]} justify="center">
+                        <Row gutter={[12, 12]} justify="center" align="middle" style={{ width: "100%" }}>
                             {filters.map(filter => (
                                 <Col flex="1" style={{ maxWidth: "270px" }} key={filter.key}>
                                     <Select
