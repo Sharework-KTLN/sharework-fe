@@ -1,11 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { MenuProps } from 'antd';
 import { Menu, Col, Row } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
 import CustomButton from '@/components/CustomButton';
+import UserDropdown from './UserDropdown';
+import NotificationDropdown from './NotificationDropdown';
+import MessageDropdown from './MessageDropdown';
 
 
 
@@ -30,11 +33,19 @@ const items: MenuItem[] = [
     }
 ];
 
+
 const NavigationBar: React.FC = () => {
+
+    const [isLogin, setIsLogin] = useState(false);
+
     const windowWidth = useWindowWidth();
     const router = useRouter();
 
-    const handleButtonLoginClick = () => {
+    const handleButtonLogin = () => {
+        setIsLogin(true);
+    };
+    const handleButtonLogout = () => {
+        setIsLogin(false);
         router.push('/auth/login');
     };
 
@@ -92,7 +103,7 @@ const NavigationBar: React.FC = () => {
                             mode="horizontal"
                             defaultSelectedKeys={['trangchu']}
                             items={items}
-                            style={{ flex: 1 }}
+                            style={{}}
                         // hidden={windowWidth < 768}
                         />
                     </div>
@@ -113,16 +124,43 @@ const NavigationBar: React.FC = () => {
                             justifyContent: 'center',
                         }}
                     >
-                        <CustomButton
-                            text="Đăng nhập"
-                            onClick={handleButtonLoginClick}
-                            backgroundColor="blue"
-                            hoverColor="darkblue"
-                            textColor="white"
-                            style={{
-                                fontWeight: 'bold'
-                            }}
-                        />
+                        {isLogin ? (
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 16
+                                }}
+                            >
+                                {/* UserMenu and NotificationMenu Dropdown */}
+                                <NotificationDropdown />
+                                <MessageDropdown />
+                                <UserDropdown
+                                    user={
+                                        {
+                                            id: '1',
+                                            name: 'Nguyễn Văn A',
+                                            email: 'hiep@gmail.com',
+                                            candidateId: '123456'
+                                        }
+                                    }
+                                    onLogout={handleButtonLogout}
+                                />
+                            </div>
+
+
+                        ) : (
+                            <CustomButton
+                                text="Đăng nhập"
+                                onClick={handleButtonLogin}
+                                backgroundColor="blue"
+                                hoverColor="darkblue"
+                                textColor="white"
+                                style={{
+                                    fontWeight: 'bold'
+                                }}
+                            />
+                        )}
                     </div>
                 </Col>
             </Row>

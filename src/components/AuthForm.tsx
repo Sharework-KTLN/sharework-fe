@@ -153,13 +153,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText
             </div>
 
             {/* Background Section */}
-            <div style={{
-                width: '40%',
-                backgroundImage: `url(https://vinit.com.vn/wp-content/uploads/2020/05/tuyen-dung-300x225-1.jpg)`,
-                backgroundSize: 'contain',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-            }} />
+            <div
+                style={{
+                    width: '40%',
+                    backgroundImage: `url(https://vinit.com.vn/wp-content/uploads/2020/05/tuyen-dung-300x225-1.jpg)`,
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                }} />
         </div>
     );
 };
