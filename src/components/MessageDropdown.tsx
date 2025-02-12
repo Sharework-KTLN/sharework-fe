@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 import { Avatar, Space } from 'antd';
 import { CommentOutlined } from '@ant-design/icons';
 
 const MessageDropdown = () => {
     const handleButtonMessageClick = () => {
         alert('You clicked on Button Message!');
-    }
+    };
     return (
         <Space
             onClick={handleButtonMessageClick}
@@ -17,6 +17,6 @@ const MessageDropdown = () => {
             ></Avatar>
         </Space>
     );
-}
+};
 
 export default MessageDropdown;
