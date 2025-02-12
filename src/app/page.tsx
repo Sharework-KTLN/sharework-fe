@@ -1,7 +1,10 @@
 import NavigationBar from "@/components/NavigationBar";
-
+import Page from "@/app/candidate/home/page";
 export default function Home() {
   return (
-    <NavigationBar />
+    <div>
+      <NavigationBar/>
+      <Page/>
+    </div>
   );
 }
