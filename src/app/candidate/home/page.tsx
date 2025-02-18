@@ -45,7 +45,7 @@ const filters = [
 
 const pageSize = 9; // Số lượng card hiển thị trên mỗi trang
 
-const Page = () => {
+const Home = () => {
     //Khởi tạo state nhận null hoặc kiểu dữ liệu khác
     const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: string | null }>({
         location: null,
@@ -270,4 +270,4 @@ const Page = () => {
     );
 };
 
-export default Page;
+export default Home;

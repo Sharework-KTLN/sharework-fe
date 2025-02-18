@@ -47,6 +47,36 @@ const jobs = [
         location: "Hồ Chí Minh",
         specialization: "Du lịch",
         jobCount: 4
+    },
+    {
+        id: 5,
+        image: "https://kientrucaau.com/anh/2022/hopctyaa/hop-cong-ty-1.webp",
+        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
+        company: "Công ty du lịch Vietravel",
+        description: "Đưa bạn đi đến mọi nơi",
+        location: "Hồ Chí Minh",
+        specialization: "Kế toán, Du lịch",
+        jobCount: 3
+    },
+    {
+        id: 6,
+        image: "https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-hop-tac-thanh-cong-inkythuatso-07-10-42-07.jpg",
+        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
+        company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn",
+        description: "Niềm vui của mọi người",
+        location: "Bắc Giang",
+        specialization: "Quản trị kinh doanh, Công nghệ thông tin",
+        jobCount: 4
+    },
+    {
+        id: 7,
+        image: "https://kientrucaau.com/anh/2022/hopctyaa/hop-cong-ty-1.webp",
+        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
+        company: "Ngân hàng TMCP Công thương Việt Nam",
+        description: "Niềm tin của mọi nhà",
+        location: "Hồ Chí Minh",
+        specialization: "Kế toán",
+        jobCount: 3
     }
 ];
 
@@ -63,14 +93,15 @@ const filters = [
     },
 ];
 
-const pageSize = 9; // Số lượng card hiển thị trên mỗi trang
+const pageSize = 6; // Số lượng card hiển thị trên mỗi trang
 
-const Page = () => {
+const InfoBusiness = () => {
     //Khởi tạo state nhận null hoặc kiểu dữ liệu khác
     const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: string | null }>({
         location: null,
         specialization: null,
     });
+    const [hoveredCard, setHoveredCard] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1); // Theo dõi trang hiện tại
     const [filteredJobs, setFilteredJobs] = useState(jobs); // Danh sách công việc đã lọc
     const [openSelect, setOpenSelect] = useState<Record<string, boolean>>({}); // Trạng thái của Select
@@ -208,8 +239,22 @@ const Page = () => {
             {/* Danh sách việc làm */}
             <Row gutter={[16, 16]}>
                 {displayedJobs.map(job => (
-                    <Col xs={24} sm={12} md={8} key={job.id}>
-                        <Card hoverable style={{ borderRadius: "10px", overflow: "hidden", boxShadow: "0 4px 10px rgba(0,0,0,0.2)" }}>
+                    <Col xs={24} sm={12} md={6} lg={5} xl={4} key={job.id}>
+                        <Card hoverable 
+                            style={{ 
+                                borderRadius: "10px",
+                                overflow: "hidden",
+                                height: "100%",
+                                display: 'flex',
+                                flexDirection: "column",
+                                boxShadow: hoveredCard === job.id ? "0 6px 15px rgba(0,0,0,0.3)" : "0 4px 10px rgba(0,0,0,0.2)",
+                                background: hoveredCard === job.id ? "#f0f8ff" : "#ffffff",
+                                transition: "all 0.3s ease",
+                                transform: hoveredCard === job.id ? "translateY(-5px)" : "translateY(-2px)", 
+                            }}
+                            onMouseEnter={() => setHoveredCard(job.id)}
+                            onMouseLeave={() => setHoveredCard(null)}
+                            >
                             <div style={{ position: "relative", height: "140px" ,overflow: "hidden" }}>
                                 <Image 
                                     src={job.image}
@@ -249,4 +294,4 @@ const Page = () => {
     );
 };
 
-export default Page;
+export default InfoBusiness;

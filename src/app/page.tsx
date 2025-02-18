@@ -1,10 +1,10 @@
-import NavigationBar from "@/components/NavigationBar";
-import Page from "@/app/candidate/infoBusiness/page";
+// import NavigationBar from "@/components/NavigationBar";
+import Homes from "@/app/candidate/home/page";
 export default function Home() {
   return (
     <div>
-      <NavigationBar/>
-      <Page/>
+      {/* <NavigationBar/> */}
+      <Homes/>
     </div>
   );
 }
