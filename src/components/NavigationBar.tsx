@@ -21,7 +21,7 @@ const NavigationBar: React.FC = () => {
     const router = useRouter();
     const items: MenuItem[] = [
         {
-            label: (<div onClick={() => router.push('/candidate/home')}>Trang chủ</div>),
+            label: (<div onClick={() => router.push('/')}>Trang chủ</div>),
             key: 'trangchu',
         },
         {
