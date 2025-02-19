@@ -14,25 +14,6 @@ import MessageDropdown from './MessageDropdown';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-const items: MenuItem[] = [
-    {
-        label: 'Trang chủ',
-        key: 'trangchu',
-    },
-    {
-        label: 'Việc làm',
-        key: 'vieclam',
-    },
-    {
-        label: 'Quản lý hồ sơ',
-        key: 'quanlyhoso',
-    },
-    {
-        label: 'Công ty',
-        key: 'congty',
-    }
-];
-
 
 const NavigationBar: React.FC = () => {
 
@@ -40,6 +21,29 @@ const NavigationBar: React.FC = () => {
 
     const windowWidth = useWindowWidth();
     const router = useRouter();
+
+    const items: MenuItem[] = [
+        {
+            label: (
+                <div onClick={() => router.push('/')}>Trang chủ</div>
+            ),
+            key: 'trangchu',
+        },
+        {
+            label: 'Việc làm',
+            key: 'vieclam',
+        },
+        {
+            label: 'Quản lý hồ sơ',
+            key: 'quanlyhoso',
+        },
+        {
+            label: (
+                <div onClick={() => router.push('work')}>Công ty</div>
+            ),
+            key: 'congty',
+        }
+    ];
 
     const handleButtonLogin = () => {
         setIsLogin(true);
@@ -69,6 +73,7 @@ const NavigationBar: React.FC = () => {
                     }}
                 >
                     <div
+                        onClick={() => router.push('/')}
                         style={{
                             display: 'flex',
                             justifyContent: 'center',
@@ -101,7 +106,7 @@ const NavigationBar: React.FC = () => {
                         <Menu
                             theme="light"
                             mode="horizontal"
-                            defaultSelectedKeys={['trangchu']}
+                            // defaultSelectedKeys={['trangchu']}
                             items={items}
                             style={{}}
                         // hidden={windowWidth < 768}
