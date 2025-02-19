@@ -1,32 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { MenuProps } from 'antd';
 import { Menu, Col, Row } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
 import CustomButton from '@/components/CustomButton';
-import UserDropdown from './UserDropdown';
-import NotificationDropdown from './NotificationDropdown';
-import MessageDropdown from './MessageDropdown';
-
+// import UserDropdown from './UserDropdown';
+// import NotificationDropdown from './NotificationDropdown';
+// import MessageDropdown from './MessageDropdown';
 
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-
 const NavigationBar: React.FC = () => {
 
-    const [isLogin, setIsLogin] = useState(false);
+    // const [isLogin, setIsLogin] = useState(false);
 
     const windowWidth = useWindowWidth();
     const router = useRouter();
-
     const items: MenuItem[] = [
         {
-            label: (
-                <div onClick={() => router.push('/')}>Trang chủ</div>
-            ),
+            label: (<div onClick={() => router.push('/candidate/home')}>Trang chủ</div>),
             key: 'trangchu',
         },
         {
@@ -34,24 +29,22 @@ const NavigationBar: React.FC = () => {
             key: 'vieclam',
         },
         {
-            label: 'Quản lý hồ sơ',
+            label: (<div onClick={() => router.push('/candidate/profileManagement')}>Quản lí hồ sơ</div>),
             key: 'quanlyhoso',
         },
         {
-            label: (
-                <div onClick={() => router.push('work')}>Công ty</div>
-            ),
+            label: (<div onClick={() => router.push('/candidate/infoBusiness')}>Công ty</div>),
             key: 'congty',
         }
     ];
 
     const handleButtonLogin = () => {
-        setIsLogin(true);
-    };
-    const handleButtonLogout = () => {
-        setIsLogin(false);
         router.push('/auth/login');
     };
+    // const handleButtonLogout = () => {
+    //     setIsLogin(false);
+    //     router.push('/auth/login');
+    // };
 
     return (
         <div>
@@ -129,7 +122,17 @@ const NavigationBar: React.FC = () => {
                             justifyContent: 'center',
                         }}
                     >
-                        {isLogin ? (
+                        <CustomButton
+                            text="Đăng nhập"
+                            onClick={handleButtonLogin}
+                            backgroundColor="blue"
+                            hoverColor="darkblue"
+                            textColor="white"
+                            style={{
+                                fontWeight: 'bold'
+                            }}
+                        />
+                        {/* {isLogin ? (
                             <div
                                 style={{
                                     display: 'flex',
@@ -137,7 +140,7 @@ const NavigationBar: React.FC = () => {
                                     gap: 16
                                 }}
                             >
-                                {/* UserMenu and NotificationMenu Dropdown */}
+                                
                                 <NotificationDropdown />
                                 <MessageDropdown />
                                 <UserDropdown
@@ -165,7 +168,7 @@ const NavigationBar: React.FC = () => {
                                     fontWeight: 'bold'
                                 }}
                             />
-                        )}
+                        )} */}
                     </div>
                 </Col>
             </Row>
