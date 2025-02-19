@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Select, Button, Pagination, Input, Image } from 'antd';
-import { EnvironmentOutlined , SearchOutlined, FilterOutlined, DownOutlined, UpOutlined} from '@ant-design/icons';
+import { EnvironmentOutlined, SearchOutlined, FilterOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
@@ -34,7 +34,7 @@ const filters = [
     {
         key: "jobType",
         placeholder: "Chọn loại công việc",
-        options: ["Thực tập","Full-time", "Part-time", "Freelance"]
+        options: ["Thực tập", "Full-time", "Part-time", "Freelance"]
     },
     {
         key: "salary",
@@ -58,7 +58,7 @@ const Home = () => {
     const [filteredJobs, setFilteredJobs] = useState(jobs); // Danh sách công việc đã lọc
     const [openSelect, setOpenSelect] = useState<Record<string, boolean>>({}); // Trạng thái của Select
     const [searchTerm, setSearchTerm] = useState("");
-    
+
     // Hàm cập nhật trạng thái mở/đóng Select
     const handleDropdownVisibleChange = (key: string, open: boolean) => {
         setOpenSelect(prev => ({ ...prev, [key]: open }));
@@ -79,7 +79,7 @@ const Home = () => {
         });
         setFilteredJobs(jobs); // Hiển thị lại toàn bộ danh sách công việc
     };
-    
+
     // Hàm lọc dữ liệu dựa trên bộ lọc và tìm kiếm
     useEffect(() => {
         const updatedJobs = jobs.filter(job => {
@@ -93,7 +93,7 @@ const Home = () => {
                 (!selectedFilters.salary || checkSalaryFilter(jobSalary, selectedFilters.salary)) &&
                 (searchTerm === "" ||
                     job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    job.company.toLowerCase().includes(searchTerm.toLowerCase())||
+                    job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     job.location.toLowerCase().includes(searchTerm.toLowerCase()))
             );
         });
@@ -122,11 +122,11 @@ const Home = () => {
     const displayedJobs = filteredJobs.slice(startIndex, endIndex); //Lấy danh sách công việc hiển thị
 
     return (
-        <div style={{ width: "100%", overflow: "hidden"}}>
-            <div style={{ 
-                background: '#FFEFE5', 
-                padding: '20px', 
-                borderRadius: '8px', 
+        <div style={{ width: "100%", overflow: "hidden" }}>
+            <div style={{
+                background: '#FFEFE5',
+                padding: '20px',
+                borderRadius: '8px',
                 minHeight: '80px',
                 maxHeight: '250px',
                 height: 'auto',
@@ -136,41 +136,41 @@ const Home = () => {
                 marginBottom: '10px'
             }}>
                 {/* Tiêu đề */}
-                <div style={{ maxWidth: "900px", width: "100%", textAlign: "left", marginBottom:"10px", marginLeft: "140px"}}>
+                <div style={{ maxWidth: "900px", width: "100%", textAlign: "left", marginBottom: "10px", marginLeft: "140px" }}>
                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', }}>
                         Tìm kiếm <span style={{ background: '#D4421E', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}>Việc làm</span>
                     </h2>
                 </div>
-                
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>
+
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
                     {/* Ô tìm kiếm */}
                     <div style={{ maxWidth: "1200px", width: "100%", textAlign: "center", marginBottom: "10px" }}>
                         <Row gutter={[12, 12]} justify="center" align="middle" style={{ width: "100%" }} >
                             <Col flex="auto">
-                                <Input 
-                                    placeholder="Tìm kiếm theo các Kỹ năng, Vị trí, Công ty,..." 
-                                    size="large" 
-                                    value={searchTerm} 
+                                <Input
+                                    placeholder="Tìm kiếm theo các Kỹ năng, Vị trí, Công ty,..."
+                                    size="large"
+                                    value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </Col>
                             <Col>
                                 <Button type="primary"
-                                        size="large" 
-                                        style={{ 
-                                            height:"39px",
-                                            background: "#D4421E",
-                                            borderColor: "#D4421E",
-                                            transition: "background 0.3s, border-color 0.3s"
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.background = "#ff5733"; // Màu sáng hơn khi hover
-                                            e.currentTarget.style.borderColor = "#ff5733";
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.background = "#D4421E"; // Quay lại màu cũ
-                                            e.currentTarget.style.borderColor = "#D4421E";
-                                        }}
+                                    size="large"
+                                    style={{
+                                        height: "39px",
+                                        background: "#D4421E",
+                                        borderColor: "#D4421E",
+                                        transition: "background 0.3s, border-color 0.3s"
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = "#ff5733"; // Màu sáng hơn khi hover
+                                        e.currentTarget.style.borderColor = "#ff5733";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = "#D4421E"; // Quay lại màu cũ
+                                        e.currentTarget.style.borderColor = "#D4421E";
+                                    }}
                                 >
                                     <SearchOutlined /> Tìm kiếm
                                 </Button>
@@ -210,17 +210,17 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-            
+
             <div>
-            {/* Danh sách việc làm */}
+                {/* Danh sách việc làm */}
                 <Row gutter={[16, 16]}>
                     {displayedJobs.map(job => (
                         <Col xs={24} sm={12} md={8} lg={8} key={job.id}>
-                            <Card 
-                                bordered={false} 
-                                style={{ 
-                                    width: "100%",       
-                                    height: "150px",     
+                            <Card
+                                bordered={false}
+                                style={{
+                                    width: "100%",
+                                    height: "150px",
                                     cursor: "pointer",
                                     boxShadow: hoveredCard === job.id ? "0 6px 15px rgba(0,0,0,0.3)" : "0 4px 10px rgba(0,0,0,0.2)",
                                     borderRadius: "10px",
@@ -236,15 +236,15 @@ const Home = () => {
                                 <Row gutter={16} align="middle" style={{ width: "100%" }}>
                                     {/* Hình ảnh bên trái */}
                                     <Col span={8}>
-                                        <Image 
-                                            src={job.image} 
-                                            alt={job.title} 
-                                            style={{ width: "100%", height: "100px", borderRadius: "8px", objectFit: "cover" }} 
+                                        <Image
+                                            src={job.image}
+                                            alt={job.title}
+                                            style={{ width: "100%", height: "100px", borderRadius: "8px", objectFit: "cover" }}
                                         />
                                     </Col>
                                     {/* Nội dung bên phải */}
                                     <Col span={16}>
-                                        <h3 style={{ marginBottom: 5, fontSize: "16px", fontWeight:"bold" }}>{job.title}</h3>
+                                        <h3 style={{ marginBottom: 5, fontSize: "16px", fontWeight: "bold" }}>{job.title}</h3>
                                         <p style={{ fontSize: "14px" }}><strong>Công ty:</strong> {job.company}</p>
                                         <p style={{ fontSize: "14px" }}><strong>Loai:</strong> {job.jobType}</p>
                                         <p style={{ fontSize: "14px" }}><strong>Lương:</strong> {job.salary}</p>
@@ -258,11 +258,11 @@ const Home = () => {
 
                 {/* Phân trang */}
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <Pagination 
-                        current={currentPage} 
-                        total={jobs.length} 
-                        pageSize={pageSize} 
-                        onChange={setCurrentPage} 
+                    <Pagination
+                        current={currentPage}
+                        total={jobs.length}
+                        pageSize={pageSize}
+                        onChange={setCurrentPage}
                     />
                 </div>
             </div>

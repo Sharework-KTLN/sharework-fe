@@ -160,7 +160,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText
                     backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
-                }} />
+                }}
+            />
+
         </div>
     );
 };
