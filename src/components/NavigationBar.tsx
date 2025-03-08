@@ -21,19 +21,19 @@ const NavigationBar: React.FC = () => {
     const router = useRouter();
     const items: MenuItem[] = [
         {
-            label: (<div onClick={()=>router.push('/candidate/home')}>Trang chủ</div>),
+            label: (<div onClick={() => router.push('/')}>Trang chủ</div>),
             key: 'trangchu',
         },
         {
-            label: 'Việc làm',
+            label: (<div onClick={() => router.push('/candidate/work')}>Việc làm</div>),
             key: 'vieclam',
         },
         {
-            label: (<div onClick={()=>router.push('/candidate/profileManagement')}>Quản lí hồ sơ</div>),
+            label: (<div onClick={() => router.push('/candidate/profileManagement')}>Quản lí hồ sơ</div>),
             key: 'quanlyhoso',
         },
         {
-            label: (<div onClick={()=>router.push('/candidate/infoBusiness')}>Công ty</div>),
+            label: (<div onClick={() => router.push('/candidate/infoBusiness')}>Công ty</div>),
             key: 'congty',
         }
     ];
@@ -66,6 +66,7 @@ const NavigationBar: React.FC = () => {
                     }}
                 >
                     <div
+                        onClick={() => router.push('/')}
                         style={{
                             display: 'flex',
                             justifyContent: 'center',
@@ -98,7 +99,7 @@ const NavigationBar: React.FC = () => {
                         <Menu
                             theme="light"
                             mode="horizontal"
-                            defaultSelectedKeys={['trangchu']}
+                            // defaultSelectedKeys={['trangchu']}
                             items={items}
                             style={{}}
                         // hidden={windowWidth < 768}
@@ -122,15 +123,15 @@ const NavigationBar: React.FC = () => {
                         }}
                     >
                         <CustomButton
-                                text="Đăng nhập"
-                                onClick={handleButtonLogin}
-                                backgroundColor="blue"
-                                hoverColor="darkblue"
-                                textColor="white"
-                                style={{
-                                    fontWeight: 'bold'
-                                }}
-                            />
+                            text="Đăng nhập"
+                            onClick={handleButtonLogin}
+                            backgroundColor="blue"
+                            hoverColor="darkblue"
+                            textColor="white"
+                            style={{
+                                fontWeight: 'bold'
+                            }}
+                        />
                         {/* {isLogin ? (
                             <div
                                 style={{
@@ -168,7 +169,7 @@ const NavigationBar: React.FC = () => {
                                 }}
                             />
                         )} */}
-                    </div> 
+                    </div>
                 </Col>
             </Row>
         </div>

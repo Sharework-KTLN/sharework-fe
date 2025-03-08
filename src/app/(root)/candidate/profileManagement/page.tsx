@@ -42,25 +42,6 @@ const jobsApplied = [
     },
 ];
 
-const yourContracts = [
-    {
-        id: 1,
-        title: "Lập trình viên Web",
-        company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn",
-        salary: "6 triệu",
-        location: "Bắc Giang",
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA" 
-    },
-    { 
-        id: 2,
-        title: "Thực Tập Sinh Graphic Design",
-        company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc",
-        salary: "5 triệu",
-        location: "Hồ Chí Minh",
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA" 
-    },
-];
-
 const jobSuggestions = [
     { 
         id: 1,
@@ -89,11 +70,6 @@ const ProfileManagement = () => {
     const [currentJobsPage, setCurrentJobsPage] = useState(1);
     const jobsPageSize = 4;
     const paginatedJobsApplied = jobsApplied.slice((currentJobsPage - 1) * jobsPageSize, currentJobsPage * jobsPageSize);
-
-    // Phân trang cho danh sách yourContract
-    const [currentContractsPage, setCurrentContractsPage] = useState(1);
-    const ContractsPageSize = 4;
-    const paginatedYourContracts = yourContracts.slice((currentContractsPage - 1) * ContractsPageSize, currentContractsPage * ContractsPageSize);
 
     // Phân trang cho danh sách jobSuggestions 
     const [currentSuggestionsPage, setCurrentSuggestionsPage] = useState(1);
@@ -143,52 +119,6 @@ const ProfileManagement = () => {
                     total={jobsApplied.length}
                     pageSize={jobsPageSize}
                     onChange={setCurrentJobsPage}
-                    style={{ textAlign: "center", marginTop: "12px" }}
-                />
-            </div>
-            
-            <div>
-                <h2 style={{fontWeight:"bold", marginBottom:"12px", marginTop:"12px"}}>Hợp đồng của bạn</h2>
-                <Row gutter={[16, 16]}>
-                    {paginatedYourContracts.map((job) => (
-                    <Col xs={24} sm={12} md={8} lg={6} key={job.id}>
-                        <Card hoverable
-                            style={{ 
-                                borderRadius: "10px",
-                                overflow: "hidden",
-                                height: "100%",
-                                display: 'flex',
-                                flexDirection: "column",
-                                boxShadow:
-                                    hoveredCard.id === job.id && hoveredCard.type === "yourContract"
-                                        ? "0 6px 15px rgba(0,0,0,0.3)"
-                                        : "0 4px 10px rgba(0,0,0,0.2)",
-                                background:
-                                    hoveredCard.id === job.id && hoveredCard.type === "yourContract" ? "#f0f8ff" : "#ffffff",
-                                transition: "all 0.3s ease",
-                                transform:
-                                    hoveredCard.id === job.id && hoveredCard.type === "yourContract"
-                                        ? "translateY(-5px)"
-                                        : "translateY(-2px)",
-                            }}
-                            onMouseEnter={() => setHoveredCard({ id: job.id, type: "yourContract" })}
-                            onMouseLeave={() => setHoveredCard({ id: null, type: null })}
-                        >
-                            <Image src={job.logo} alt={job.company} width={50} />
-                            <h3 style={{fontSize: "16px", fontWeight:"bold" }}>{job.title}</h3>
-                            <p style={{ fontSize: "14px" }}><strong>Công ty:</strong> {job.company}</p>
-                            <p style={{ fontSize: "14px" }}><strong>Lương:</strong> {job.salary}</p>
-                            <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.location}</p>
-                        </Card>
-                        
-                    </Col>
-                    ))}
-                </Row>
-                <Pagination
-                    current={currentContractsPage}
-                    total={yourContracts.length}
-                    pageSize={ContractsPageSize}
-                    onChange={setCurrentContractsPage}
                     style={{ textAlign: "center", marginTop: "12px" }}
                 />
             </div>
