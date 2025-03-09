@@ -6,9 +6,10 @@ import type { MenuProps } from 'antd';
 // Định nghĩa kiểu dữ liệu cho user
 interface User {
     id: string;
-    name: string;
+    full_name: string;
     email: string;
     candidateId: string;
+    profile_image: string;
 }
 
 interface UserDropdownProps {
@@ -21,10 +22,10 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user, onLogout }) => {
     const userMenu: MenuProps['items'] = useMemo(() => {
         const userInfo = (
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Avatar size="default" icon={<UserOutlined />} />
+                <Avatar size="default" src={user.profile_image || undefined} icon={!user.profile_image && <UserOutlined />} />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontWeight: 'bold', color: 'blue' }}>{user.name}</span>
-                    <span style={{ fontSize: '12px', color: 'gray' }}>Mã ứng viên: {user.candidateId}</span>
+                    <span style={{ fontWeight: 'bold', color: 'blue' }}>{user.full_name}</span>
+                    <span style={{ fontSize: '12px', color: 'gray' }}>Mã ứng viên: {user.id}</span>
                     <span style={{ fontSize: '12px', color: 'gray' }}>{user.email}</span>
                 </div>
             </div>
@@ -61,7 +62,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user, onLogout }) => {
 
     return (
         <Dropdown menu={{ items: userMenu }} placement="bottomRight" arrow>
-            <Avatar size="default" icon={<UserOutlined />} style={{ cursor: 'pointer' }} />
+            <Avatar size="default" src={user.profile_image || undefined} icon={!user.profile_image && <UserOutlined />} style={{ cursor: 'pointer' }} />
         </Dropdown>
     );
 };
