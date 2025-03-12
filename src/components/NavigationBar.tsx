@@ -1,15 +1,15 @@
 'use client';
 
-// import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { MenuProps } from 'antd';
 import { Menu, Col, Row } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
 import CustomButton from '@/components/CustomButton';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import UserDropdown from './UserDropdown';
 import NotificationDropdown from './NotificationDropdown';
 import MessageDropdown from './MessageDropdown';
+import SearchParamsHandler from './SearchParamsHandler'
 
 type MenuItem = Required<MenuProps>['items'][number];
 type User = {
@@ -48,13 +48,7 @@ const NavigationBar: React.FC = () => {
     ];
 
     useEffect(() => {
-        // Lấy token từ URL
-        const token = searchParams.get('token');
-        console.log("token:", token);
-        if (token) {
-            localStorage.setItem('token', token); // Lưu token vào localStorage
-            router.replace('/'); // Xóa token trên URL
-        }
+
         const fetchUser = async () => {
             const savedToken = localStorage.getItem("token");
             if (!savedToken) {
@@ -79,7 +73,9 @@ const NavigationBar: React.FC = () => {
                 setUser(null);
             }
         };
+
         fetchUser();
+
     }, [router, searchParams]);
     useEffect(() => {
         console.log("user:", user);
@@ -95,6 +91,9 @@ const NavigationBar: React.FC = () => {
 
     return (
         <div>
+            <Suspense fallback={null}>
+                <SearchParamsHandler />
+            </Suspense>
             <Row
                 wrap={false}
                 style={{
