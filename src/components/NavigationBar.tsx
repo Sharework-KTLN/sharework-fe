@@ -9,7 +9,7 @@ import { Suspense, useEffect, useState } from 'react';
 import UserDropdown from './UserDropdown';
 import NotificationDropdown from './NotificationDropdown';
 import MessageDropdown from './MessageDropdown';
-import SearchParamsHandler from './SearchParamsHandler'
+import SearchParamsHandler from './SearchParamsHandler';
 
 type MenuItem = Required<MenuProps>['items'][number];
 type User = {
