@@ -64,7 +64,7 @@ export default function Register() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [messageApi]);
     return (
         <>
             {contextHolder}

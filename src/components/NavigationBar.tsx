@@ -12,11 +12,18 @@ import NotificationDropdown from './NotificationDropdown';
 import MessageDropdown from './MessageDropdown';
 
 type MenuItem = Required<MenuProps>['items'][number];
+type User = {
+    id: string;
+    full_name: string;
+    email: string;
+    candidateId: string;
+    profile_image: string;
+}
 
 const NavigationBar: React.FC = () => {
 
     // const [isLogin, setIsLogin] = useState(false);
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
 
     const windowWidth = useWindowWidth();
     const router = useRouter();
@@ -73,8 +80,10 @@ const NavigationBar: React.FC = () => {
             }
         };
         fetchUser();
-    }, [router]);
-
+    }, [router, searchParams]);
+    useEffect(() => {
+        console.log("user:", user);
+    }, [user]);
     const handleButtonLogin = () => {
         router.push('/auth/login');
     };

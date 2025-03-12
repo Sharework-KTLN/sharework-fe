@@ -46,7 +46,7 @@ export default function Login() {
             // Decode token để lấy thông tin user
             const decodedUser = jwtDecode<JwtPayload>(data.token);
             setUser(decodedUser);
-
+            console.log("user: ", user);
             // Cập nhật UI bằng cách refresh router
             router.refresh();
 
@@ -55,10 +55,11 @@ export default function Login() {
             });
         } catch (error) {
             messageApi.error("Lỗi đăng nhập, vui lòng thử lại!");
+            console.error("Lỗi đăng nhập:", error);
         } finally {
             setLoading(false);
         }
-    }, [router]);
+    }, [router, messageApi, user]);
 
     // Định nghĩa các dữ liệu cần thiết cho form đăng nhập
     const title = "Chào mừng bạn đã quay trở lại";
@@ -83,6 +84,7 @@ export default function Login() {
                     linkText={linkText}
                     linkHref={linkHref}
                     onSubmit={handleLogin}
+                    errors={errors}
                 />
             </Spin>
         </>
