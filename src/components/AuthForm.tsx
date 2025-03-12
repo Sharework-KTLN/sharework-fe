@@ -24,35 +24,48 @@ interface AuthFormProps {
     linkText?: string;
     linkHref?: string;
     onSubmit?: (data: Record<string, string>) => void;
+    errors?: Record<string, string>;
 }
 
 
-const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText, linkText, linkHref, onSubmit }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText, linkText, linkHref, onSubmit, errors }) => {
 
     const [formData, setFormData] = useState<Record<string, string>>({});
+
+    const handleLogin = () => {
+        window.location.href = "http://localhost:8080/auth/google";
+    };
 
     // Phân biệt giữa input field và input password field
     const renderInputField = (field: Field) => {
         if (field.type === "password") {
             return (
-                <Input.Password
-                    size="large"
-                    placeholder={field.placeholder}
-                    prefix={field.icon}
-                    value={formData[field.name] || ""}
-                    onChange={(e) => handleInputChange(field.name, e.target.value)}
-                />
+                <>
+                    <Input.Password
+                        size="large"
+                        placeholder={field.placeholder}
+                        prefix={field.icon}
+                        value={formData[field.name] || ""}
+                        onChange={(e) => handleInputChange(field.name, e.target.value)}
+                        status={errors?.[field.name] ? "error" : ""}
+                    />
+                    {errors?.[field.name] && <p style={{ color: "red" }}>{errors[field.name]}</p>}
+                </>
             );
         } else {
             return (
-                <Input
-                    size="large"
-                    placeholder={field.placeholder}
-                    prefix={field.icon}
-                    type={field.type || "text"}
-                    value={formData[field.name] || ""}
-                    onChange={(e) => handleInputChange(field.name, e.target.value)}
-                />
+                <>
+                    <Input
+                        size="large"
+                        placeholder={field.placeholder}
+                        prefix={field.icon}
+                        type={field.type || "text"}
+                        value={formData[field.name] || ""}
+                        onChange={(e) => handleInputChange(field.name, e.target.value)}
+                        status={errors?.[field.name] ? "error" : ""}
+                    />
+                    {errors?.[field.name] && <p style={{ color: "red" }}>{errors[field.name]}</p>}
+                </>
             );
         }
     };
@@ -150,6 +163,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText
 
                 {/* Link to other auth pages */}
                 {renderLinks()}
+                {buttonText === "Đăng nhập" && <Row style={{ marginTop: '1.5%' }}>
+                    <Col offset={4} span={16}>
+                        <button onClick={handleLogin}>Đăng nhập với google</button>
+                    </Col>
+                </Row>}
             </div>
 
             {/* Background Section */}
@@ -162,6 +180,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText
                     backgroundPosition: 'center',
                 }}
             />
+
 
         </div>
     );

@@ -1,24 +1,32 @@
 'use client';
 
-// import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { MenuProps } from 'antd';
 import { Menu, Col, Row } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
 import CustomButton from '@/components/CustomButton';
-// import UserDropdown from './UserDropdown';
-// import NotificationDropdown from './NotificationDropdown';
-// import MessageDropdown from './MessageDropdown';
-
+import { useEffect, useState } from 'react';
+import UserDropdown from './UserDropdown';
+import NotificationDropdown from './NotificationDropdown';
+import MessageDropdown from './MessageDropdown';
 
 type MenuItem = Required<MenuProps>['items'][number];
+type User = {
+    id: string;
+    full_name: string;
+    email: string;
+    candidateId: string;
+    profile_image: string;
+}
 
 const NavigationBar: React.FC = () => {
 
     // const [isLogin, setIsLogin] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
 
     const windowWidth = useWindowWidth();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const items: MenuItem[] = [
         {
             label: (<div onClick={() => router.push('/')}>Trang chủ</div>),
@@ -38,13 +46,57 @@ const NavigationBar: React.FC = () => {
         }
     ];
 
+    useEffect(() => {
+        const token = searchParams.get('token');
+        console.log("token:", token);
+
+        if (token) {
+            localStorage.setItem('token', token); // Lưu token vào localStorage
+            router.replace('/'); // Xóa token khỏi URL
+        }
+    }, [searchParams, router]);
+
+    useEffect(() => {
+
+        const fetchUser = async () => {
+            const savedToken = localStorage.getItem("token");
+            if (!savedToken) {
+                setUser(null);
+                return;
+            }
+            try {
+                const res = await fetch("http://localhost:8080/auth/me", {
+                    headers: { "Authorization": `Bearer ${savedToken}` },
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    setUser(data); // Lưu thông tin user vào state
+                } else {
+                    localStorage.removeItem("token"); // Xóa token nếu không hợp lệ
+                    setUser(null);
+                }
+            } catch (error) {
+                console.error("Lỗi khi lấy user:", error);
+                localStorage.removeItem("token");
+                setUser(null);
+            }
+        };
+
+        fetchUser();
+
+    }, [router, searchParams]);
+    useEffect(() => {
+        console.log("user:", user);
+    }, [user]);
     const handleButtonLogin = () => {
         router.push('/auth/login');
     };
-    // const handleButtonLogout = () => {
-    //     setIsLogin(false);
-    //     router.push('/auth/login');
-    // };
+    const handleButtonLogout = async () => {
+        localStorage.removeItem("token"); // Xóa token khỏi localStorage
+        setUser(null); // Reset state user
+        router.push("/auth/login"); // Chuyển hướng về trang đăng nhập
+    };
 
     return (
         <div>
@@ -122,17 +174,7 @@ const NavigationBar: React.FC = () => {
                             justifyContent: 'center',
                         }}
                     >
-                        <CustomButton
-                            text="Đăng nhập"
-                            onClick={handleButtonLogin}
-                            backgroundColor="blue"
-                            hoverColor="darkblue"
-                            textColor="white"
-                            style={{
-                                fontWeight: 'bold'
-                            }}
-                        />
-                        {/* {isLogin ? (
+                        {user ? (
                             <div
                                 style={{
                                     display: 'flex',
@@ -140,17 +182,12 @@ const NavigationBar: React.FC = () => {
                                     gap: 16
                                 }}
                             >
-                                
+
                                 <NotificationDropdown />
                                 <MessageDropdown />
                                 <UserDropdown
                                     user={
-                                        {
-                                            id: '1',
-                                            name: 'Nguyễn Văn A',
-                                            email: 'hiep@gmail.com',
-                                            candidateId: '123456'
-                                        }
+                                        user
                                     }
                                     onLogout={handleButtonLogout}
                                 />
@@ -168,7 +205,7 @@ const NavigationBar: React.FC = () => {
                                     fontWeight: 'bold'
                                 }}
                             />
-                        )} */}
+                        )}
                     </div>
                 </Col>
             </Row>
