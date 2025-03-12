@@ -5,11 +5,10 @@ import type { MenuProps } from 'antd';
 import { Menu, Col, Row } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
 import CustomButton from '@/components/CustomButton';
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import UserDropdown from './UserDropdown';
 import NotificationDropdown from './NotificationDropdown';
 import MessageDropdown from './MessageDropdown';
-import SearchParamsHandler from './SearchParamsHandler';
 
 type MenuItem = Required<MenuProps>['items'][number];
 type User = {
@@ -46,6 +45,16 @@ const NavigationBar: React.FC = () => {
             key: 'congty',
         }
     ];
+
+    useEffect(() => {
+        const token = searchParams.get('token');
+        console.log("token:", token);
+
+        if (token) {
+            localStorage.setItem('token', token); // Lưu token vào localStorage
+            router.replace('/'); // Xóa token khỏi URL
+        }
+    }, [searchParams, router]);
 
     useEffect(() => {
 
@@ -91,9 +100,6 @@ const NavigationBar: React.FC = () => {
 
     return (
         <div>
-            <Suspense fallback={null}>
-                <SearchParamsHandler />
-            </Suspense>
             <Row
                 wrap={false}
                 style={{

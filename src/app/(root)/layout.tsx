@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from "next";
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { Geist, Geist_Mono } from "next/font/google";
@@ -28,7 +29,9 @@ export default function RootLayout({
         <>
             <main className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <ReduxProvider>
-                    <NavigationBar />
+                    <Suspense fallback={null}>
+                        <NavigationBar />
+                    </Suspense>
                     <AntdRegistry>{children}</AntdRegistry>
                 </ReduxProvider>
 
