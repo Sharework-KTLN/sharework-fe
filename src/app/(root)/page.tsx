@@ -5,7 +5,20 @@ import { EnvironmentOutlined, SearchOutlined, FilterOutlined, DownOutlined, UpOu
 import { useRouter } from 'next/navigation';
 
 const { Option } = Select;
-
+interface Job {
+    id: number;
+    title: string;
+    company: string;
+    location: string;
+    specialization: string;
+    description?: string;  // Có thể là string hoặc undefined
+    requirement: string;
+    jobType: string;
+    salary: string;
+    create_date?: string;  // Có thể là string hoặc undefined
+    end_date?: string;  // Có thể là string hoặc undefined
+    image: string;
+}
 // Dữ liệu
 const jobs = [
     { 
@@ -72,7 +85,7 @@ const Home = () => {
     const [openSelect, setOpenSelect] = useState<Record<string, boolean>>({}); // Trạng thái của Select
     const [searchTerm, setSearchTerm] = useState("");
     const router = useRouter(); // Khởi tạo router
-    const [savedJobs, setSavedJobs] = useState<number[]>([]);
+    const [savedJobs, setSavedJobs] = useState<Job[]>([]);
 
     // Hàm cập nhật trạng thái mở/đóng Select
     const handleDropdownVisibleChange = (key: string, open: boolean) => {
@@ -144,12 +157,33 @@ const Home = () => {
         router.push(`/candidate/recruitmentInfoDetail?id=${jobId}`); // Điều hướng đến trang chi tiết công việc
     };
 
-    //Lưu việc yêu thích
+    // Lưu công việc yêu thích và thông tin công việc vào sessionStorage
     const handleSaveJob = (jobId: number) => {
-        setSavedJobs((prev) =>
-            prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
-        );
+        setSavedJobs(prev => {
+            // Tìm công việc theo jobId
+            const jobToSave = jobs.find(job => job.id === jobId);
+            
+            // Nếu công việc tìm thấy, thực hiện lưu công việc đó vào sessionStorage
+            if (jobToSave) {
+                const updatedJobs = prev.some(job => job.id === jobId) 
+                    ? prev.filter(job => job.id !== jobId)  // Nếu công việc đã lưu, xoá khỏi danh sách
+                    : [...prev, jobToSave];  // Nếu công việc chưa lưu, thêm vào danh sách
+
+                // Lưu danh sách các công việc đã lưu vào sessionStorage
+                sessionStorage.setItem("savedJobs", JSON.stringify(updatedJobs));
+                return updatedJobs;
+            }
+
+            return prev;  // Trả về trạng thái cũ nếu không tìm thấy công việc
+        });
     };
+
+    // Dùng useEffect để lấy savedJobs khi component mount
+    useEffect(() => {
+        const saved = JSON.parse(sessionStorage.getItem("savedJobs") || "[]");
+        setSavedJobs(saved);  // Cập nhật trạng thái với danh sách công việc đã lưu từ sessionStorage
+    }, []);
+    
     return (
         <div style={{ width: "100%", overflow: "hidden" }}>
             <div style={{
@@ -281,7 +315,7 @@ const Home = () => {
                                         <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.location}</p>
                                     </Col>
                                 </Row>
-                                {savedJobs.includes(job.id) ? (
+                                {savedJobs.some(savedJob => savedJob.id === job.id) ? (
                             <HeartFilled 
                                 onClick={(e) => {
                                     e.stopPropagation(); // Ngăn chặn sự kiện click vào card

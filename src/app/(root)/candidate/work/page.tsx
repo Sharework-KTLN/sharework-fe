@@ -1,8 +1,23 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Pagination, Image, Button, Tag } from "antd";
 import { EnvironmentOutlined } from "@ant-design/icons";
+
+interface jobSaved {
+    id : number;
+    title: string;
+    company: string;
+    location: string;
+    specialization: string;
+    description: string;
+    requirement: string;
+    jobType: string;
+    salary: string;
+    create_date: string;
+    end_date: string;
+    image: string;
+}
 
 const jobsApplied = [
     { 
@@ -42,6 +57,8 @@ const jobsApplied = [
     },
 ];
 
+const jobsSaved : jobSaved[] = [];
+
 const jobSuggestions = [
     { 
         id: 1,
@@ -65,11 +82,27 @@ const jobSuggestions = [
 
 const Work = () => {
     const [hoveredCard, setHoveredCard] = useState<{ id: number | null; type: string | null }>({ id: null, type: null });
+    const [savedJobs, setSavedJobs] = useState<jobSaved[]>([]);
+
+    useEffect(() => {
+        const savedJobs = JSON.parse(sessionStorage.getItem("savedJobs") || "[]");
+        setSavedJobs(savedJobs); // Cập nhật danh sách công việc đã lưu
+    }, []); // Chạy lại khi component render lại
+    const handleUnsaveJob = (jobId: number) => {
+        const updatedSavedJobs = savedJobs.filter((saved) => saved.id !== jobId);
+        setSavedJobs(updatedSavedJobs);
+        sessionStorage.setItem('savedJobs', JSON.stringify(updatedSavedJobs));
+    };
 
     // Phân trang cho danh sách jobsApplied
     const [currentJobsPage, setCurrentJobsPage] = useState(1);
     const jobsPageSize = 4;
     const paginatedJobsApplied = jobsApplied.slice((currentJobsPage - 1) * jobsPageSize, currentJobsPage * jobsPageSize);
+
+    // Phân trang cho danh sách jobsSaved
+    const [currentSavesPage, setCurrentSavesPage] = useState(1);
+    const SavesPageSize = 4;
+    const paginatedjobsSaved = jobsSaved.slice((currentSavesPage - 1) * SavesPageSize, currentSavesPage * SavesPageSize);
 
     // Phân trang cho danh sách jobSuggestions 
     const [currentSuggestionsPage, setCurrentSuggestionsPage] = useState(1);
@@ -119,6 +152,31 @@ const Work = () => {
                     total={jobsApplied.length}
                     pageSize={jobsPageSize}
                     onChange={setCurrentJobsPage}
+                    style={{ textAlign: "center", marginTop: "12px" }}
+                />
+            </div>
+            
+            <div>
+                <h2 style={{fontWeight:"bold", marginBottom:"12px", marginTop:"12px"}}>Việc làm yêu thích</h2>
+                <Row gutter={16}>
+                    {savedJobs.map((job, index) => (
+                        <Col span={6} key={`${job.id}-${index}`}>
+                            <Card
+                                title={job.title}
+                                extra={<Button type="link">Xem chi tiết</Button>}
+                                cover={<Image src={job.image} alt={job.title} />}
+                            >
+                                <Tag icon={<EnvironmentOutlined />} color="blue">{job.company}</Tag>
+                                <Button onClick={() => handleUnsaveJob(job.id)}>Hủy lưu</Button>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+                <Pagination
+                    current={currentSavesPage}
+                    total={jobsSaved.length}
+                    pageSize={SavesPageSize}
+                    onChange={setCurrentSavesPage}
                     style={{ textAlign: "center", marginTop: "12px" }}
                 />
             </div>

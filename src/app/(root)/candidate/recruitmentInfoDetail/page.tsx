@@ -74,6 +74,13 @@ const RecruitmentInfoDetail = () =>{
         return daysRemaining;
     };
 
+    // Lưu công việc vào sessionStorage
+    const handleSaveJob = () => {
+        const savedJobs = JSON.parse(sessionStorage.getItem('savedJobs') || '[]');
+        savedJobs.push(job); // Thêm công việc vào mảng đã lưu
+        sessionStorage.setItem('savedJobs', JSON.stringify(savedJobs)); // Cập nhật lại sessionStorage
+        setSavedJob(!savedJob); // Đổi trạng thái đã lưu
+    };
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
             {/* Job Details Section */}
@@ -99,7 +106,7 @@ const RecruitmentInfoDetail = () =>{
                             borderColor: "#D4421E", 
                             fontWeight: "500"
                         }}
-                        onClick={() => setSavedJob(!savedJob)}
+                        onClick={handleSaveJob}
                         icon={savedJob ? <HeartFilled style={{ color: "#D4421E" }} /> : <HeartOutlined />} // Đổi icon
                     >{savedJob ? "Đã lưu" : "Lưu tin"} 
                     </Button>
