@@ -50,7 +50,13 @@ const RecruitmentInfoDetail = () =>{
         // Lấy dữ liệu từ sessionStorage
         const storedJob = sessionStorage.getItem('selectedJob');
         if (storedJob) {
-            setJob(JSON.parse(storedJob)); // Chuyển đổi lại dữ liệu từ string thành object
+            const jobData = JSON.parse(storedJob);
+            setJob(jobData); 
+    
+            // Kiểm tra nếu công việc này đã được lưu
+            const savedJobs = JSON.parse(sessionStorage.getItem('savedJobs') || '[]');
+            const isSaved = savedJobs.some((savedJob: Job) => savedJob.title === jobData.title);
+            setSavedJob(isSaved);
         }
     }, []);
 
@@ -59,6 +65,7 @@ const RecruitmentInfoDetail = () =>{
         return <div>Đang tải dữ liệu...</div>;
     }
 
+    
     const descriptionSentences = job.description.split('.').filter(Boolean);
 
     const calculateDaysRemaining = (endDate: string) => {
@@ -76,10 +83,20 @@ const RecruitmentInfoDetail = () =>{
 
     // Lưu công việc vào sessionStorage
     const handleSaveJob = () => {
-        const savedJobs = JSON.parse(sessionStorage.getItem('savedJobs') || '[]');
-        savedJobs.push(job); // Thêm công việc vào mảng đã lưu
-        sessionStorage.setItem('savedJobs', JSON.stringify(savedJobs)); // Cập nhật lại sessionStorage
-        setSavedJob(!savedJob); // Đổi trạng thái đã lưu
+        if (!job) return;
+        
+        let savedJobs = JSON.parse(sessionStorage.getItem('savedJobs') || '[]');
+    
+        if (savedJob) {
+            // Nếu công việc đã được lưu, xóa nó khỏi danh sách
+            savedJobs = savedJobs.filter((savedJob: Job) => savedJob.title !== job.title);
+        } else {
+            // Nếu chưa lưu, thêm công việc vào danh sách
+            savedJobs.push(job);
+        }
+    
+        sessionStorage.setItem('savedJobs', JSON.stringify(savedJobs));
+        setSavedJob(!savedJob); // Cập nhật UI
     };
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">

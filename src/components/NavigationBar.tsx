@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname} from 'next/navigation';
 import type { MenuProps } from 'antd';
 import { Menu, Col, Row } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
@@ -27,6 +27,16 @@ const NavigationBar: React.FC = () => {
     const windowWidth = useWindowWidth();
     const router = useRouter();
     const searchParams = useSearchParams();
+    const pathname = usePathname(); // Lấy đường dẫn hiện tại
+    // Xác định mục nào đang được chọn
+    const selectedKey = pathname.startsWith('/candidate/work')
+        ? 'vieclam'
+        : pathname.startsWith('/candidate/profileManagement')
+        ? 'quanlyhoso'
+        : pathname.startsWith('/candidate/infoBusiness')
+        ? 'congty'
+        : 'trangchu';
+
     const items: MenuItem[] = [
         {
             label: (<div onClick={() => router.push('/')}>Trang chủ</div>),
@@ -131,7 +141,7 @@ const NavigationBar: React.FC = () => {
                         <span
                             style={{
                                 fontWeight: 'bold',
-                                color: 'blue',
+                                color: '#D4421E',
                                 // whiteSpace: 'nowrap',
                             }}
                             className="text-sm md:text-base lg:text-lg xl:text-xl"
@@ -151,9 +161,11 @@ const NavigationBar: React.FC = () => {
                         <Menu
                             theme="light"
                             mode="horizontal"
+                            selectedKeys={[selectedKey]}
                             // defaultSelectedKeys={['trangchu']}
                             items={items}
-                            style={{}}
+                            style={{ borderBottom: 'none' }}
+                            className="custom-menu"
                         // hidden={windowWidth < 768}
                         />
                     </div>
@@ -198,8 +210,8 @@ const NavigationBar: React.FC = () => {
                             <CustomButton
                                 text="Đăng nhập"
                                 onClick={handleButtonLogin}
-                                backgroundColor="blue"
-                                hoverColor="darkblue"
+                                backgroundColor="#D4421E"
+                                hoverColor="#ff5733"
                                 textColor="white"
                                 style={{
                                     fontWeight: 'bold'
@@ -209,6 +221,22 @@ const NavigationBar: React.FC = () => {
                     </div>
                 </Col>
             </Row>
+            <style jsx global>{`
+                .custom-menu .ant-menu-item:hover, 
+                .custom-menu .ant-menu-item-active,
+                .custom-menu .ant-menu-item-selected {
+                    color: #D4421E !important;
+                }
+                
+                /* Đổi màu gạch dưới */
+                .custom-menu .ant-menu-item::after {
+                    border-bottom: 2px solid transparent !important;
+                }
+
+                .custom-menu .ant-menu-item-selected::after {
+                    border-bottom: 2px solid #D4421E !important;
+                }
+            `}</style>
         </div>
     );
 };
