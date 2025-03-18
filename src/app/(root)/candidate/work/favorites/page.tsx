@@ -18,9 +18,8 @@ interface jobSaved {
     end_date: string;
     image: string;
     savedAt: string;
-}
-
-
+    appliedAt?: string;
+};
 
 const jobSuggestions = [
     { 
@@ -49,10 +48,18 @@ const WorkFavorites = () =>{
 
     useEffect(() => {
         const savedJobs = JSON.parse(sessionStorage.getItem("savedJobs") || "[]");
-        setSavedJobs(savedJobs.map((job: jobSaved) => ({
-            ...job,
-            savedAt: job.savedAt || new Date().toISOString() // Nếu chưa có, set thời gian hiện tại
-        })));
+        const appliedJobs = JSON.parse(sessionStorage.getItem("appliedJobs") || "[]");
+    
+        // Kiểm tra xem job trong savedJobs có trong appliedJobs không
+        const updatedSavedJobs = savedJobs.map((job: jobSaved) => {
+            const appliedJob = appliedJobs.find((applied: jobSaved) => applied.id === job.id);
+            return {
+                ...job,
+                savedAt: job.savedAt || new Date().toISOString(), // Nếu chưa có savedAt, đặt thời gian hiện tại
+                appliedAt: appliedJob ? appliedJob.appliedAt : job.appliedAt, // Cập nhật nếu đã ứng tuyển trước
+            };
+        });
+        setSavedJobs(updatedSavedJobs);
     }, []);
     
     const handleUnsaveJob = (jobId: number) => {
@@ -61,6 +68,33 @@ const WorkFavorites = () =>{
         sessionStorage.setItem('savedJobs', JSON.stringify(updatedSavedJobs));
     };
     
+    const handleApplyJob = (jobId: number) => {
+        // Tìm công việc từ savedJobs
+        const appliedJob = savedJobs.find((job) => job.id === jobId);
+    
+        if (!appliedJob) return; // Nếu không tìm thấy, thoát luôn
+    
+        // Lấy danh sách appliedJobs từ sessionStorage (nếu có)
+        const storedAppliedJobs = JSON.parse(sessionStorage.getItem("appliedJobs") || "[]");
+    
+        // Kiểm tra xem job đã có trong danh sách applied chưa
+        const isAlreadyApplied = storedAppliedJobs.some((job: jobSaved) => job.id === jobId);
+    
+        if (!isAlreadyApplied) {
+            const newAppliedJob = { ...appliedJob, appliedAt: new Date().toISOString().split("T")[0] };
+    
+            // Cập nhật appliedJobs trong sessionStorage
+            const updatedAppliedJobs = [...storedAppliedJobs, newAppliedJob];
+            sessionStorage.setItem("appliedJobs", JSON.stringify(updatedAppliedJobs));
+    
+            // 🔹 Cập nhật lại state savedJobs để giao diện thay đổi ngay lập tức
+            const updatedSavedJobs = savedJobs.map((job) =>
+                job.id === jobId ? { ...job, appliedAt: newAppliedJob.appliedAt } : job
+            );
+            setSavedJobs(updatedSavedJobs);
+        }
+    };
+
     // Phân trang cho danh sách jobsSaved
     const [currentSavesPage, setCurrentSavesPage] = useState(1);
     const SavesPageSize = 3;
@@ -125,8 +159,10 @@ const WorkFavorites = () =>{
                                             type="primary" className="mb-4"
                                             style={{ alignSelf: "flex-start", marginTop: "8px", background:"#D4421E",fontWeight:"500"}}
                                             icon={<SendOutlined/>}
+                                            onClick={() => handleApplyJob(job.id)}
+                                            disabled={!!job.appliedAt}
                                         >
-                                            Ứng tuyển
+                                            {job.appliedAt ? `Đã ứng tuyển` : "Ứng tuyển"}
                                         </Button>
                                         <Button 
                                             style={{ alignSelf: "flex-start", marginTop: "8px",fontWeight:"500" }} 

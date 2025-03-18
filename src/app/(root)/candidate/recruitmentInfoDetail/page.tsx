@@ -1,7 +1,7 @@
 'use client';
 import { Card, Button ,Typography, Tag , Image} from "antd";
 import { EnvironmentOutlined, MoneyCollectOutlined, ClockCircleOutlined , LaptopOutlined,
-    SolutionOutlined , CalendarOutlined , HourglassOutlined, SendOutlined, HeartOutlined, HeartFilled, 
+    SolutionOutlined , CalendarOutlined , HourglassOutlined, SendOutlined , HeartOutlined, HeartFilled, 
     ExportOutlined} from "@ant-design/icons";
 import { useEffect, useState } from 'react';
 
@@ -46,6 +46,7 @@ const info2Style = {
 const RecruitmentInfoDetail = () =>{
     const [job, setJob] = useState<Job | null >(null);
     const [savedJob, setSavedJob] = useState(false);
+    const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
 
     useEffect(() => {
         // Lấy dữ liệu từ sessionStorage
@@ -61,12 +62,17 @@ const RecruitmentInfoDetail = () =>{
         }
     }, []);
 
+    useEffect(() => {
+        // Lấy danh sách công việc đã ứng tuyển từ sessionStorage
+        const storedAppliedJobs = JSON.parse(sessionStorage.getItem('appliedJobs') || '[]');
+        setAppliedJobs(storedAppliedJobs);
+    }, []);
+
     // Kiểm tra nếu chưa có job, hiển thị thông báo hoặc placeholder
     if (!job) {
         return <div>Đang tải dữ liệu...</div>;
-    }
+    };
 
-    
     const descriptionSentences = job.description.split('.').filter(Boolean);
 
     const calculateDaysRemaining = (endDate: string) => {
@@ -100,7 +106,25 @@ const RecruitmentInfoDetail = () =>{
         sessionStorage.setItem('savedJobs', JSON.stringify(savedJobs));
         setSavedJob(!savedJob); // Cập nhật UI
     };
-    
+
+    const handleApplyJob = () => {
+        if (!job) return;
+
+        let appliedJobsList = JSON.parse(sessionStorage.getItem('appliedJobs') || '[]');
+
+        if (appliedJobs.includes(job.title)) {
+            // Nếu đã ứng tuyển, xóa công việc khỏi danh sách
+            appliedJobsList = appliedJobsList.filter((appliedJob: Job) => appliedJob.title !== job.title);
+        } else {
+            // Nếu chưa ứng tuyển, thêm công việc vào danh sách
+            const today = new Date().toISOString().split('T')[0]; // Lấy ngày hiện tại
+            appliedJobsList.push({ ...job, appliedAt: today });
+        }
+
+        sessionStorage.setItem('appliedJobs', JSON.stringify(appliedJobsList));
+        setAppliedJobs(appliedJobsList.map((appliedJob: Job) => appliedJob.title)); // Cập nhật UI
+    };
+
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
             {/* Job Details Section */}
@@ -115,9 +139,16 @@ const RecruitmentInfoDetail = () =>{
                     </div>
                     <Button 
                         type="primary" className="mb-4" 
-                        style={{background:"#D4421E", fontWeight:"500",marginRight:"10px"}}
+                        style={{
+                            background: appliedJobs.includes(job.title) ? "#4CAF50" : "#D4421E",
+                            fontWeight:"500",
+                            marginRight:"10px"
+                        }}
                         icon={<SendOutlined/>}
-                    >Ứng tuyển ngay</Button>
+                        onClick={handleApplyJob}
+                    >
+                        {appliedJobs.includes(job.title) ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
+                    </Button>
 
                     <Button 
                         type="primary" className="mb-4" ghost
@@ -128,7 +159,8 @@ const RecruitmentInfoDetail = () =>{
                         }}
                         onClick={handleSaveJob}
                         icon={savedJob ? <HeartFilled style={{ color: "#D4421E" }} /> : <HeartOutlined />} // Đổi icon
-                    >{savedJob ? "Đã lưu" : "Lưu tin"} 
+                    >
+                            {savedJob ? "Đã lưu" : "Lưu tin"} 
                     </Button>
                     
                     <Title level={4}>Thông tin chi tiết</Title>
