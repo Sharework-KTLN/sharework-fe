@@ -1,5 +1,5 @@
 'use client';
-import { Card, Button, Typography, Tag , Image} from "antd";
+import { Card, Button ,Typography, Tag , Image} from "antd";
 import { EnvironmentOutlined, MoneyCollectOutlined, ClockCircleOutlined , LaptopOutlined,
     SolutionOutlined , CalendarOutlined , HourglassOutlined, SendOutlined, HeartOutlined, HeartFilled, 
     ExportOutlined} from "@ant-design/icons";
@@ -19,6 +19,7 @@ interface Job {
     create_date: string;
     end_date: string;
     image: string;
+    savedAt: string;
 }
 
 const iconStyle = {
@@ -84,20 +85,22 @@ const RecruitmentInfoDetail = () =>{
     // Lưu công việc vào sessionStorage
     const handleSaveJob = () => {
         if (!job) return;
-        
-        let savedJobs = JSON.parse(sessionStorage.getItem('savedJobs') || '[]');
     
+        let savedJobs = JSON.parse(sessionStorage.getItem('savedJobs') || '[]');
+
         if (savedJob) {
             // Nếu công việc đã được lưu, xóa nó khỏi danh sách
             savedJobs = savedJobs.filter((savedJob: Job) => savedJob.title !== job.title);
         } else {
-            // Nếu chưa lưu, thêm công việc vào danh sách
-            savedJobs.push(job);
+            // Nếu chưa lưu, thêm công việc vào danh sách với thời gian hiện tại
+            const savedJobData = { ...job, savedAt: new Date().toISOString() };
+            savedJobs.push(savedJobData);
         }
-    
+
         sessionStorage.setItem('savedJobs', JSON.stringify(savedJobs));
         setSavedJob(!savedJob); // Cập nhật UI
     };
+    
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
             {/* Job Details Section */}

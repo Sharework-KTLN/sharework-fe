@@ -18,6 +18,7 @@ interface Job {
     create_date?: string;  // Có thể là string hoặc undefined
     end_date?: string;  // Có thể là string hoặc undefined
     image: string;
+    savedAt: string;
 }
 // Dữ liệu
 const jobs = [
@@ -160,21 +161,18 @@ const Home = () => {
     // Lưu công việc yêu thích và thông tin công việc vào sessionStorage
     const handleSaveJob = (jobId: number) => {
         setSavedJobs(prev => {
-            // Tìm công việc theo jobId
             const jobToSave = jobs.find(job => job.id === jobId);
-            
-            // Nếu công việc tìm thấy, thực hiện lưu công việc đó vào sessionStorage
             if (jobToSave) {
-                const updatedJobs = prev.some(job => job.id === jobId) 
-                    ? prev.filter(job => job.id !== jobId)  // Nếu công việc đã lưu, xoá khỏi danh sách
-                    : [...prev, jobToSave];  // Nếu công việc chưa lưu, thêm vào danh sách
-
-                // Lưu danh sách các công việc đã lưu vào sessionStorage
+                const now = new Date().toISOString(); // Lưu dưới dạng ISO format
+    
+                const updatedJobs = prev.some(job => job.id === jobId)
+                    ? prev.filter(job => job.id !== jobId) // Xóa nếu đã lưu trước đó
+                    : [...prev, { ...jobToSave, savedAt: now }]; // Thêm ngày giờ
+    
                 sessionStorage.setItem("savedJobs", JSON.stringify(updatedJobs));
                 return updatedJobs;
             }
-
-            return prev;  // Trả về trạng thái cũ nếu không tìm thấy công việc
+            return prev;
         });
     };
 
@@ -307,7 +305,7 @@ const Home = () => {
                                         />
                                     </Col>
                                     {/* Nội dung bên phải */}
-                                    <Col span={16}>
+                                    <Col span={16} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%" }}>
                                         <h3 style={{ marginBottom: 5, fontSize: "16px", fontWeight: "bold" }}>{job.title}</h3>
                                         <p style={{ fontSize: "14px" }}><strong>Công ty:</strong> {job.company}</p>
                                         <p style={{ fontSize: "14px" }}><strong>Loai:</strong> {job.jobType}</p>

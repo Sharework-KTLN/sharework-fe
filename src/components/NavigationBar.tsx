@@ -30,12 +30,12 @@ const NavigationBar: React.FC = () => {
     const pathname = usePathname(); // Lấy đường dẫn hiện tại
     // Xác định mục nào đang được chọn
     const selectedKey = pathname.startsWith('/candidate/work')
-        ? 'vieclam'
-        : pathname.startsWith('/candidate/profileManagement')
-        ? 'quanlyhoso'
-        : pathname.startsWith('/candidate/infoBusiness')
-        ? 'congty'
-        : 'trangchu';
+    ? 'vieclam'
+    : pathname.startsWith('/candidate/profileManagement')
+    ? 'quanlyhoso'
+    : pathname.startsWith('/candidate/infoBusiness')
+    ? 'congty'
+    : 'trangchu';
 
     const items: MenuItem[] = [
         {
@@ -43,8 +43,22 @@ const NavigationBar: React.FC = () => {
             key: 'trangchu',
         },
         {
-            label: (<div onClick={() => router.push('/candidate/work')}>Việc làm</div>),
+            label: (
+                <div onClick={() => router.push('/candidate/work')}>
+                    Việc làm
+                </div>
+            ),
             key: 'vieclam',
+            children: [
+                {
+                    label: (<div onClick={() => router.push('/candidate/work/applied')}>Việc đã ứng tuyển</div>),
+                    key: 'vieclamdaungtuyen',
+                },
+                {
+                    label: (<div onClick={() => router.push('/candidate/work/favorites')}>Việc yêu thích</div>),
+                    key: 'vieclamyeuthich',
+                },
+            ],
         },
         {
             label: (<div onClick={() => router.push('/candidate/profileManagement')}>Quản lí hồ sơ</div>),
@@ -222,19 +236,36 @@ const NavigationBar: React.FC = () => {
                 </Col>
             </Row>
             <style jsx global>{`
+                /* Đổi màu các mục khi hover, chọn hoặc active */
                 .custom-menu .ant-menu-item:hover, 
                 .custom-menu .ant-menu-item-active,
                 .custom-menu .ant-menu-item-selected {
                     color: #D4421E !important;
                 }
-                
-                /* Đổi màu gạch dưới */
-                .custom-menu .ant-menu-item::after {
-                    border-bottom: 2px solid transparent !important;
+
+                .ant-menu-item {
+                    font-size: 14px; /* Điều chỉnh kích thước font nếu cần */
+                    font-weight: bold; /* Làm đậm font */
                 }
 
-                .custom-menu .ant-menu-item-selected::after {
-                    border-bottom: 2px solid #D4421E !important;
+                /* Kiểu cho mục cha "Việc làm" */
+                .custom-menu .ant-menu-submenu-title {
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+
+                /* Đổi màu mục cha khi hover */
+                .custom-menu .ant-menu-submenu-title:hover {
+                    color: #D4421E; /* Màu khi hover */
+                    font-weight: bold; /* Làm đậm chữ */
+                }
+
+                /* Đảm bảo border-bottom khi mục cha được chọn hoặc hover */
+                .custom-menu .ant-menu-item-selected::after,
+                .custom-menu .ant-menu-item:hover::after,
+                .custom-menu .ant-menu-submenu-title:hover::after,
+                .custom-menu .ant-menu-submenu-title.ant-menu-submenu-title-selected::after {
+                    border-bottom: 2px solid #D4421E !important; /* Đổi màu gạch chân */
                 }
             `}</style>
         </div>
