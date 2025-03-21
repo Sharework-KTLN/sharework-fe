@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import type { MenuProps } from 'antd';
 import { Menu, Col, Row } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
@@ -33,7 +33,16 @@ const NavigationBar: React.FC = () => {
     const searchParams = useSearchParams();
 
     const user = useSelector((state: RootState) => state.user);
-    console.log("user:", user);
+
+    const pathname = usePathname(); // Lấy đường dẫn hiện tại
+    // Xác định mục nào đang được chọn
+    const selectedKey = pathname.startsWith('/candidate/work')
+        ? 'vieclam'
+        : pathname.startsWith('/candidate/profileManagement')
+            ? 'quanlyhoso'
+            : pathname.startsWith('/candidate/infoBusiness')
+                ? 'congty'
+                : 'trangchu';
 
     const items: MenuItem[] = [
         {
@@ -41,8 +50,22 @@ const NavigationBar: React.FC = () => {
             key: 'trangchu',
         },
         {
-            label: 'Việc làm',
+            label: (
+                <div onClick={() => router.push('/candidate/work')}>
+                    Việc làm
+                </div>
+            ),
             key: 'vieclam',
+            children: [
+                {
+                    label: (<div onClick={() => router.push('/candidate/work/applied')}>Việc đã ứng tuyển</div>),
+                    key: 'vieclamdaungtuyen',
+                },
+                {
+                    label: (<div onClick={() => router.push('/candidate/work/favorites')}>Việc yêu thích</div>),
+                    key: 'vieclamyeuthich',
+                },
+            ],
         },
         {
             label: (<div onClick={() => router.push('/candidate/profileManagement')}>Quản lí hồ sơ</div>),
@@ -127,19 +150,19 @@ const NavigationBar: React.FC = () => {
     // }, [router, searchParams]);
 
     const handleButtonLogin = () => {
-        router.push('/auth/login');
+        router.push('/auth/candidate/login');
     };
     const handleButtonRegister = () => {
-        router.push('/auth/register');
+        router.push('/auth/candidate/register');
     };
     const handleButtonPostJob = () => {
-        router.push('/');
+        router.push('/recruiter');
     };
     const handleButtonLogout = async () => {
         localStorage.removeItem("token"); // Xóa token khỏi localStorage
         // setUser(null); // Reset state user
         dispatch(logout());
-        router.push("/auth/login"); // Chuyển hướng về trang đăng nhập
+        router.push("/auth/candidate/login"); // Chuyển hướng về trang đăng nhập
     };
 
     return (
@@ -175,7 +198,7 @@ const NavigationBar: React.FC = () => {
                         <span
                             style={{
                                 fontWeight: 'bold',
-                                color: 'blue',
+                                color: '#D4421E',
                                 // whiteSpace: 'nowrap',
                             }}
                             className="text-sm md:text-base lg:text-lg xl:text-xl"
@@ -195,9 +218,11 @@ const NavigationBar: React.FC = () => {
                         <Menu
                             theme="light"
                             mode="horizontal"
+                            selectedKeys={[selectedKey]}
                             // defaultSelectedKeys={['trangchu']}
                             items={items}
-                            style={{}}
+                            style={{ borderBottom: 'none' }}
+                            className="custom-menu"
                         // hidden={windowWidth < 768}
                         />
                     </div>
@@ -283,6 +308,39 @@ const NavigationBar: React.FC = () => {
                     </div>
                 </Col>
             </Row>
+            <style jsx global>{`
+                /* Đổi màu các mục khi hover, chọn hoặc active */
+                .custom-menu .ant-menu-item:hover, 
+                .custom-menu .ant-menu-item-active,
+                .custom-menu .ant-menu-item-selected {
+                    color: #D4421E !important;
+                }
+
+                .ant-menu-item {
+                    font-size: 14px; /* Điều chỉnh kích thước font nếu cần */
+                    font-weight: bold; /* Làm đậm font */
+                }
+
+                /* Kiểu cho mục cha "Việc làm" */
+                .custom-menu .ant-menu-submenu-title {
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+
+                /* Đổi màu mục cha khi hover */
+                .custom-menu .ant-menu-submenu-title:hover {
+                    color: #D4421E; /* Màu khi hover */
+                    font-weight: bold; /* Làm đậm chữ */
+                }
+
+                /* Đảm bảo border-bottom khi mục cha được chọn hoặc hover */
+                .custom-menu .ant-menu-item-selected::after,
+                .custom-menu .ant-menu-item:hover::after,
+                .custom-menu .ant-menu-submenu-title:hover::after,
+                .custom-menu .ant-menu-submenu-title.ant-menu-submenu-title-selected::after {
+                    border-bottom: 2px solid #D4421E !important; /* Đổi màu gạch chân */
+                }
+            `}</style>
         </div>
     );
 };

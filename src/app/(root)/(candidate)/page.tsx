@@ -1,23 +1,50 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Select, Button, Pagination, Input, Image } from 'antd';
-import { EnvironmentOutlined, SearchOutlined, FilterOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, SearchOutlined, FilterOutlined, DownOutlined, UpOutlined, HeartOutlined, HeartFilled } from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
 
 const { Option } = Select;
-
+interface Job {
+    id: number;
+    title: string;
+    company: string;
+    location: string;
+    specialization: string;
+    description?: string;  // Có thể là string hoặc undefined
+    requirement: string;
+    jobType: string;
+    salary: string;
+    create_date?: string;  // Có thể là string hoặc undefined
+    end_date?: string;  // Có thể là string hoặc undefined
+    image: string;
+    savedAt: string;
+}
 // Dữ liệu
 const jobs = [
-    { id: 1, title: "Thực Tập Sinh IT Support", company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc", location: "Hà Nội", specialization: "Công nghệ thông tin", jobType: "Thực tập", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-    { id: 2, title: "Thực Tập Sinh Graphic Design", company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc", location: "Hồ Chí Minh", specialization: "Công nghệ thông tin", jobType: "Thực tập", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-    { id: 3, title: "Lập Trình Viên Thực Tập", company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc", location: "Đà Nẵng", specialization: "Công nghệ thông tin", jobType: "Part-time", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-    { id: 4, title: "Thực Tập Sinh Game Unity", company: "Công ty Game Nhất Trí", location: "Đà Nẵng", specialization: "Công nghệ thông tin", jobType: "Thực tập", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-    { id: 5, title: "Thực Tập Sinh Kế Toán", company: "Ngân hàng TMCP Á Châu", location: "Bình Dương", specialization: "Kế toán", jobType: "Thực tập", salary: "4 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-    { id: 6, title: "Thực Tập Sinh Kinh doanh", company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn", location: "Bắc Giang", specialization: "Quản trị kinh doanh", jobType: "Part-time", salary: "6 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-    { id: 7, title: "Thực Tập Sinh Sale Marketing", company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn", location: "Bắc Giang", specialization: "Quản trị kinh doanh", jobType: "Full-time", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-    { id: 8, title: "Thực Tập Sinh Du Lịch", company: "Công ty du lịch Booking", location: "Bình Dương", specialization: "Du lịch", jobType: "Thực tập", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-    { id: 9, title: "Thực Tập Sinh Ngân Hàng", company: "Ngân hàng TMCP Công thương Việt Nam", location: "Hồ Chí Minh", specialization: "Kế toán", jobType: "Thực tập", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-    { id: 10, title: "Thực Tập Sinh Du Lịch", company: "Công ty du lịch Vietravel", location: "Hồ Chí Minh", specialization: "Du lịch", jobType: "Full-time", salary: "12 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" }
+    { 
+        id: 1,
+        title: "Thực Tập Sinh IT Support", 
+        company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc", 
+        location: "Hà Nội", 
+        specialization: "Công nghệ thông tin", 
+        description:"Biết ngôn ngữ Unity. Biết họp tác làm việc nhóm, lắng nghe và học hỏi. Hỗ trợ người dùng về phần mềm.", 
+        requirement:"Không yêu cầu kinh nghiệm", 
+        jobType: "Thực tập", 
+        salary: "5 triệu",
+        create_date: "3/3/2025",
+        end_date:"4/3/2025",
+        image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" 
+    },
+    { id: 2, title: "Thực Tập Sinh Graphic Design", company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc", location: "Hồ Chí Minh", specialization: "Công nghệ thông tin",requirement:"Không yêu cầu kinh nghiệm", description:"Biết ngôn ngữ Unity. Biết họp tác làm việc nhóm, lắng nghe và học hỏi. Hỗ trợ người dùng về phần mềm.",jobType: "Thực tập", salary: "5 triệu",create_date: "3/12/2024", end_date:"3/15/2025" ,image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
+    { id: 3, title: "Lập Trình Viên Thực Tập", company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc", location: "Đà Nẵng", specialization: "Công nghệ thông tin", description:"Biết ngôn ngữ Unity. Biết họp tác làm việc nhóm, lắng nghe và học hỏi. Hỗ trợ người dùng về phần mềm.",requirement:"1-2 năm kinh nghiệm", jobType: "Part-time", salary: "5 triệu", create_date: "3/12/2024", end_date:"4/25/2025",image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
+    { id: 4, title: "Thực Tập Sinh Game Unity", company: "Công ty Game Nhất Trí", location: "Đà Nẵng", specialization: "Công nghệ thông tin", description:"Biết ngôn ngữ Unity. Biết họp tác làm việc nhóm, lắng nghe và học hỏi. Hỗ trợ người dùng về phần mềm.", requirement:"Không yêu cầu kinh nghiệm", jobType: "Thực tập", salary: "5 triệu", create_date: "3/12/2024", end_date:"4/25/2025",image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
+    { id: 5, title: "Thực Tập Sinh Kế Toán", company: "Ngân hàng TMCP Á Châu", location: "Bình Dương", specialization: "Kế toán", description:"Biết ngôn ngữ Unity. Biết họp tác làm việc nhóm, lắng nghe và học hỏi. Hỗ trợ người dùng về phần mềm.", requirement:"Không yêu cầu kinh nghiệm", jobType: "Thực tập", salary: "4 triệu", create_date: "3/12/2024", end_date:"4/25/2025",image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
+    { id: 6, title: "Thực Tập Sinh Kinh doanh", company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn", location: "Bắc Giang", specialization: "Quản trị kinh doanh", requirement:"Không yêu cầu kinh nghiệm", jobType: "Part-time", salary: "6 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
+    { id: 7, title: "Thực Tập Sinh Sale Marketing", company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn", location: "Bắc Giang", specialization: "Quản trị kinh doanh", requirement:"Không yêu cầu kinh nghiệm", jobType: "Full-time", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
+    { id: 8, title: "Thực Tập Sinh Du Lịch", company: "Công ty du lịch Booking", location: "Bình Dương", specialization: "Du lịch", jobType: "Thực tập", requirement:"Không yêu cầu kinh nghiệm", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
+    { id: 9, title: "Thực Tập Sinh Ngân Hàng", company: "Ngân hàng TMCP Công thương Việt Nam", location: "Hồ Chí Minh", specialization: "Kế toán", jobType: "Thực tập", requirement:"Không yêu cầu kinh nghiệm",salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
+    { id: 10, title: "Quản Trị Dịch Vụ Du Lịch Và Lữ Hành", company: "Công ty du lịch Vietravel", location: "Hồ Chí Minh", specialization: "Du lịch", requirement:"Không yêu cầu kinh nghiệm", jobType: "Full-time", salary: "12 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" }
 ];
 
 const filters = [
@@ -34,7 +61,7 @@ const filters = [
     {
         key: "jobType",
         placeholder: "Chọn loại công việc",
-        options: ["Thực tập", "Full-time", "Part-time", "Freelance"]
+        options: ["Thực tập", "Full-time", "Part-time"]
     },
     {
         key: "salary",
@@ -58,6 +85,8 @@ const Home = () => {
     const [filteredJobs, setFilteredJobs] = useState(jobs); // Danh sách công việc đã lọc
     const [openSelect, setOpenSelect] = useState<Record<string, boolean>>({}); // Trạng thái của Select
     const [searchTerm, setSearchTerm] = useState("");
+    const router = useRouter(); // Khởi tạo router
+    const [savedJobs, setSavedJobs] = useState<Job[]>([]);
 
     // Hàm cập nhật trạng thái mở/đóng Select
     const handleDropdownVisibleChange = (key: string, open: boolean) => {
@@ -121,6 +150,38 @@ const Home = () => {
     const endIndex = startIndex + pageSize; //Vị trí kết thúc
     const displayedJobs = filteredJobs.slice(startIndex, endIndex); //Lấy danh sách công việc hiển thị
 
+    const handleCardClick = (jobId: number) => {
+        const selectedJob = jobs.find(job => job.id === jobId);
+        if (selectedJob) {
+            sessionStorage.setItem('selectedJob', JSON.stringify(selectedJob));
+        }
+        router.push(`/candidate/recruitmentInfoDetail?id=${jobId}`); // Điều hướng đến trang chi tiết công việc
+    };
+
+    // Lưu công việc yêu thích và thông tin công việc vào sessionStorage
+    const handleSaveJob = (jobId: number) => {
+        setSavedJobs(prev => {
+            const jobToSave = jobs.find(job => job.id === jobId);
+            if (jobToSave) {
+                const now = new Date().toISOString(); // Lưu dưới dạng ISO format
+    
+                const updatedJobs = prev.some(job => job.id === jobId)
+                    ? prev.filter(job => job.id !== jobId) // Xóa nếu đã lưu trước đó
+                    : [...prev, { ...jobToSave, savedAt: now }]; // Thêm ngày giờ
+    
+                sessionStorage.setItem("savedJobs", JSON.stringify(updatedJobs));
+                return updatedJobs;
+            }
+            return prev;
+        });
+    };
+
+    // Dùng useEffect để lấy savedJobs khi component mount
+    useEffect(() => {
+        const saved = JSON.parse(sessionStorage.getItem("savedJobs") || "[]");
+        setSavedJobs(saved);  // Cập nhật trạng thái với danh sách công việc đã lưu từ sessionStorage
+    }, []);
+    
     return (
         <div style={{ width: "100%", overflow: "hidden" }}>
             <div style={{
@@ -232,6 +293,7 @@ const Home = () => {
                                 }}
                                 onMouseEnter={() => setHoveredCard(job.id)}
                                 onMouseLeave={() => setHoveredCard(null)}
+                                onClick={() => handleCardClick(job.id)}
                             >
                                 <Row gutter={16} align="middle" style={{ width: "100%" }}>
                                     {/* Hình ảnh bên trái */}
@@ -243,7 +305,7 @@ const Home = () => {
                                         />
                                     </Col>
                                     {/* Nội dung bên phải */}
-                                    <Col span={16}>
+                                    <Col span={16} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%" }}>
                                         <h3 style={{ marginBottom: 5, fontSize: "16px", fontWeight: "bold" }}>{job.title}</h3>
                                         <p style={{ fontSize: "14px" }}><strong>Công ty:</strong> {job.company}</p>
                                         <p style={{ fontSize: "14px" }}><strong>Loai:</strong> {job.jobType}</p>
@@ -251,6 +313,39 @@ const Home = () => {
                                         <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.location}</p>
                                     </Col>
                                 </Row>
+                                {savedJobs.some(savedJob => savedJob.id === job.id) ? (
+                            <HeartFilled 
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Ngăn chặn sự kiện click vào card
+                                    handleSaveJob(job.id);
+                                }}
+                                style={{
+                                    position: "absolute",
+                                    bottom: "10px",
+                                    right: "10px",
+                                    fontSize: "20px",
+                                    cursor: "pointer",
+                                    color: "#D4421E",
+                                    transition: "color 0.2s ease"
+                                }}
+                            />
+                        ) : (
+                            <HeartOutlined 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleSaveJob(job.id);
+                                }}
+                                style={{
+                                    position: "absolute",
+                                    bottom: "10px",
+                                    right: "10px",
+                                    fontSize: "20px",
+                                    cursor: "pointer",
+                                    color: "#D4421E",
+                                    transition: "color 0.2s ease"
+                                }}
+                            />
+                        )}
                             </Card>
                         </Col>
                     ))}
