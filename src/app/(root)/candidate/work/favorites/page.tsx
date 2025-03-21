@@ -97,7 +97,7 @@ const WorkFavorites = () =>{
 
     // Phân trang cho danh sách jobsSaved
     const [currentSavesPage, setCurrentSavesPage] = useState(1);
-    const SavesPageSize = 3;
+    const SavesPageSize = 6;
     const paginatedjobsSaved = savedJobs.slice((currentSavesPage - 1) * SavesPageSize, currentSavesPage * SavesPageSize);
 
     // Phân trang cho danh sách jobSuggestions 

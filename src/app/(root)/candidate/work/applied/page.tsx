@@ -70,7 +70,7 @@ const WorkApplied = () =>{
 
     // Phân trang cho danh sách jobsApplied
     const [currentJobsPage, setCurrentJobsPage] = useState(1);
-    const jobsPageSize = 4;
+    const jobsPageSize = 6;
     const paginatedJobsApplied = jobsApplied.slice((currentJobsPage - 1) * jobsPageSize, currentJobsPage * jobsPageSize);
 
     // Phân trang cho danh sách jobSuggestions 

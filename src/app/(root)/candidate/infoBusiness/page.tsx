@@ -3,9 +3,22 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Select, Button, Pagination, Input, Image } from 'antd';
 import { EnvironmentOutlined , SearchOutlined, DownOutlined, UpOutlined} from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
 
 const { Option } = Select;
-
+interface Job {
+    id: number;
+    image: string;
+    logo: string;
+    company: string; // Nếu API trả về 'company', thì giữ nguyên
+    description: string;
+    link?: string; // Có thể undefined
+    location: string;
+    locationDetail: string;
+    specialization: string;
+    jobCount: number;
+    title?: string; // Nếu thực sự có 'title'
+}
 // Dữ liệu
 const jobs = [
     {
@@ -14,7 +27,9 @@ const jobs = [
         logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA", // Logo công ty
         company: "CÔNG TY CỔ PHẦN CÔNG NGHỆ",
         description: "All Your Applications In One Place",
+        link: "https://iuh.edu.vn/",
         location: "Hồ Chí Minh",
+        locationDetail:"12 Nguyễn Văn Bảo, Phường 1, Gò Vấp, Hồ Chí Minh",
         specialization: "Dịch vụ doanh nghiệp, B2B Solutions",
         jobCount: 1
     },
@@ -24,37 +39,43 @@ const jobs = [
         logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
         company: "CÔNG TY TNHH PHẦN MỀM ABC",
         description: "Innovative Tech Solutions",
+        link: "https://www.haui.edu.vn/vn",
         location: "Hà Nội",
+        locationDetail: "Số 298 Đ. Cầu Diễn, Minh Khai, Bắc Từ Liêm, Hà Nội",
         specialization: "Phần mềm, Công nghệ thông tin",
         jobCount: 3
     },
     {
         id: 3,
-        image: "https://kientrucaau.com/anh/2022/hopctyaa/hop-cong-ty-1.webp",
+        image: "https://dplusvn.com/wp-content/uploads/2020/02/hinh-anh-van-phong-cong-ty-zola.jpg",
         logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
         company: "TECH STARTUP XYZ",
         description: "Future of AI & ML",
+        link: "https://www.udn.vn/",
         location: "Đà Nẵng",
+        locationDetail: "41 Đ. Lê Duẩn, Hải Châu 1, Hải Châu, Đà Nẵng 550000",
         specialization: "Trí tuệ nhân tạo, Machine Learning",
         jobCount: 2
     },
     {
         id: 4,
-        image: "https://kientrucaau.com/anh/2022/hopctyaa/hop-cong-ty-1.webp",
+        image: "https://dplusvn.com/wp-content/uploads/2020/02/hinh-anh-van-phong-cong-ty-zola.jpg",
         logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
         company: "Công ty du lịch Vietravel",
         description: "Đưa bạn đi đến mọi nơi",
         location: "Hồ Chí Minh",
+        locationDetail:"12 Nguyễn Văn Bảo, Phường 1, Gò Vấp, Hồ Chí Minh",
         specialization: "Du lịch",
         jobCount: 4
     },
     {
         id: 5,
-        image: "https://kientrucaau.com/anh/2022/hopctyaa/hop-cong-ty-1.webp",
+        image: "https://dplusvn.com/wp-content/uploads/2020/02/hinh-anh-van-phong-cong-ty-zola.jpg",
         logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
         company: "Công ty du lịch Vietravel",
         description: "Đưa bạn đi đến mọi nơi",
         location: "Hồ Chí Minh",
+        locationDetail:"12 Nguyễn Văn Bảo, Phường 1, Gò Vấp, Hồ Chí Minh",
         specialization: "Kế toán, Du lịch",
         jobCount: 3
     },
@@ -65,16 +86,18 @@ const jobs = [
         company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn",
         description: "Niềm vui của mọi người",
         location: "Bắc Giang",
+        locationDetail: "TT. Bích Động, Việt Yên, Bắc Giang",
         specialization: "Quản trị kinh doanh, Công nghệ thông tin",
         jobCount: 4
     },
     {
         id: 7,
-        image: "https://kientrucaau.com/anh/2022/hopctyaa/hop-cong-ty-1.webp",
+        image: "https://dplusvn.com/wp-content/uploads/2020/02/hinh-anh-van-phong-cong-ty-zola.jpg",
         logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
         company: "Ngân hàng TMCP Công thương Việt Nam",
         description: "Niềm tin của mọi nhà",
         location: "Hồ Chí Minh",
+        locationDetail:"12 Nguyễn Văn Bảo, Phường 1, Gò Vấp, Hồ Chí Minh",
         specialization: "Kế toán",
         jobCount: 3
     }
@@ -106,6 +129,7 @@ const InfoBusiness = () => {
     const [filteredJobs, setFilteredJobs] = useState(jobs); // Danh sách công việc đã lọc
     const [openSelect, setOpenSelect] = useState<Record<string, boolean>>({}); // Trạng thái của Select
     const [searchTerm, setSearchTerm] = useState("");
+    const router = useRouter(); 
     
     // Hàm cập nhật trạng thái mở/đóng Select
     const handleDropdownVisibleChange = (key: string, open: boolean) => {
@@ -143,6 +167,11 @@ const InfoBusiness = () => {
     const startIndex = (currentPage - 1) * pageSize; // Vị trí bắt đầu
     const endIndex = startIndex + pageSize; //Vị trí kết thúc
     const displayedJobs = filteredJobs.slice(startIndex, endIndex); //Lấy danh sách công việc hiển thị
+
+    const handleCardClick = (job: Job) => {
+        sessionStorage.setItem("infoBusinessDetail", JSON.stringify(job));
+        router.push(`/candidate/work?id=${job.id}`); // Chuyển đến trang chi tiết
+    };
 
     return (
         <div style={{ width: "100%", overflow: "hidden"}}>
@@ -224,7 +253,7 @@ const InfoBusiness = () => {
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.background = "#D4421E";
                                     e.currentTarget.style.borderColor = "#D4421E";
-                                }}
+                                }}    
                             >
                                 <SearchOutlined /> Tìm kiếm
                             </Button>
@@ -254,6 +283,7 @@ const InfoBusiness = () => {
                             }}
                             onMouseEnter={() => setHoveredCard(job.id)}
                             onMouseLeave={() => setHoveredCard(null)}
+                            onClick={()=>handleCardClick(job)}
                             >
                             <div style={{ position: "relative", height: "140px" ,overflow: "hidden" }}>
                                 <Image 

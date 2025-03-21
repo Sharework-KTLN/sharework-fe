@@ -1,8 +1,23 @@
 'use client';
 
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Card, Button, Row, Col, Image } from "antd";
 import { EnvironmentOutlined, GlobalOutlined } from "@ant-design/icons";
+import { useParams } from "next/navigation";
+
+interface Business{
+    id: number;
+    image: string;
+    logo: string;
+    company: string; // Nếu API trả về 'company', thì giữ nguyên
+    description: string;
+    link?: string; // Có thể undefined
+    location: string;
+    locationDetail: string;
+    specialization: string;
+    jobCount: number;
+    title?: string; // Nếu thực sự có 'title'
+}
 interface Job {
     id: number;
     title: string;
@@ -15,20 +30,21 @@ const jobs: Job[] = [
     { id: 2, title: "Digital Marketing Intern", salary: "Từ 6-8 triệu", location: "Hà Nội" },
 ];
   
-const CompanyPage = () => {
-    const [expanded, setExpanded] = useState(false);
-    const fullContent = `
-        Công ty Cổ Phần Đầu Tư Công Nghệ Sạch Sacotec thành lập vào ngày 07-08–2017 là công ty hoạt động tiên phong trong lĩnh vực công nghệ vi sinh học phục vụ cho Nông nghiệp Việt Nam.
+const InfoBusinessDetail = () => {
+    const [business, setBusiness] = useState<Business | null>(null);
+    const [expanded, setExpanded] = useState<boolean>(false);
 
-        Từ 01/11/2023, Công ty chính thức chuyển thành CÔNG TY TNHH CÔNG NGHỆ SẠCH GREEN BIO.
+    useEffect(() => {
+        const businessDetail = sessionStorage.getItem("infoBusinessDetail");
+        if (businessDetail) {
+            setBusiness(JSON.parse(businessDetail));
+        }
+    }, []);
+    if (!business) return <p>Loading...</p>;
 
-        Chúng tôi chuyên cung cấp Chế Phẩm Sinh Học – Phân Bón - Thuốc Bảo Vệ Thực Vật Sinh Học và các vật tư phục vụ trong lĩnh vực Nông nghiệp hàng đầu Việt Nam. Với kinh nghiệm nhiều năm nghiên cứu chuyên sâu về công nghệ vi sinh và ứng dụng kinh doanh sản phẩm trong thực tế, Sacotec đã cải tiến công nghệ phù hợp với nông hóa thổ nhưỡng, khí hậu Việt Nam. Thông qua các cơ chế tác động sinh học tiên tiến và không biến đổi gen; Chúng tôi luôn xác định nông nghiệp sạch và bền vững chính là xu hướng của tương lai Việt Nam.
-
-        Chất lượng sản phẩm luôn là tiêu chí hàng đầu của chúng tôi, các sản phẩm của chúng tôi đã đem đến sự đột phá trong việc xử lý các vấn đề cấp thiết nhất hiện nay như an toàn thực phẩm, thoái hóa đất đai hay ô nhiễm môi trường và đặc biệt là sức khỏe người nông dân. Mang đến lợi ích to lớn và bền vững cho các nhà sản xuất cũng như người tiêu dùng.
-    `;
-
+    const fullContent = business?.description || "Chưa có mô tả";
     // Rút gọn nội dung
-    const shortContent = fullContent.substring(0, 500) + "...";
+    const shortContent = fullContent.length > 500 ? fullContent.substring(0, 500) + "..." : fullContent;
 
     return (
         <div className="container mx-auto p-6">
@@ -43,7 +59,7 @@ const CompanyPage = () => {
                 }}
             >
                 <Image
-                    src="https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-hop-tac-thanh-cong-inkythuatso-07-10-42-07.jpg"
+                    src={business?.image || "https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-hop-tac-thanh-cong-inkythuatso-07-10-42-07.jpg"}
                     alt="Banner"
                     width="100%" // Kích thước ảnh
                     height="200px"
@@ -69,7 +85,7 @@ const CompanyPage = () => {
                     <Col>
                         <Row align="middle">
                             <Image
-                                src="https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA"
+                                src={business?.logo || "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA"}
                                 alt="Company Logo"
                                 width={100}
                                 height={100}
@@ -83,14 +99,14 @@ const CompanyPage = () => {
                                 }}
                                 preview={false} // Tắt tính năng xem trước
                             />
-                            <Col>
-                                <h1 style={{ fontWeight: "700", fontSize: "24px", color:"#000000" }}>SonatGame Studio</h1>
+                            <Col style={{marginLeft:"15px"}}>
+                                <h1 style={{ fontWeight: "700", fontSize: "24px", color:"#000000" }}>{business.company}</h1>
                                 <a 
-                                    href="https://www.sonat.vn/" target="_blank" rel="noopener noreferrer" 
+                                    href={business?.link} target="_blank" rel="noopener noreferrer" 
                                     style={{ fontWeight: "500", fontSize: "13px", color: "black" }}
                                 >
                                     <GlobalOutlined style={{ color: "#000000", fontSize: "13px", marginRight: "8px" }} />
-                                    https://www.sonat.vn/
+                                    {business.link}
                                 </a>
                             </Col>
                         </Row>
@@ -135,12 +151,69 @@ const CompanyPage = () => {
                                 {expanded ? fullContent : shortContent}
                             </p>
                             <Button 
-                        type="link" 
-                        onClick={() => setExpanded(!expanded)}
-                        style={{ color: "#D4421E", fontWeight: "500", paddingLeft: "0" }}
+                                type="link" 
+                                onClick={() => setExpanded(!expanded)}
+                                style={{ color: "#D4421E", fontWeight: "500", paddingLeft: "0" }}
+                            >
+                                {expanded ? "Thu gọn" : "Xem thêm"}
+                            </Button>
+                        </div>
+                    </Card>
+                    {/* Danh sách tuyển dụng */}
+                    <Card 
+                        style={{
+                            border: "none", padding: "0", margin: "0",
+                        }}
                     >
-                        {expanded ? "Thu gọn" : "Xem thêm"}
-                    </Button>
+                        {/* Tiêu đề Tuyển dụng */}
+                        <div style={{ 
+                                background: "linear-gradient(to right, #D4421E, #FFA07A)", 
+                                padding: "12px 16px", borderRadius: "8px 8px 0 0",
+                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+                            }}>
+                            <h2 style={{ fontWeight: "500", fontSize: "18px", color:"#000000" }}>Tuyển dụng</h2>
+                            <div className="flex space-x-2">
+                                <input 
+                                    type="text" 
+                                    placeholder="Tên công việc, vị trí ứng tuyển..."
+                                    className="border border-gray-300 p-2 rounded-md w-72"
+                                />
+                                <select className="border border-gray-300 p-2 rounded-md">
+                                    <option>Tất cả tỉnh/thành phố</option>
+                                    <option>Hà Nội</option>
+                                    <option>TP.HCM</option>
+                                </select>
+                                <Button
+                                    style={{ 
+                                        backgroundColor: "#D4421E", color: "white", border: "none",
+                                        fontWeight: "500", height: "43px"
+                                    }}>
+                                    Tìm kiếm
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div style={{ maxHeight: "300px", overflowY: "auto" }}> 
+                            {jobs.map((job) => (
+                                <Card 
+                                    key={job.id} 
+                                    className="flex items-center border rounded-lg p-4 shadow mb-3"
+                                >
+                                    <div className="flex items-center">
+                                        <Image 
+                                            src={business?.logo || "https://via.placeholder.com/80"} 
+                                            alt="Company Logo"
+                                            width={60} height={60} 
+                                            className="mr-4 border p-1 bg-white rounded-lg"
+                                        />
+                                        <div>
+                                            <h3 className="font-bold">{job.title}</h3>
+                                            <p className="text-sm text-gray-500">{job.salary} - {job.location}</p>
+                                        </div>
+                                    </div>
+                                    <Button className="mt-2 w-full">Ứng tuyển</Button>
+                                </Card>
+                            ))}
                         </div>
                     </Card>
                 </Col>
@@ -164,7 +237,7 @@ const CompanyPage = () => {
                             }}>
                             <p className="mt-2 text-black-600 flex items-center">
                                 <EnvironmentOutlined style={{ color: "#D4421E", fontSize: "20px", marginRight: "8px" }} />
-                                103 Láng Hạ, Đống Đa, Hà Nội
+                                {business.locationDetail}
                             </p>
 
                             {/* Google Map Embed */}
@@ -174,34 +247,15 @@ const CompanyPage = () => {
                                 height="150" 
                                 frameBorder="0" 
                                 style={{ border: 0, marginTop: "10px" }} 
-                                src="https://www.google.com/maps?q=103+Láng+Hạ,+Đống+Đa,+Hà+Nội&output=embed" 
+                                src={`https://www.google.com/maps?q=${encodeURIComponent(business?.locationDetail)}&output=embed`} 
                                 allowFullScreen
                             ></iframe>
                         </div>
                     </Card>
                 </Col>
             </Row>
-            {/* Job Listings */}
-            <Card className="mt-6">
-                <div className="p-6">
-                    <h2 className="text-xl font-bold">Tuyển dụng</h2>
-                    <Row gutter={[16, 16]} className="mt-4">
-                        {jobs.map((job) => (
-                            <Col key={job.id} xs={24} sm={12} md={12} lg={8}>
-                                <Card>
-                                    <div className="p-4">
-                                        <h3 className="font-bold">{job.title}</h3>
-                                        <p className="text-sm text-gray-500">{job.salary} - {job.location}</p>
-                                        <Button className="mt-2 w-full">Ứng tuyển</Button>
-                                    </div>
-                                </Card>
-                            </Col>
-                        ))};
-                    </Row>
-                </div>
-            </Card>
         </div>
     );
 };
   
-  export default CompanyPage;
+  export default InfoBusinessDetail;
