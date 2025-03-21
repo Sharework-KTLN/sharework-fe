@@ -4,7 +4,8 @@ interface UserState {
     id: number | null;
     full_name: string;
     email: string;
-    avatar: string;
+    candidateId: string;
+    profile_image: string;
     token: string | null;
 }
 
@@ -13,7 +14,8 @@ const initialState: UserState = {
     id: null,
     full_name: "",
     email: "",
-    avatar: "",
+    candidateId: "",
+    profile_image: "",
     token: null,
 };
 

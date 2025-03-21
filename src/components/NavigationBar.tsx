@@ -1,14 +1,17 @@
 'use client';
 
-import { useRouter, useSearchParams, usePathname} from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import type { MenuProps } from 'antd';
 import { Menu, Col, Row } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
 import CustomButton from '@/components/CustomButton';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import UserDropdown from './UserDropdown';
 import NotificationDropdown from './NotificationDropdown';
 import MessageDropdown from './MessageDropdown';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/redux/store';
+import { login, logout } from '@/redux/userSlice';
 
 type MenuItem = Required<MenuProps>['items'][number];
 type User = {
@@ -22,20 +25,24 @@ type User = {
 const NavigationBar: React.FC = () => {
 
     // const [isLogin, setIsLogin] = useState(false);
-    const [user, setUser] = useState<User | null>(null);
+    // const [user, setUser] = useState<User | null>(null);
 
+    const dispatch = useDispatch<AppDispatch>();
     const windowWidth = useWindowWidth();
     const router = useRouter();
     const searchParams = useSearchParams();
+
+    const user = useSelector((state: RootState) => state.user);
+
     const pathname = usePathname(); // Lấy đường dẫn hiện tại
     // Xác định mục nào đang được chọn
     const selectedKey = pathname.startsWith('/candidate/work')
-    ? 'vieclam'
-    : pathname.startsWith('/candidate/profileManagement')
-    ? 'quanlyhoso'
-    : pathname.startsWith('/candidate/infoBusiness')
-    ? 'congty'
-    : 'trangchu';
+        ? 'vieclam'
+        : pathname.startsWith('/candidate/profileManagement')
+            ? 'quanlyhoso'
+            : pathname.startsWith('/candidate/infoBusiness')
+                ? 'congty'
+                : 'trangchu';
 
     const items: MenuItem[] = [
         {
@@ -81,11 +88,10 @@ const NavigationBar: React.FC = () => {
     }, [searchParams, router]);
 
     useEffect(() => {
-
         const fetchUser = async () => {
             const savedToken = localStorage.getItem("token");
             if (!savedToken) {
-                setUser(null);
+                dispatch(logout()); // Xóa Redux nếu không có token
                 return;
             }
             try {
@@ -95,31 +101,68 @@ const NavigationBar: React.FC = () => {
 
                 const data = await res.json();
                 if (res.ok) {
-                    setUser(data); // Lưu thông tin user vào state
+                    dispatch(login({ ...data, token: savedToken })); // Cập nhật Redux
                 } else {
-                    localStorage.removeItem("token"); // Xóa token nếu không hợp lệ
-                    setUser(null);
+                    localStorage.removeItem("token");
+                    dispatch(logout());
                 }
             } catch (error) {
                 console.error("Lỗi khi lấy user:", error);
                 localStorage.removeItem("token");
-                setUser(null);
+                dispatch(logout());
             }
         };
 
-        fetchUser();
+        if (!user.id) { // Chỉ gọi API nếu Redux chưa có user
+            fetchUser();
+        }
+    }, [dispatch]);
 
-    }, [router, searchParams]);
-    useEffect(() => {
-        console.log("user:", user);
-    }, [user]);
+    // useEffect(() => {
+
+    //     const fetchUser = async () => {
+    //         const savedToken = localStorage.getItem("token");
+    //         if (!savedToken) {
+    //             setUser(null);
+    //             return;
+    //         }
+    //         try {
+    //             const res = await fetch("http://localhost:8080/auth/me", {
+    //                 headers: { "Authorization": `Bearer ${savedToken}` },
+    //             });
+
+    //             const data = await res.json();
+    //             if (res.ok) {
+    //                 setUser(data); // Lưu thông tin user vào state
+    //             } else {
+    //                 localStorage.removeItem("token"); // Xóa token nếu không hợp lệ
+    //                 setUser(null);
+    //             }
+    //         } catch (error) {
+    //             console.error("Lỗi khi lấy user:", error);
+    //             localStorage.removeItem("token");
+    //             setUser(null);
+    //         }
+    //     };
+
+    //     fetchUser();
+
+    // }, [router, searchParams]);
+
     const handleButtonLogin = () => {
-        router.push('/auth/login');
+        router.push('/auth/candidate/login');
+    };
+    const handleButtonRegister = () => {
+        router.push('/auth/candidate/register');
+    };
+    const handleButtonPostJob = () => {
+        router.push('/recruiter');
     };
     const handleButtonLogout = async () => {
         localStorage.removeItem("token"); // Xóa token khỏi localStorage
-        setUser(null); // Reset state user
-        router.push("/auth/login"); // Chuyển hướng về trang đăng nhập
+        // setUser(null); // Reset state user
+        dispatch(logout());
+        router.push("/auth/candidate/login"); // Chuyển hướng về trang đăng nhập
     };
 
     return (
@@ -135,7 +178,7 @@ const NavigationBar: React.FC = () => {
                 }}
             >
                 <Col
-                    xs={6} sm={6} md={4} lg={3}
+                    xs={6} sm={6} md={4} lg={4}
                     style={{
                         minWidth: '50px',
                         padding: '0',
@@ -165,7 +208,7 @@ const NavigationBar: React.FC = () => {
                     </div>
                 </Col>
                 <Col
-                    xs={12} sm={12} md={12} lg={18}
+                    xs={12} sm={12} md={12} lg={12}
                 >
                     <div
                         style={{
@@ -185,7 +228,7 @@ const NavigationBar: React.FC = () => {
                     </div>
                 </Col>
                 <Col
-                    xs={6} sm={6} md={4} lg={3}
+                    xs={6} sm={6} md={4} lg={8}
                     style={{
                         minWidth: '50px',
                         borderBottom: '1px solid #f0f0f0',
@@ -200,7 +243,7 @@ const NavigationBar: React.FC = () => {
                             justifyContent: 'center',
                         }}
                     >
-                        {user ? (
+                        {user.id !== null ? (
                             <div
                                 style={{
                                     display: 'flex',
@@ -221,16 +264,46 @@ const NavigationBar: React.FC = () => {
 
 
                         ) : (
-                            <CustomButton
-                                text="Đăng nhập"
-                                onClick={handleButtonLogin}
-                                backgroundColor="#D4421E"
-                                hoverColor="#ff5733"
-                                textColor="white"
+                            <div
                                 style={{
-                                    fontWeight: 'bold'
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 16
                                 }}
-                            />
+                            >
+                                <CustomButton
+                                    text="Đăng nhập"
+                                    onClick={handleButtonLogin}
+                                    backgroundColor="white"
+                                    hoverColor="darkblue"
+                                    textColor="orange"
+                                    style={{
+                                        fontWeight: 'bold',
+                                        border: '1px solid orange'
+                                    }}
+                                />
+                                <CustomButton
+                                    text="Đăng ký"
+                                    onClick={handleButtonRegister}
+                                    backgroundColor="blue"
+                                    hoverColor="darkblue"
+                                    textColor="white"
+                                    style={{
+                                        fontWeight: 'bold'
+                                    }}
+                                />
+                                <CustomButton
+                                    text="Đăng tin tuyển dụng"
+                                    onClick={handleButtonPostJob}
+                                    backgroundColor="grey"
+                                    hoverColor="darkblue"
+                                    textColor="white"
+                                    style={{
+                                        fontWeight: 'bold'
+                                    }}
+                                />
+                            </div>
+
                         )}
                     </div>
                 </Col>

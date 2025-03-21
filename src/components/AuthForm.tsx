@@ -5,6 +5,7 @@ import React, { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Input, Row, Col } from 'antd';
 import CustomButton from '@/components/CustomButton';
+import { GoogleOutlined } from '@ant-design/icons';
 
 // Định nghĩa kiểu dữ liệu cho từng input field
 interface Field {
@@ -163,13 +164,38 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText
 
                 {/* Link to other auth pages */}
                 {renderLinks()}
-                {buttonText === "Đăng nhập" && <Row style={{ marginTop: '1.5%' }}>
-                    <Col offset={4} span={16}>
-                        <button onClick={handleLogin}>Đăng nhập với google</button>
-                    </Col>
-                </Row>}
+                {buttonText === "Đăng nhập" && (
+                    <>
+                        <Row justify="center" style={{ marginTop: '1.5%' }}>
+                            <Col>
+                                <p style={{ fontWeight: '500', color: 'grey' }}>Hoặc đăng nhập bằng</p>
+                            </Col>
+                        </Row>
+                        <Row justify="center" style={{ marginTop: '1.5%' }}>
+                            <Col>
+                                <button
+                                    onClick={handleLogin}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px',
+                                        padding: '10px 20px',
+                                        fontSize: '16px',
+                                        borderRadius: '8px',
+                                        border: '1px solid',
+                                        background: 'red',
+                                        cursor: 'pointer',
+                                        color: 'white',
+                                    }}
+                                >
+                                    <GoogleOutlined style={{ fontSize: '24px', color: 'white' }} />
+                                    Đăng nhập với Google
+                                </button>
+                            </Col>
+                        </Row>
+                    </>
+                )}
             </div>
-
             {/* Background Section */}
             <div
                 style={{

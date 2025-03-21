@@ -5,11 +5,12 @@ import type { MenuProps } from 'antd';
 
 // Định nghĩa kiểu dữ liệu cho user
 interface User {
-    id: string;
+    id: number | null;
     full_name: string;
     email: string;
     candidateId: string;
     profile_image: string;
+    token: string | null;
 }
 
 interface UserDropdownProps {
