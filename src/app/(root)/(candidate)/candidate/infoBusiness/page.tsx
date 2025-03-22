@@ -170,7 +170,7 @@ const InfoBusiness = () => {
 
     const handleCardClick = (job: Job) => {
         sessionStorage.setItem("infoBusinessDetail", JSON.stringify(job));
-        router.push(`/candidate/work?id=${job.id}`); // Chuyển đến trang chi tiết
+        router.push(`/candidate/infoBusinessDetail?id=${job.id}`); // Chuyển đến trang chi tiết
     };
 
     return (
