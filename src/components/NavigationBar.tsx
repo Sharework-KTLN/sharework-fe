@@ -116,7 +116,7 @@ const NavigationBar: React.FC = () => {
         if (!user.id) { // Chỉ gọi API nếu Redux chưa có user
             fetchUser();
         }
-    }, [dispatch]);
+    }, [dispatch, user.id]);
 
     // useEffect(() => {
 
@@ -166,7 +166,7 @@ const NavigationBar: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className='navbar'>
             <Row
                 wrap={false}
                 style={{
@@ -340,6 +340,15 @@ const NavigationBar: React.FC = () => {
                 .custom-menu .ant-menu-submenu-title.ant-menu-submenu-title-selected::after {
                     border-bottom: 2px solid #D4421E !important; /* Đổi màu gạch chân */
                 }
+
+                .navbar {
+                    position: sticky;
+                    top: 0;
+                    width: 100%;
+                    z-index: 1000;
+                    background: white;
+                    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+                }   
             `}</style>
         </div>
     );
