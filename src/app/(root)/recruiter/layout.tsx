@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import RecruiterBar from "@/components/RecruiterBar";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -23,7 +24,16 @@ export default function RecruiterLayout({
 }>) {
     return (
         <>
-            <main className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            {/* Thanh bar cố định */}
+            <RecruiterBar />
+
+            {/* Nội dung có thể cuộn */}
+            <main
+                style={{// Đẩy xuống để không bị đè lên bởi RecruiterBar
+                    height: 'calc(100vh - 60px)', // Giới hạn chiều cao để có thể cuộn
+                    overflowY: 'auto', // Cho phép cuộn theo chiều dọc
+                }}
+            >
                 {children}
             </main>
         </>
