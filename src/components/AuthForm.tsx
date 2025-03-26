@@ -81,7 +81,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText
                             {buttonText === "Đăng nhập"
                                 ? "Bạn chưa có tài khoản? "
                                 : "Đã có tài khoản? "}
-                            <Link href={buttonText === "Đăng nhập" ? "/auth/register" : "/auth/login"}>
+                            <Link href={buttonText === "Đăng nhập" ? "/auth/candidate/register" : "/auth/candidate/login"}>
                                 {buttonText === "Đăng nhập" ? "Đăng ký ngay" : "Đăng nhập ngay"}
                             </Link>
                         </p>

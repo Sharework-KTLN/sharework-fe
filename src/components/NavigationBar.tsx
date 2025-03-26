@@ -20,6 +20,7 @@ type User = {
     email: string;
     candidateId: string;
     profile_image: string;
+    role: string;
 }
 
 const NavigationBar: React.FC = () => {
@@ -116,7 +117,7 @@ const NavigationBar: React.FC = () => {
         if (!user.id) { // Chỉ gọi API nếu Redux chưa có user
             fetchUser();
         }
-    }, [dispatch]);
+    }, [dispatch, user.id]);
 
     // useEffect(() => {
 
