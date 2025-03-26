@@ -7,6 +7,7 @@ interface UserState {
     candidateId: string;
     profile_image: string;
     token: string | null;
+    role: string;
 }
 
 // Giá trị ban đầu của state
@@ -17,6 +18,7 @@ const initialState: UserState = {
     candidateId: "",
     profile_image: "",
     token: null,
+    role: ""
 };
 
 const userSlice = createSlice({
