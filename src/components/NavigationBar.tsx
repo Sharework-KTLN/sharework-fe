@@ -20,6 +20,7 @@ type User = {
     email: string;
     candidateId: string;
     profile_image: string;
+    role: string;
 }
 
 const NavigationBar: React.FC = () => {

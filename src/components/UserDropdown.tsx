@@ -11,6 +11,7 @@ interface User {
     candidateId: string;
     profile_image: string;
     token: string | null;
+    role: string;
 }
 
 interface UserDropdownProps {
@@ -26,7 +27,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user, onLogout }) => {
                 <Avatar size="default" src={user.profile_image || undefined} icon={!user.profile_image && <UserOutlined />} />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontWeight: 'bold', color: 'blue' }}>{user.full_name}</span>
-                    <span style={{ fontSize: '12px', color: 'gray' }}>Mã ứng viên: {user.id}</span>
+                    <span style={{ fontSize: '12px', color: 'gray' }}>{user.role === 'recruiter' ? 'Mã ntd: ' : 'Mã ứng viên'}</span>
                     <span style={{ fontSize: '12px', color: 'gray' }}>{user.email}</span>
                 </div>
             </div>
