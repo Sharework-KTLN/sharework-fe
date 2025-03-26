@@ -51,7 +51,7 @@ const NavigationBar: React.FC = () => {
         },
         {
             label: (
-                <div onClick={() => router.push('/candidate/work')}>
+                <div onClick={() => router.push('/candidate/CVManagement')}>
                     Việc làm
                 </div>
             ),
