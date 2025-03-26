@@ -170,7 +170,7 @@ const InfoBusiness = () => {
 
     const handleCardClick = (job: Job) => {
         sessionStorage.setItem("infoBusinessDetail", JSON.stringify(job));
-        router.push(`/candidate/work?id=${job.id}`); // Chuyển đến trang chi tiết
+        router.push(`/candidate/infoBusinessDetail?id=${job.id}`); // Chuyển đến trang chi tiết
     };
 
     return (
@@ -264,11 +264,11 @@ const InfoBusiness = () => {
 
             </div>
             
-            <div>
+            <div style={{ width: "100%", overflow: "hidden" }}>
             {/* Danh sách việc làm */}
-            <Row gutter={[16, 16]}>
+            <Row gutter={[24, 24]}>
                 {displayedJobs.map(job => (
-                    <Col xs={24} sm={12} md={6} lg={5} xl={4} key={job.id}>
+                    <Col xs={24} sm={12} md={8} key={job.id}>
                         <Card hoverable 
                             style={{ 
                                 borderRadius: "10px",
