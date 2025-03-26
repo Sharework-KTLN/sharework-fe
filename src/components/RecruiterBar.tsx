@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react'
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
@@ -53,14 +53,14 @@ const RecruiterBar: React.FC = () => {
     const [current, setCurrent] = useState('');
     const onClick: MenuProps['onClick'] = (e) => {
         setCurrent(e.key);
-    }
+    };
 
     const handleButtonLogin = () => {
         router.push('/auth/recruiter/login');
-    }
+    };
     const handleButtonPostJob = () => {
         router.push('/auth/recruiter/register');
-    }
+    };
     const handleButtonLogout = () => {
         localStorage.removeItem("token"); // Xóa token khỏi localStorage
         // setUser(null); // Reset state user
@@ -199,7 +199,7 @@ const RecruiterBar: React.FC = () => {
                 </Col>
             </Row>
         </div>
-    )
-}
+    );
+};
 
-export default RecruiterBar
+export default RecruiterBar;

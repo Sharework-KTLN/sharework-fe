@@ -1,15 +1,15 @@
 'use client';
-import React from 'react'
+import React from 'react';
 import { formatDate } from '@/utils/dateUltil';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Form, Input, Select, Avatar, DatePicker } from 'antd';
-import CustomButton from '@/components/CustomButton'
+import CustomButton from '@/components/CustomButton';
 
 
 const { Option } = Select;
 
-const page = () => {
+const PostJobPage = () => {
 
     const [form] = Form.useForm();
 
@@ -17,7 +17,7 @@ const page = () => {
         alert('Đăng bài tuyển dụng thành công!');
     };
 
-    const onFinish = (values: any) => {
+    const onFinish = (values: Record<string, unknown>) => {
         console.log('Form Data:', values);
     };
     return (
@@ -211,7 +211,7 @@ const page = () => {
                 </Form>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default page
+export default PostJobPage;

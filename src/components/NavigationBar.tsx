@@ -117,7 +117,7 @@ const NavigationBar: React.FC = () => {
         if (!user.id) { // Chỉ gọi API nếu Redux chưa có user
             fetchUser();
         }
-    }, [dispatch]);
+    }, [dispatch, user.id]);
 
     // useEffect(() => {
 

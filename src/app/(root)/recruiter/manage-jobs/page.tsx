@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react'
-import CustomButton from '@/components/CustomButton'
-import dayjs from 'dayjs'
+import React from 'react';
+import CustomButton from '@/components/CustomButton';
+import dayjs from 'dayjs';
 
 const samplePosts = [
     {
@@ -150,7 +150,7 @@ const page = () => {
             </div> */}
 
         </div>
-    )
-}
+    );
+};
 
-export default page
+export default page;

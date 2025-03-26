@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Modal, Collapse, Form, Input, Select, message, Carousel } from 'antd';
 import { MailOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
 import type { CarouselProps, RadioChangeEvent } from 'antd';
-import Image from 'next/image'
+import Image from 'next/image';
 import CustomButton from '@/components/CustomButton';
 
 type LayoutType = Parameters<typeof Form>[0]['layout'];
 type DotPosition = CarouselProps['dotPosition'];
 
 
-const page: React.FC = () => {
+const RecruiterRegister: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const { Option } = Select;
     const provinces: { [key: string]: string[] } = {
@@ -65,7 +65,7 @@ const page: React.FC = () => {
                 console.log("Lỗi form:", errorInfo);
             });
     };
-    const handleFormSubmit = async (values: any) => {
+    const handleFormSubmit = async (values: Record<string, unknown>) => {
         console.log("Gửi form:", values);
         try {
             const response = await fetch("http://localhost:8080/auth/recruiter/register", {
@@ -513,7 +513,7 @@ const page: React.FC = () => {
                 </div>
             </Modal>
         </div>
-    )
-}
+    );
+};
 
-export default page
+export default RecruiterRegister;

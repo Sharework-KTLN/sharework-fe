@@ -1,12 +1,12 @@
-import dayjs from 'dayjs';
+import dayjs,{Dayjs} from 'dayjs';
 
 /**
  * Format ngày tháng theo định dạng dd-MM-YYYY
  * @param date Ngày cần format (có thể là string hoặc object của dayjs)
  * @returns Chuỗi ngày tháng theo định dạng dd-MM-YYYY
  */
-export const formatDate = (date: any) => {
-    return date ? dayjs(date).format('DD-MM-YYYY') : '';
+export const formatDate = (date: string | number | Date | Dayjs | null | undefined): string | null => {
+    return date ? dayjs(date).format('DD-MM-YYYY') : null;
 };
 
 /**

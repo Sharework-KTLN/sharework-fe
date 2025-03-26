@@ -147,7 +147,7 @@ const RecruiterHomePage = () => {
                         padding: '10px 15px',
                         borderRadius: '5px'
                     }}
-                    onClick={() => { alert('Tìm kiếm...') }}
+                    onClick={() => { alert('Tìm kiếm...'); }}
                 />
             </div>
 

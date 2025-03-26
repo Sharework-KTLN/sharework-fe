@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { login } from '@/redux/userSlice';
 import { AppDispatch } from '@/redux/store';
 
-const page = () => {
+const RecuiterLogin = () => {
 
     const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
@@ -115,7 +115,7 @@ const page = () => {
                 />
             </Spin>
         </>
-    )
-}
+    );
+};
 
-export default page
+export default RecuiterLogin;
