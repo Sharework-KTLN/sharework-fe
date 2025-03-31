@@ -136,7 +136,7 @@ const RecruiterRegister: React.FC = () => {
                             }
                         ]}
                         style={{
-                            background: 'linear-gradient(to right, #D4421E, #FF7E5F)', // Gradient từ đỏ sang cam
+                            background: 'linear-gradient(to right, #27445D, #EFE9D5)', // Gradient từ đỏ sang cam
                             borderRadius: '8px',
                             color: 'white',
                             padding: '10px',
@@ -356,23 +356,37 @@ const RecruiterRegister: React.FC = () => {
                 style={{
                     width: '30%',
                     height: '100vh',
+                    backgroundColor: '#27445D'
                 }}
             >
                 <Carousel
                     autoplay
                     autoplaySpeed={3000}
-                    dots={true}
+                    dots={{ className: 'custom-dots' }}
                     dotPosition='bottom'
                     effect='fade'
+                    style={{
+                        height: '100vh',
+                    }}
                 >
-                    <div>
+                    <div
+                        style={{
+                            width: '100%', // Lấy 100% chiều rộng của Carousel
+                            height: '100vh', // Full chiều cao màn hình
+                        }}
+                    >
                         <Image
                             src='https://d1csarkz8obe9u.cloudfront.net/posterpreviews/we-are-hiring-banner-design-template-996e1ccc08690262935774e681e19504_screen.jpg?ts=1628882340'
                             width={1000}
                             height={1000}
                             alt="Banner 1"
                             priority={true}
-                            style={{ objectFit: 'cover', borderRadius: '10px' }}
+                            style={{
+                                objectFit: 'fill',
+                                width: '100%', // Chiếm hết phần carousel
+                                height: '97vh', // Chiều cao full màn hình
+                                borderRadius: '10px'
+                            }}
                         />
                     </div>
                     <div>
@@ -382,7 +396,12 @@ const RecruiterRegister: React.FC = () => {
                             height={1000}
                             alt="Banner 2"
                             priority={true}
-                            style={{ objectFit: 'cover', borderRadius: '10px' }}
+                            style={{
+                                objectFit: 'fill',
+                                width: '100%', // Chiếm hết phần carousel
+                                height: '97vh', // Chiều cao full màn hình
+                                borderRadius: '10px'
+                            }}
                         />
                     </div>
                 </Carousel>
