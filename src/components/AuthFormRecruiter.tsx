@@ -29,7 +29,7 @@ interface AuthFormProps {
 }
 
 
-const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText, linkText, linkHref, onSubmit, errors }) => {
+const AuthFormRecruiter: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText, linkText, linkHref, onSubmit, errors }) => {
 
     const [formData, setFormData] = useState<Record<string, string>>({});
 
@@ -81,7 +81,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText
                             {buttonText === "Đăng nhập"
                                 ? "Bạn chưa có tài khoản? "
                                 : "Đã có tài khoản? "}
-                            <Link href={buttonText === "Đăng nhập" ? "/auth/candidate/register" : "/auth/candidate/login"}>
+                            <Link href={buttonText === "Đăng nhập" ? "/auth/recruiter/register" : "/auth/recruiter/login"}>
                                 {buttonText === "Đăng nhập" ? "Đăng ký ngay" : "Đăng nhập ngay"}
                             </Link>
                         </p>
@@ -91,8 +91,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText
         }
         return (
             <Row style={{ marginTop: "2%", display: "flex", justifyContent: "center", gap: "20px" }}>
-                <Link href="/auth/candidate/login" style={{ fontWeight: "500" }}>Quay lại đăng nhập</Link>
-                <Link href="/auth/candidate/register" style={{ fontWeight: "500" }}>Đăng ký tài khoản mới</Link>
+                <Link href="/auth/recruiter/login" style={{ fontWeight: "500" }}>Quay lại đăng nhập</Link>
+                <Link href="/auth/recruiter/register" style={{ fontWeight: "500" }}>Đăng ký tài khoản mới</Link>
             </Row>
         );
     };
@@ -212,4 +212,4 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText
     );
 };
 
-export default AuthForm;
+export default AuthFormRecruiter;

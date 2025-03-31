@@ -134,7 +134,7 @@ export default function Login() {
     ];
     const buttonText = "Đăng nhập";
     const linkText = "Quên mật khẩu";
-    const linkHref = "/auth/forgot-password";
+    const linkHref = "/auth/candidate/forgot-password";
 
     return (
         <>

@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
-import AuthForm from '@/components/AuthForm';
+import AuthFormRecruiter from '@/components/AuthFormRecruiter';
 import { message, Spin } from 'antd';
 import { useDispatch } from 'react-redux';
 import { login } from '@/redux/userSlice';
@@ -103,7 +103,7 @@ const RecuiterLogin = () => {
         <>
             {contextHolder}
             <Spin spinning={loading}>
-                <AuthForm
+                <AuthFormRecruiter
                     title={title}
                     subtitle={subtitle}
                     fields={fields}
