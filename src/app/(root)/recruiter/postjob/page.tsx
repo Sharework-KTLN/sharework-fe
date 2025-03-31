@@ -1,8 +1,8 @@
 'use client';
+
 import React from 'react';
 import { formatDate } from '@/utils/dateUltil';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Form, Input, Select, Avatar, DatePicker } from 'antd';
 import CustomButton from '@/components/CustomButton';
 
@@ -14,11 +14,41 @@ const PostJobPage = () => {
     const [form] = Form.useForm();
 
     const handleButtonPostJob = () => {
-        alert('Đăng bài tuyển dụng thành công!');
+        form
+            .validateFields()
+            .then((values) => {
+                onFinish(values);
+            })
+            .catch((info) => {
+                console.log('Validate Failed:', info);
+            });
     };
 
-    const onFinish = (values: Record<string, unknown>) => {
-        console.log('Form Data:', values);
+    const onFinish = async (values: Record<string, unknown>) => {
+        try {
+            const response = await fetch("http://localhost:8080/jobs", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    ...values,
+                    recruiter_id: 1, // 🔥 Thay bằng ID thật nếu có
+                    company_id: 1,   // 🔥 Thay bằng ID thật nếu có
+                }),
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Đăng bài tuyển dụng thành công!");
+                form.resetFields();  // 🔥 Xóa dữ liệu trong form sau khi đăng thành công
+            } else {
+                alert("Lỗi khi đăng bài: " + data.message);
+            }
+        } catch (error) {
+            console.error("Lỗi khi gửi request:", error);
+            alert("Có lỗi xảy ra, vui lòng thử lại sau.");
+        }
     };
     return (
         <div
@@ -94,47 +124,80 @@ const PostJobPage = () => {
                 <Form
                     form={form}
                     layout="vertical"
-                    onFinish={onFinish}
                     style={{
                         marginTop: '20px'
                     }}
                 >
                     {/* Vị trí cần tuyển */}
-                    <Form.Item name="position" label="Vị trí cần tuyển" rules={[{ required: true, message: 'Hãy nhập vị trí!' }]}>
+                    <Form.Item
+                        name="title"
+                        label="Vị trí cần tuyển"
+                        rules={[{ required: true, message: 'Hãy nhập vị trí!' }]}
+                    >
                         <Input placeholder="Nhập vị trí" />
                     </Form.Item>
 
                     {/* Yêu cầu kỹ năng & Số lượng */}
                     <div style={{ display: 'flex', gap: '10px' }}>
-                        <Form.Item name="skills" label="Yêu cầu kỹ năng" style={{ flex: 1 }}>
+                        <Form.Item
+                            name="required_skills"
+                            label="Yêu cầu kỹ năng"
+                            style={{ flex: 1 }}
+                            rules={[{ required: true, message: 'Hãy nhập kỹ năng yêu cầu!' }]}
+                        >
                             <Input placeholder="Nhập kỹ năng yêu cầu" />
                         </Form.Item>
-                        <Form.Item name="quantity" label="Số lượng" style={{ flex: 1 }}>
+                        <Form.Item
+                            name="vacancies"
+                            label="Số lượng"
+                            style={{ flex: 1 }}
+                            rules={[{ required: true, type: 'number', min: 1, message: 'Số lượng phải lớn hơn 0!' }]}
+                        >
                             <Input type="number" placeholder="Nhập số lượng" />
                         </Form.Item>
                     </div>
 
                     {/* Lĩnh vực, Mức lương, Hình thức lương, Hạn bài đăng */}
                     <div style={{ display: 'flex', gap: '10px' }}>
-                        <Form.Item name="field" label="Lĩnh vực" style={{ flex: 1 }}>
+                        <Form.Item
+                            name="industry"
+                            label="Lĩnh vực"
+                            style={{ flex: 1 }}
+                            rules={[{ required: true, message: 'Hãy chọn lĩnh vực!' }]}
+                        >
                             <Select>
                                 <Option value="it">Công nghệ thông tin</Option>
                                 <Option value="marketing">Marketing</Option>
                             </Select>
                         </Form.Item>
-                        <Form.Item name="salary" label="Mức lương" style={{ flex: 1 }}>
+                        <Form.Item
+                            name="salary_range"
+                            label="Mức lương"
+                            style={{ flex: 1 }}
+                            rules={[{ required: true, message: 'Hãy chọn mức lương!' }]}
+                        >
                             <Select>
                                 <Option value="negotiable">Thỏa thuận</Option>
                                 <Option value="100">100$</Option>
                             </Select>
                         </Form.Item>
-                        <Form.Item name="salaryType" label="Hình thức lương" style={{ flex: 1 }}>
+                        <Form.Item
+                            name="salary_type"
+                            label="Hình thức lương"
+                            style={{ flex: 1 }}
+                            rules={[{ required: true, message: 'Hãy chọn hình thức lương!' }]}
+                        >
                             <Select>
                                 <Option value="vnd_month">VND/tháng</Option>
                                 <Option value="vnd_week">VND/tuần</Option>
                             </Select>
                         </Form.Item>
-                        <Form.Item name="deadline" label="Hạn bài đăng" style={{ flex: 1 }}>
+                        <Form.Item
+                            name="deadline"
+                            label="Hạn bài đăng"
+                            style={{ flex: 1 }}
+                            rules={[{ required: true, message: 'Hãy chọn hạn bài đăng!' }]}
+                        >
                             <DatePicker
                                 format="DD-MM-YYYY"
                                 placeholder="Chọn ngày"
@@ -145,7 +208,11 @@ const PostJobPage = () => {
                     </div>
 
                     {/* Hình thức làm việc */}
-                    <Form.Item name="workType" label="Hình thức làm việc">
+                    <Form.Item
+                        name="work_type"
+                        label="Hình thức làm việc"
+                        rules={[{ required: true, message: 'Hãy chọn ít nhất 1 hình thức làm việc!' }]}
+                    >
                         <div>
                             <label><input type="checkbox" value="fulltime" /> Full-time</label> &nbsp;
                             <label><input type="checkbox" value="parttime" /> Part-time</label> &nbsp;
@@ -155,7 +222,10 @@ const PostJobPage = () => {
                     </Form.Item>
 
                     {/* Địa chỉ làm việc */}
-                    <Form.Item name="workAddress" label="Địa chỉ làm việc">
+                    <Form.Item
+                        name="work_location"
+                        label="Địa chỉ làm việc"
+                    >
                         <Input.TextArea
                             placeholder="Nhập địa chỉ"
                             autoSize={{ minRows: 2, maxRows: 5 }} // Tuỳ chỉnh độ cao
@@ -167,7 +237,10 @@ const PostJobPage = () => {
                         />
                     </Form.Item>
                     {/* Thời gian làm việc */}
-                    <Form.Item name="timeWorking" label="Thời gian làm việc">
+                    <Form.Item
+                        name="work_schedule"
+                        label="Thời gian làm việc"
+                    >
                         <Input.TextArea
                             placeholder="Nhập thời gian làm việc"
                             autoSize={{ minRows: 2, maxRows: 5 }} // Tuỳ chỉnh độ cao
@@ -179,7 +252,10 @@ const PostJobPage = () => {
                         />
                     </Form.Item>
                     {/* Mô tả công việc việc */}
-                    <Form.Item name="description" label="Mô tả công việc">
+                    <Form.Item
+                        name="description"
+                        label="Mô tả công việc"
+                    >
                         <Input.TextArea
                             placeholder="Nhập mô tả công việc"
                             autoSize={{ minRows: 2, maxRows: 5 }} // Tuỳ chỉnh độ cao
@@ -195,9 +271,10 @@ const PostJobPage = () => {
                         style={{ textAlign: 'right' }}
                     >
                         <CustomButton
-                            text="Gửi tin tuyển dụng"
+                            text="Đăng tuyển"
                             onClick={handleButtonPostJob}
-                            backgroundColor="green" hoverColor="darkgreen"
+                            backgroundColor="green"
+                            hoverColor="darkgreen"
                             textColor="white"
                             style={{
                                 width: '150px',
