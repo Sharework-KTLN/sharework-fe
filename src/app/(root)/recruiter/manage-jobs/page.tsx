@@ -4,16 +4,23 @@ import React, { useEffect, useState } from 'react';
 import CustomButton from '@/components/CustomButton';
 import dayjs from 'dayjs';
 import { Job } from '@/types/job';
-
+import { useRouter } from 'next/navigation';
 
 const ManageJobPage = () => {
     const [posts, setPosts] = useState<Job[]>([]);
     const [loading, setLoading] = useState(true); // State để hiển thị loading
+    const [isMounted, setIsMounted] = useState(false); // State kiểm tra nếu đang ở môi trường client
+    const router = useRouter();
+
+    useEffect(() => {
+        setIsMounted(true); // Chỉ thiết lập isMounted thành true khi component đã render trên client
+    }, []);
+
     useEffect(() => {
         // Gọi API lấy danh sách bài đăng của recruiter_id = 1
         const fetchPosts = async () => {
             try {
-                const response = await fetch("http://localhost:8080/jobs/1");
+                const response = await fetch("http://localhost:8080/jobs/recruiter/1");
                 if (!response.ok) {
                     throw new Error("Lỗi khi tải bài đăng");
                 }
@@ -28,6 +35,13 @@ const ManageJobPage = () => {
 
         fetchPosts();
     }, []);
+
+    const handleButtonViewPost = (post_id: number) => {
+        if (isMounted) {
+            router.push(`/recruiter/manage-jobs/${post_id}`);
+        }
+    };
+
     return (
         <div
             style={{
@@ -39,9 +53,7 @@ const ManageJobPage = () => {
                 padding: '20px',
             }}
         >
-            <p
-                className='text-base font-bold mt-2 ml-3'
-            >
+            <p className='text-base font-bold mt-2 ml-3'>
                 Thư viện bài đăng của bạn
             </p>
             {loading ? (
@@ -65,7 +77,6 @@ const ManageJobPage = () => {
                             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                         }}
                     >
-                        {/* Cột 1 - Thông tin công việc */}
                         <div style={{ flex: 2 }}>
                             <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '5px' }}>
                                 {post.title}
@@ -93,7 +104,6 @@ const ManageJobPage = () => {
                             </p>
                         </div>
 
-                        {/* Cột 2 - Ngày đăng */}
                         <div style={{ flex: 1, textAlign: 'center' }}>
                             <p style={{ fontSize: '14px', color: '#555' }}>📅 Ngày đăng:</p>
                             <p style={{ fontSize: '14px', fontWeight: 'bold' }}>
@@ -101,14 +111,13 @@ const ManageJobPage = () => {
                             </p>
                         </div>
 
-                        {/* Cột 3 - Hành động */}
                         <div style={{ flex: 1, display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                             <CustomButton
                                 text="Xem bài đăng"
                                 backgroundColor="blue"
                                 hoverColor="darkblue"
                                 textColor="white"
-                                onClick={() => alert(`Xem bài đăng ID: ${post.id}`)}
+                                onClick={() => handleButtonViewPost(post.id)}
                             />
                             <CustomButton
                                 text="Chỉnh sửa"
@@ -128,20 +137,6 @@ const ManageJobPage = () => {
                     </div>
                 ))
             )}
-            {/* <div
-                style={{
-                    width: '98%',
-                    height: '80px',
-                    marginLeft: '1%',
-                    marginTop: '10px',
-                    border: '0px solid gray',
-                    borderRadius: '5px',
-                    backgroundColor: '#FFFFFF'
-                }}
-            >
-                
-            </div> */}
-
         </div>
     );
 };
