@@ -13,10 +13,10 @@ import { AppDispatch } from '@/redux/store';
 export default function Login() {
 
     const dispatch = useDispatch<AppDispatch>();
+    const router = useRouter();
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const router = useRouter();
     const [messageApi, contextHolder] = message.useMessage();
     const [user, setUser] = useState<JwtPayload | null>(null);
     // Kiểm tra nếu có token thì decode lấy user
@@ -134,7 +134,7 @@ export default function Login() {
     ];
     const buttonText = "Đăng nhập";
     const linkText = "Quên mật khẩu";
-    const linkHref = "/auth/forgot-password";
+    const linkHref = "/auth/candidate/forgot-password";
 
     return (
         <>
