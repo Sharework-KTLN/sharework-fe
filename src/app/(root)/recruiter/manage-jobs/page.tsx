@@ -1,12 +1,16 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/redux/store';
 import CustomButton from '@/components/CustomButton';
 import dayjs from 'dayjs';
 import { Job } from '@/types/job';
 import { useRouter } from 'next/navigation';
 
 const ManageJobPage = () => {
+
+    const user = useSelector((state: RootState) => state.user);
     const [posts, setPosts] = useState<Job[]>([]);
     const [loading, setLoading] = useState(true); // State để hiển thị loading
     const [isMounted, setIsMounted] = useState(false); // State kiểm tra nếu đang ở môi trường client
@@ -20,21 +24,27 @@ const ManageJobPage = () => {
         // Gọi API lấy danh sách bài đăng của recruiter_id = 1
         const fetchPosts = async () => {
             try {
-                const response = await fetch("http://localhost:8080/jobs/recruiter/1");
+                const response = await fetch(`http://localhost:8080/jobs/recruiter/${user.id}`);
                 if (!response.ok) {
-                    throw new Error("Lỗi khi tải bài đăng");
+                    setPosts([]);
+                    return;
                 }
                 const data = await response.json();
-                setPosts(data);
+                if (Array.isArray(data) && data.length === 0) {
+                    setPosts([]); // Nếu không có bài đăng, trả về danh sách rỗng
+                } else {
+                    setPosts(data); // Gán dữ liệu bài đăng nếu có
+                }
             } catch (error) {
-                console.error("Lỗi tải bài đăng:", error);
+                console.error("Lỗi tải bài đăng1:", error);
+                setPosts([]); // Set lại danh sách bài đăng rỗng khi có lỗi
             } finally {
                 setLoading(false);
             }
         };
 
         fetchPosts();
-    }, []);
+    }, [user.id]);
 
     const handleButtonViewPost = (post_id: number) => {
         if (isMounted) {

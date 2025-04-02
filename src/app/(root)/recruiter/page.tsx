@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Carousel } from 'antd';
 import CustomButton from '@/components/CustomButton';
@@ -11,6 +12,7 @@ const heroImages = [
 ];
 
 const RecruiterHomePage = () => {
+    const router = useRouter();
     return (
         <div className="w-full min-h-screen bg-gray-100">
             {/* Hero Section - Thay thế Carousel bằng hiệu ứng chữ động */}
@@ -87,7 +89,7 @@ const RecruiterHomePage = () => {
                         cursor: 'pointer',
                         transition: 'background-color 0.3s ease'
                     }}
-                    onClick={() => alert('Chuyển đến trang đăng ký')}
+                    onClick={() => router.push('/auth/recruiter/register')}
                 />
             </motion.div>
 

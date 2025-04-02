@@ -3,8 +3,11 @@
 import React from 'react';
 import { formatDate } from '@/utils/dateUltil';
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/redux/store';
 import { Form, Input, Select, Avatar, DatePicker } from 'antd';
 import CustomButton from '@/components/CustomButton';
+import { Company } from '@/types/company';
 
 
 const { Option } = Select;
@@ -12,6 +15,30 @@ const { Option } = Select;
 const PostJobPage = () => {
 
     const [form] = Form.useForm();
+    const user = useSelector((state: RootState) => state.user);
+    const [company, setCompany] = useState<Company | null>(null);
+
+    // Gọi API để lấy thông tin công ty ngay khi component được render
+    useEffect(() => {
+        const fetchCompany = async () => {
+            try {
+                const companyRes = await fetch(`http://localhost:8080/companies/recruiter/${user.id}`);
+
+                if (!companyRes.ok) {
+                    throw new Error("Không tìm thấy công ty của bạn!");
+                }
+
+                const companyData = await companyRes.json();
+                setCompany(companyData); // Lưu thông tin công ty vào state
+            } catch (error) {
+                console.error("Lỗi khi lấy dữ liệu công ty:", error);
+            }
+        };
+
+        if (user?.id) {
+            fetchCompany();
+        }
+    }, [user?.id]); // Chỉ chạy lại khi user.id thay đổi
 
     const handleButtonPostJob = () => {
         form
@@ -26,6 +53,7 @@ const PostJobPage = () => {
 
     const onFinish = async (values: Record<string, unknown>) => {
         try {
+            // 🔹 Gọi API để tạo bài đăng
             const response = await fetch("http://localhost:8080/jobs", {
                 method: "POST",
                 headers: {
@@ -33,8 +61,8 @@ const PostJobPage = () => {
                 },
                 body: JSON.stringify({
                     ...values,
-                    recruiter_id: 1, // 🔥 Thay bằng ID thật nếu có
-                    company_id: 1,   // 🔥 Thay bằng ID thật nếu có
+                    recruiter_id: user?.id, // 🔥 Thay bằng ID thật nếu có
+                    company_id: company?.id,   // 🔥 Thay bằng ID thật nếu có
                 }),
             });
             const data = await response.json();
@@ -83,12 +111,12 @@ const PostJobPage = () => {
                         alt="Recruiter Avatar"
                     />
                     <div style={{ marginLeft: '15px' }}>
-                        <p style={{ fontSize: '16px', fontWeight: 'bold', margin: 0 }}>Hiệp Phan</p>
+                        <p style={{ fontSize: '16px', fontWeight: 'bold', margin: 0 }}>{user.full_name}</p>
                         <p style={{ fontSize: '14px', color: '#666', margin: '4px 0' }}>
                             Mã nhà tuyển dụng:
                         </p>
                         <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
-                            hiepphannguyen123abc@gmail.com
+                            {user.email}
                         </p>
                     </div>
                 </div>
@@ -96,7 +124,9 @@ const PostJobPage = () => {
                 {/* Phần thông tin công ty (50%) */}
                 <div style={{ width: '50%' }}>
                     <p style={{ fontSize: '16px', color: '#666', margin: 0 }}>Tên công ty:</p>
-                    <p style={{ fontSize: '16px', fontWeight: 'bold', color: 'black', margin: '4px 0' }}>Hoa hồng đen group</p>
+                    <p style={{ fontSize: '16px', fontWeight: 'bold', color: 'black', margin: '4px 0' }}>
+                        {company?.name}
+                    </p>
                 </div>
             </div>
 
@@ -151,7 +181,7 @@ const PostJobPage = () => {
                             name="vacancies"
                             label="Số lượng"
                             style={{ flex: 1 }}
-                            rules={[{ required: true, type: 'number', min: 1, message: 'Số lượng phải lớn hơn 0!' }]}
+                        // rules={[{ required: true, type: 'number', min: 1, message: 'Số lượng phải lớn hơn 0!' }]}
                         >
                             <Input type="number" placeholder="Nhập số lượng" />
                         </Form.Item>
