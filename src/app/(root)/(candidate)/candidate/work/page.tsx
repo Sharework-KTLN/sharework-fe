@@ -1,13 +1,13 @@
-// "use client";
+ "use client";
 
-// import { useEffect, useState } from "react";
-// import { Card, Button, Upload, Typography, Row, Col, Empty } from "antd";
-// import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
-// import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Card, Button, Upload, Typography, Row, Col, Empty } from "antd";
+import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
 
 // const { Title, Text } = Typography;
 
-// const CVManager = () => {
+const CVManager = () => {
 //   const router = useRouter();
 //   const [uploadedCVs, setUploadedCVs] = useState<{ id: number; name: string }[]>([]);
 //   const [image, setImage] = useState<string | null>(null); // Khai báo state image
@@ -148,6 +148,6 @@
 //       </Card>
 //     </div>
 //   );
-// };
+};
 
-// export default CVManager;
+export default CVManager;
