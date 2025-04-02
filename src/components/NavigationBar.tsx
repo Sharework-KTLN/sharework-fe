@@ -35,46 +35,31 @@ const NavigationBar: React.FC = () => {
     const user = useSelector((state: RootState) => state.user);
 
     const pathname = usePathname(); // Lấy đường dẫn hiện tại
+    // Định nghĩa mapping giữa đường dẫn và key
+    const routeMap: Record<string, string> = {
+        '/candidate/work': 'vieclam',
+        '/candidate/profileManagement': 'quanlyhoso',
+        '/candidate/infoBusiness': 'congty',
+        '/candidate/CVManagement': 'quanlycv',
+    };
     // Xác định mục nào đang được chọn
-    const selectedKey = pathname.startsWith('/candidate/work')
-        ? 'vieclam'
-        : pathname.startsWith('/candidate/profileManagement')
-            ? 'quanlyhoso'
-            : pathname.startsWith('/candidate/infoBusiness')
-                ? 'congty'
-                : 'trangchu';
+    const selectedKey =
+    Object.keys(routeMap).find((route) => pathname.startsWith(route)) || 'trangchu';
 
     const items: MenuItem[] = [
+        { label: 'Trang chủ', key: 'trangchu', onClick: () => router.push('/') },
         {
-            label: (<div onClick={() => router.push('/')}>Trang chủ</div>),
-            key: 'trangchu',
-        },
-        {
-            label: (
-                <div onClick={() => router.push('/candidate/CVManagement')}>
-                    Việc làm
-                </div>
-            ),
+            label: 'Việc làm',
             key: 'vieclam',
+            
             children: [
-                {
-                    label: (<div onClick={() => router.push('/candidate/work/applied')}>Việc đã ứng tuyển</div>),
-                    key: 'vieclamdaungtuyen',
-                },
-                {
-                    label: (<div onClick={() => router.push('/candidate/work/favorites')}>Việc yêu thích</div>),
-                    key: 'vieclamyeuthich',
-                },
+                { label: 'Việc đã ứng tuyển', key: 'vieclamdaungtuyen', onClick: () => router.push('/candidate/work/applied') },
+                { label: 'Việc yêu thích', key: 'vieclamyeuthich', onClick: () => router.push('/candidate/work/favorites') },
             ],
         },
-        {
-            label: (<div onClick={() => router.push('/candidate/profileManagement')}>Quản lí hồ sơ</div>),
-            key: 'quanlyhoso',
-        },
-        {
-            label: (<div onClick={() => router.push('/candidate/infoBusiness')}>Công ty</div>),
-            key: 'congty',
-        }
+        { label: 'Quản lí hồ sơ', key: 'quanlyhoso', onClick: () => router.push('/candidate/profileManagement') },
+        { label: 'Quản lí CV', key: 'quanlycv', onClick: () => router.push('/candidate/CVManagement') },
+        { label: 'Công ty', key: 'congty', onClick: () => router.push('/candidate/infoBusiness') },
     ];
 
     useEffect(() => {

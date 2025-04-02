@@ -1,261 +1,153 @@
-'use client';
+// "use client";
 
-import React, {useState, useEffect} from "react";
-import { Card, Button, Row, Col, Image } from "antd";
-import { EnvironmentOutlined, GlobalOutlined } from "@ant-design/icons";
-import { useParams } from "next/navigation";
+// import { useEffect, useState } from "react";
+// import { Card, Button, Upload, Typography, Row, Col, Empty } from "antd";
+// import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
+// import { useRouter } from "next/navigation";
 
-interface Business{
-    id: number;
-    image: string;
-    logo: string;
-    company: string; // Nếu API trả về 'company', thì giữ nguyên
-    description: string;
-    link?: string; // Có thể undefined
-    location: string;
-    locationDetail: string;
-    specialization: string;
-    jobCount: number;
-    title?: string; // Nếu thực sự có 'title'
-}
-interface Job {
-    id: number;
-    title: string;
-    salary: string;
-    location: string;
-};
+// const { Title, Text } = Typography;
 
-const jobs: Job[] = [
-    { id: 1, title: "Game Designer (Fresher)", salary: "Từ 8 triệu", location: "Hà Nội" },
-    { id: 2, title: "Digital Marketing Intern", salary: "Từ 6-8 triệu", location: "Hà Nội" },
-];
+// const CVManager = () => {
+//   const router = useRouter();
+//   const [uploadedCVs, setUploadedCVs] = useState<{ id: number; name: string }[]>([]);
+//   const [image, setImage] = useState<string | null>(null); // Khai báo state image
+//   const [cvData, setCvData] = useState<any[]>([]); // Khai báo state cvData
+
   
-const InfoBusinessDetail = () => {
-    const [business, setBusiness] = useState<Business | null>(null);
-    const [expanded, setExpanded] = useState<boolean>(false);
+//   useEffect(() => {
+//     // Lấy dữ liệu CV đã lưu trong sessionStorage
+//     const savedCvData = JSON.parse(sessionStorage.getItem("cvData") || "[]");
+//     setCvData(Array.isArray(savedCvData) ? savedCvData : []);
 
-    useEffect(() => {
-        const businessDetail = sessionStorage.getItem("infoBusinessDetail");
-        if (businessDetail) {
-            setBusiness(JSON.parse(businessDetail));
-        }
-    }, []);
-    if (!business) return <p>Loading...</p>;
+//     // Lấy ảnh đã lưu trong sessionStorage và hiển thị
+//     const savedImage = sessionStorage.getItem("cvImage");
+//     if (savedImage) {
+//         setImage(savedImage); // Cập nhật lại ảnh đã lưu
+//     }
+//   }, []);
 
-    const fullContent = business?.description || "Chưa có mô tả";
-    // Rút gọn nội dung
-    const shortContent = fullContent.length > 500 ? fullContent.substring(0, 500) + "..." : fullContent;
+//   const createNewCV = () => {
+//     router.push("/candidate/CVManagement");
+//   };
 
-    return (
-        <div className="container mx-auto p-6">
-            <div 
-                style={{
-                    maxWidth: "1450px",
-                    width: "calc(100% - 47px)",
-                    height: "200px",
-                    borderRadius: "8px 8px 0 0",
-                    overflow: "hidden",
-                    margin: "0 auto"
-                }}
-            >
-                <Image
-                    src={business?.image || "https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-hop-tac-thanh-cong-inkythuatso-07-10-42-07.jpg"}
-                    alt="Banner"
-                    width="100%" // Kích thước ảnh
-                    height="200px"
-                    style={{
-                        objectFit: "cover"
-                    }}
-                    preview={false} // Tắt tính năng xem trước
-                />
-            </div>
-            {/* Company Header */}
-            <Card 
-                style={{ 
-                    background: "linear-gradient(to right, #D4421E, #FFA07A)", 
-                    maxWidth: "100%", 
-                    width: "calc(100% - 47px)", // Giảm 40px để có lề trái và phải đều
-                    margin: "0 auto", // Căn giữa toàn bộ Card
-                    padding: "0 0 16px 16px",
-                    borderRadius: "0 0 8px 8px",
-                    height: "150px"
-                }}>
-                    
-                <Row align="middle" justify="space-between">
-                    <Col>
-                        <Row align="middle">
-                            <Image
-                                src={business?.logo || "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA"}
-                                alt="Company Logo"
-                                width={100}
-                                height={100}
-                                style={{
-                                    border: "1px solid white",
-                                    padding: "3px",
-                                    background: "white",
-                                    borderRadius: "50%", // Bo tròn ảnh
-                                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
-                                    marginRight: "10px"
-                                }}
-                                preview={false} // Tắt tính năng xem trước
-                            />
-                            <Col style={{marginLeft:"15px"}}>
-                                <h1 style={{ fontWeight: "700", fontSize: "24px", color:"#000000" }}>{business.company}</h1>
-                                <a 
-                                    href={business?.link} target="_blank" rel="noopener noreferrer" 
-                                    style={{ fontWeight: "500", fontSize: "13px", color: "black" }}
-                                >
-                                    <GlobalOutlined style={{ color: "#000000", fontSize: "13px", marginRight: "8px" }} />
-                                    {business.link}
-                                </a>
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Col>
-                        <Button 
-                            style={{ 
-                                backgroundColor: "#D4421E", color: "white", border: "none",
-                                fontWeight: "500", height: "43px"
-                            }}>
-                            + Theo dõi công ty
-                        </Button>
-                    </Col>
-                </Row>
-            </Card>
-            
-            {/* Company Info Section */}
-            <Row gutter={[16, 16]} style={{}}>
-                {/* About Company */}
-                <Col xs={24} md={16}>
-                    <Card 
-                        style={{
-                            border: "none", padding: "0", margin: "0",
-                        }}>
-                        {/* Tiêu đề có nền đậm hơn */}
-                        <div 
-                            style={{ 
-                                background: "linear-gradient(to right, #D4421E, #FFA07A)", 
-                                padding: "12px 16px", borderRadius: "8px 8px 0 0", height:"50px",
-                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
-                            }}>
-                            <h2 style={{ fontWeight: "500", fontSize: "18px", color:"#000000" }}>Giới thiệu công ty</h2>
-                        </div>
+//   const handleUpload = (info: any) => {
+//     const file = info.file;
+//     const newCV = { id: Date.now(), name: file.name };
+//     const updatedCVs = [...uploadedCVs, newCV];
+//     setUploadedCVs(updatedCVs);
+//     sessionStorage.setItem("uploadedCVs", JSON.stringify(updatedCVs));
+//   };
+//   const handleDeleteCV = (index: number) => {
+//       // Lấy danh sách CV hiện tại từ sessionStorage
+//     const updatedCvData = JSON.parse(sessionStorage.getItem("cvData") || "[]");
+//       // Xóa CV tại vị trí chỉ định
+//     updatedCvData.splice(index, 1);
+//       // Cập nhật lại sessionStorage với danh sách CV mới
+//     sessionStorage.setItem("cvData", JSON.stringify(updatedCvData));
+//       // Cập nhật state cvData để re-render lại giao diện
+//     setCvData(updatedCvData);
+//     alert("CV đã được xóa!");
+//   };
 
-                        {/* Nội dung có nền trắng */}
-                        <div 
-                            style={{ 
-                                background: "#FFFFFF", padding: "16px", borderRadius: "0 0 8px 8px",
-                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
-                            }}>
-                            <p className="mt-2 text-black-600">
-                                {expanded ? fullContent : shortContent}
-                            </p>
-                            <Button 
-                                type="link" 
-                                onClick={() => setExpanded(!expanded)}
-                                style={{ color: "#D4421E", fontWeight: "500", paddingLeft: "0" }}
-                            >
-                                {expanded ? "Thu gọn" : "Xem thêm"}
-                            </Button>
-                        </div>
-                    </Card>
-                    {/* Danh sách tuyển dụng */}
-                    <Card 
-                        style={{
-                            border: "none", padding: "0", margin: "0",
-                        }}
-                    >
-                        {/* Tiêu đề Tuyển dụng */}
-                        <div style={{ 
-                                background: "linear-gradient(to right, #D4421E, #FFA07A)", 
-                                padding: "12px 16px", borderRadius: "8px 8px 0 0",
-                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
-                            }}>
-                            <h2 style={{ fontWeight: "500", fontSize: "18px", color:"#000000" }}>Tuyển dụng</h2>
-                            <div className="flex space-x-2">
-                                <input 
-                                    type="text" 
-                                    placeholder="Tên công việc, vị trí ứng tuyển..."
-                                    className="border border-gray-300 p-2 rounded-md w-72"
-                                />
-                                <select className="border border-gray-300 p-2 rounded-md">
-                                    <option>Tất cả tỉnh/thành phố</option>
-                                    <option>Hà Nội</option>
-                                    <option>TP.HCM</option>
-                                </select>
-                                <Button
-                                    style={{ 
-                                        backgroundColor: "#D4421E", color: "white", border: "none",
-                                        fontWeight: "500", height: "43px"
-                                    }}>
-                                    Tìm kiếm
-                                </Button>
-                            </div>
-                        </div>
-
-                        <div style={{ maxHeight: "300px", overflowY: "auto" }}> 
-                            {jobs.map((job) => (
-                                <Card 
-                                    key={job.id} 
-                                    className="flex items-center border rounded-lg p-4 shadow mb-3"
-                                >
-                                    <div className="flex items-center">
-                                        <Image 
-                                            src={business?.logo || "https://via.placeholder.com/80"} 
-                                            alt="Company Logo"
-                                            width={60} height={60} 
-                                            className="mr-4 border p-1 bg-white rounded-lg"
-                                        />
-                                        <div>
-                                            <h3 className="font-bold">{job.title}</h3>
-                                            <p className="text-sm text-gray-500">{job.salary} - {job.location}</p>
-                                        </div>
-                                    </div>
-                                    <Button className="mt-2 w-full">Ứng tuyển</Button>
-                                </Card>
-                            ))}
-                        </div>
-                    </Card>
-                </Col>
-
-                {/* Contact Info */}
-                <Col xs={24} md={8}>
-                    <Card style={{ border: "none", padding: "0" }}>
-                        {/* Tiêu đề có nền đậm hơn */}
-                        <div 
-                            style={{ 
-                                background: "linear-gradient(to right, #D4421E, #FFA07A)",
-                                padding: "12px 16px", borderRadius: "8px 8px 0 0", height:"50px",
-                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
-                            }}>
-                            <h2 style={{ fontWeight: "500", fontSize: "18px", color:"#000000" }}>Thông tin liên hệ</h2>
-                        </div>
-
-                        <div style={{ 
-                            background: "#FFFFFF", padding: "16px", borderRadius: "0 0 8px 8px",
-                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
-                            }}>
-                            <p className="mt-2 text-black-600 flex items-center">
-                                <EnvironmentOutlined style={{ color: "#D4421E", fontSize: "20px", marginRight: "8px" }} />
-                                {business.locationDetail}
-                            </p>
-
-                            {/* Google Map Embed */}
-                            <iframe 
-                                title="Google Map" 
-                                width="100%" 
-                                height="150" 
-                                frameBorder="0" 
-                                style={{ border: 0, marginTop: "10px" }} 
-                                src={`https://www.google.com/maps?q=${encodeURIComponent(business?.locationDetail)}&output=embed`} 
-                                allowFullScreen
-                            ></iframe>
-                        </div>
-                    </Card>
-                </Col>
-            </Row>
-        </div>
-    );
-};
+//   // const handleViewDetails = (cv: any) => {
+//   //   // Chuyển hướng đến trang chi tiết với dữ liệu CV
+//   //   router.push({
+//   //     pathname: "/candidate/CV", // Đảm bảo rằng đây là đường dẫn đúng của trang CV
+//   //     query: { cvId: cv.id }, // Truyền id CV qua query parameters
+//   //   });
+//   // };
   
-  export default InfoBusinessDetail;
+//   return (
+//     <div style={{ maxWidth: "900px", margin: "auto", padding: "20px" }}>
+//       <Title level={2} style={{ textAlign: "center", marginBottom: "20px" }}>
+//         📄 Quản lý CV
+//       </Title>
+
+//       {/* CV đã tạo */}
+//       <Card title="CV đã tạo trên hệ thống" style={{ marginBottom: "20px", width: "1100px" }}>
+//           {cvData.length === 0 ? (
+//               <Empty description="Bạn chưa tạo CV nào" />
+//           ) : (
+//               <Row gutter={[16, 16]}>
+//                   {cvData.map((cv, index) => (
+//                       <Col xs={24} sm={12} md={8} lg={6} key={index}>
+//                           <Card 
+//                               hoverable
+//                               style={{ 
+//                                   background: "#ffffff", 
+//                                   borderRadius: "8px", 
+//                                   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+//                                   transition: "transform 0.2s ease-in-out",
+//                                   width: "100%", // Đảm bảo card chiếm hết chiều rộng
+//                               }}
+//                               cover={
+//                                   <img 
+//                                       src={cv.image} 
+//                                       alt="Avatar" 
+//                                       style={{ 
+//                                           width: "100%", 
+//                                           height: "150px", 
+//                                           objectFit: "cover", 
+//                                           borderRadius: "8px 8px 0 0" 
+//                                       }} 
+//                                   />
+//                               }
+//                           >
+//                               <div >
+//                                   <Title level={4} style={{ marginBottom: "5px" }}>
+//                                       {cv.name || "Chưa có tiêu đề"}
+//                                   </Title>
+//                                   <Text type="secondary" style={{ display: "block" }}>
+//                                       <strong>Vị trí:</strong> {cv.positionApply || "Chưa có vị trí"}
+//                                   </Text>
+//                                   <Text type="secondary" style={{ display: "block", marginBottom: "10px" }}>
+//                                       <strong>Ngày tạo:</strong> {cv.createdAt ? new Date(cv.createdAt).toLocaleDateString() : "Không rõ"}
+//                                   </Text>
+//                               </div>
+//                               <div style={{ textAlign: "center", marginTop: "10px"}}>
+//                                   <Row gutter={8}>
+//                                       <Col span={12}>
+//                                           <Button
+//                                               type="primary"
+//                                               onClick={() => alert(`Xem CV: ${cv.name}`)}
+//                                               style={{ width: "100px", marginRight:"10px" }}
+//                                           >
+//                                               Xem chi tiết
+//                                           </Button>
+//                                       </Col>
+//                                       <Col span={12}>
+//                                           <Button
+//                                               type="default"
+//                                               danger={true}
+//                                               onClick={() => handleDeleteCV(index)}
+//                                               style={{ width: "100%" }}
+//                                           >
+//                                               Xóa
+//                                           </Button>
+//                                       </Col>
+//                                   </Row>
+//                               </div>
+//                           </Card>
+//                       </Col>
+//                   ))}
+//               </Row>
+//           )}
+//           <div style={{ textAlign: "left", marginTop: "20px" }}>
+//               <Button type="primary" icon={<PlusOutlined />} onClick={createNewCV}>
+//                   Tạo mới
+//               </Button>
+//           </div>
+//       </Card>
+
+//       {/* CV đã tải lên */}
+//       <Card title="CV đã tải lên">
+//         {uploadedCVs.length === 0 ? <Empty description="Bạn chưa tải lên CV nào" /> : uploadedCVs.map((cv) => <p key={cv.id}>{cv.name}</p>)}
+//         <Upload beforeUpload={() => false} onChange={handleUpload}>
+//           <Button icon={<UploadOutlined />}>Tải CV lên</Button>
+//         </Upload>
+//       </Card>
+//     </div>
+//   );
+// };
+
+// export default CVManager;
