@@ -90,7 +90,7 @@ const ManagePostPage = () => {
         {
             title: "Hành động",
             key: "action",
-            render: (_: any, record: JobPost) => (
+            render: (_: unknown, record: JobPost) => (
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <CustomButton
                         text="Duyệt"
