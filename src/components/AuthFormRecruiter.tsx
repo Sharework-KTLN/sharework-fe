@@ -81,7 +81,12 @@ const AuthFormRecruiter: React.FC<AuthFormProps> = ({ title, subtitle, fields, b
                             {buttonText === "Đăng nhập"
                                 ? "Bạn chưa có tài khoản? "
                                 : "Đã có tài khoản? "}
-                            <Link href={buttonText === "Đăng nhập" ? "/auth/recruiter/register" : "/auth/recruiter/login"}>
+                            <Link
+                                href={buttonText === "Đăng nhập" ? "/auth/recruiter/register" : "/auth/recruiter/login"}
+                                style={{ color: '#007BFF', textDecoration: 'none' }} // Màu xanh dương mặc định
+                                onMouseEnter={(e) => (e.currentTarget.style.color = '#0056b3')} // Màu xanh đậm hơn khi hover
+                                onMouseLeave={(e) => (e.currentTarget.style.color = '#007BFF')} // Quay lại màu mặc định khi rời
+                            >
                                 {buttonText === "Đăng nhập" ? "Đăng ký ngay" : "Đăng nhập ngay"}
                             </Link>
                         </p>
@@ -200,12 +205,69 @@ const AuthFormRecruiter: React.FC<AuthFormProps> = ({ title, subtitle, fields, b
             <div
                 style={{
                     width: '40%',
-                    backgroundImage: `url(https://vinit.com.vn/wp-content/uploads/2020/05/tuyen-dung-300x225-1.jpg)`,
-                    backgroundSize: 'contain',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
+                    height: '100vh',
+                    background: 'linear-gradient(135deg, #4A90E2, #9013FE)', // Gradient màu xanh dương và tím
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    color: 'white',
+                    fontFamily: 'Arial, sans-serif',
+                    textAlign: 'center',
+                    padding: '20px',
+                    position: 'relative',
                 }}
-            />
+            >
+                <Link href="/recruiter"
+                    style={{
+                        position: 'absolute',
+                        top: '20px',
+                        left: '20px',
+                        fontSize: '26px',
+                        fontWeight: 'bold',
+                        color: '#FF8C00',
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                        padding: '5px 10px',
+                        borderRadius: '8px',
+                        textDecoration: 'none',
+                        textShadow: '1px 1px 2px rgba(0,0,0,0.4)',
+                        transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                        e.currentTarget.style.textDecoration = 'underline';
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)';
+                        e.currentTarget.style.color = '#FFA500'; // sáng hơn 1 tí
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.textDecoration = 'none';
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                        e.currentTarget.style.color = '#FF8C00';
+                    }}
+                >
+                    Sharework
+                </Link>
+
+                <h2 style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    marginTop: '60px',
+                    marginBottom: '20px',
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
+                }}>
+                    Đăng nhập dành cho Nhà Tuyển Dụng
+                </h2>
+                <p style={{ fontSize: '18px', marginBottom: '10px' }}>
+                    Kết nối đúng người – Tuyển dụng đúng lúc.
+                </p>
+                <p style={{ fontSize: '16px', fontStyle: 'italic', marginBottom: '20px', opacity: 0.9 }}>
+                    Không chỉ là tuyển dụng, đó là chiến lược phát triển.
+                </p>
+                <div style={{ fontSize: '20px', color: '#FFD700', fontWeight: '500' }}>
+                    🔍 AI dẫn lối – Nhân tài hội tụ
+                </div>
+            </div>
 
 
         </div>

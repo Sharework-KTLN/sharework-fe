@@ -55,29 +55,82 @@ const RecruiterBar: React.FC = () => {
 
     const menuItems: MenuItem[] = [
         {
-            label: (<div onClick={() => router.push('/recruiter')}>Bảng tin</div>),
+            label: (
+                <div
+                    onClick={() => router.push('/recruiter')}
+                    style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                    onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                    onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                >
+                    Bảng tin
+                </div>
+            ),
             key: 'bangtin',
         },
         {
-            label: 'Đăng tin',
+            label: (
+                <div
+                    style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                    onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                    onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                >
+                    Đăng tin
+                </div>
+            ),
             key: 'dangtin',
             children: [ // 🟢 Thêm submenu
                 {
-                    label: (<div onClick={() => router.push('/recruiter/postjob')}>Đăng tin tuyển dụng</div>),
+                    label: (
+                        <div
+                            onClick={() => router.push('/recruiter/postjob')}
+                            style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                            onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                            onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                        >
+                            Đăng tin tuyển dụng
+                        </div>
+                    ),
                     key: 'dangtin-tuyendung',
                 },
                 {
-                    label: (<div onClick={() => router.push('/recruiter/manage-jobs')}>Quản lý bài đăng</div>),
+                    label: (
+                        <div
+                            onClick={() => router.push('/recruiter/manage-jobs')}
+                            style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                            onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                            onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                        >
+                            Quản lý bài đăng
+                        </div>
+                    ),
                     key: 'quanly-baidang',
                 }
             ]
         },
         {
-            label: 'Công ty',
+            label: (
+                <div
+                    onClick={() => router.push('/recruiter/manage-jobs')}
+                    style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                    onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                    onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                >
+                    Công ty
+                </div>
+            ),
             key: 'congty',
         },
         {
-            label: 'Tìm CV',
+            label: (
+                <div
+                    onClick={() => router.push('/recruiter/manage-jobs')}
+                    style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                    onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                    onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                >
+                    Tìm CV
+                </div>
+            ),
             key: 'timcv',
         }
     ];
@@ -153,11 +206,12 @@ const RecruiterBar: React.FC = () => {
                             theme="light"
                             mode="horizontal"
                             selectedKeys={[current]}
-                            // defaultSelectedKeys={['trangchu']}
                             items={menuItems}
-                            style={{ borderBottom: 'none' }}
-                            className="custom-menu"
-                        // hidden={windowWidth < 768}
+
+                            style={{
+                                borderBottom: 'none',
+                                fontFamily: 'Arial, sans-serif', // Chỉnh font chữ cho menu
+                            }}
                         />
                     </div>
                 </Col>

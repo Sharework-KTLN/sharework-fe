@@ -14,7 +14,7 @@ const heroImages = [
 const RecruiterHomePage = () => {
     const router = useRouter();
     return (
-        <div className="w-full min-h-screen bg-gray-100">
+        <div className="w-full min-h-screen bg-gray-100 mt-1">
             {/* Hero Section - Thay thế Carousel bằng hiệu ứng chữ động */}
             <div className="relative w-full h-screen flex items-center justify-center bg-gray-900">
                 <motion.h1

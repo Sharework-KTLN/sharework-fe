@@ -94,13 +94,14 @@ const PostJobPage = () => {
                     width: '90%',
                     height: '100px',
                     marginLeft: '5%',
-                    border: '1px solid gray',
-                    borderRadius: '8px',
+                    border: '1px solid rgba(0, 0, 0, 0.1)', // Màu border mềm hơn
+                    borderRadius: '12px', // Bo góc mềm mại
                     backgroundColor: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     padding: '10px 20px',
                     gap: '20px', // Khoảng cách giữa các phần
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', // Thêm hiệu ứng đổ bóng
                 }}
             >
                 {/* Phần Avatar + Thông tin nhà tuyển dụng (50%) */}
@@ -136,13 +137,14 @@ const PostJobPage = () => {
                     minHeight: '100vh', // ✅ Cho phép mở rộng theo nội dung
                     marginLeft: '5%',
                     marginTop: '10px',
-                    border: '1px solid gray',
-                    borderRadius: '5px',
+                    border: '1px solid rgba(0, 0, 0, 0.1)', // Màu border mềm hơn
+                    borderRadius: '12px', // Bo góc mềm mại
                     backgroundColor: '#FFF',
                     padding: '20px',
                     overflowY: 'auto', // ✅ Kích hoạt thanh cuộn nếu nội dung quá dài
                     display: 'flex',
                     flexDirection: 'column', // ✅ Đảm bảo Form không bị kéo dài
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', // Thêm hiệu ứng đổ bóng
                 }}
             >
                 <p
@@ -303,15 +305,18 @@ const PostJobPage = () => {
                         <CustomButton
                             text="Đăng tuyển"
                             onClick={handleButtonPostJob}
-                            backgroundColor="green"
-                            hoverColor="darkgreen"
+                            backgroundColor="#AF40FF" // Xanh dương nhẹ
+                            hoverColor="#5B42F3" // Xanh dương đậm hơn khi hover
                             textColor="white"
                             style={{
                                 width: '150px',
-                                fontSize: 15,
-                                fontWeight: 'bold',
-                                font: 'Arial, sans-serif',
+                                fontWeight: '900px',
+                                fontFamily: 'Arial, sans-serif',
                                 right: 0,
+                                borderRadius: '6px', // Bo góc nhẹ cho nút
+                                border: 'none', // Loại bỏ border
+                                padding: '10px 20px', // Thêm padding để nút rộng hơn
+                                transition: 'background-color 0.3s ease', // Hiệu ứng chuyển màu mượt mà
                             }}
                         />
                     </Form.Item>
