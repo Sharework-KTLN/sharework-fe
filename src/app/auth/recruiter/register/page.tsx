@@ -387,7 +387,7 @@ const RecruiterRegister: React.FC = () => {
                 }}
             >
                 <Link
-                    href="/auth/recruiter/login"
+                    href="/auth/recruiter"
                     style={{
                         position: 'absolute',
                         top: '20px',

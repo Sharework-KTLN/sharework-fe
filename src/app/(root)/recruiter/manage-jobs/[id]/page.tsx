@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import dayjs from "dayjs";
 import { Job } from "@/types/job";
 import { Company } from "@/types/company";
 
 export default function JobDetailPage() {
+
+    const router = useRouter();
+
     const { id } = useParams();
     const [job, setJob] = useState<Job | null>(null);
     const [company, setCompany] = useState<Company | null>(null);
@@ -52,6 +55,10 @@ export default function JobDetailPage() {
             </div>
         );
     }
+
+    const handleButtonEditPost = (post_id: number) => {
+        router.push(`/recruiter/edit-job/${post_id}`);
+    };
 
     return (
         <div className="max-w-5xl mx-auto p-6 bg-gray-100 min-h-screen">
@@ -106,7 +113,10 @@ export default function JobDetailPage() {
                 <button className="bg-gray-500 text-white px-6 py-3 rounded-lg font-bold text-lg hover:bg-gray-700 transition duration-300">
                     Ẩn bài đăng
                 </button>
-                <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 transition duration-300">
+                <button
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 transition duration-300"
+                    onClick={() => handleButtonEditPost(job.id)}
+                >
                     Chỉnh sửa bài đăng ✏️
                 </button>
             </div>

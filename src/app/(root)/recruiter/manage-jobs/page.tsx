@@ -51,6 +51,11 @@ const ManageJobPage = () => {
             router.push(`/recruiter/manage-jobs/${post_id}`);
         }
     };
+    const handleButtonEditPost = (post_id: number) => {
+        if (isMounted) {
+            router.push(`/recruiter/edit-job/${post_id}`);
+        }
+    };
 
     return (
         <div
@@ -134,7 +139,7 @@ const ManageJobPage = () => {
                                 backgroundColor="orange"
                                 hoverColor="darkorange"
                                 textColor="white"
-                                onClick={() => alert(`Chỉnh sửa bài đăng ID: ${post.id}`)}
+                                onClick={() => handleButtonEditPost(post.id)}
                             />
                             <CustomButton
                                 text="Ẩn bài đăng"
