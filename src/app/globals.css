@@ -19,8 +19,17 @@ body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradientMove 4s ease infinite;
+/* Chỉnh màu hover cho side bar admin */
+/* Áp dụng hover chỉ cho item KHÔNG được chọn */
+.custom-menu .ant-menu-item:not(.ant-menu-item-selected):hover {
+  background-color: #d5cdcd !important;
+  color: #000  !important;
 }
+
+/* Mục được chọn giữ màu riêng */
+.custom-menu .ant-menu-item-selected {
+  background-color: #c4dff4  !important;
+  color: whit1677ff e !important;
+  font-weight: 600;
+}
+
