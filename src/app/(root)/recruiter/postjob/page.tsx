@@ -174,16 +174,57 @@ const PostJobPage = () => {
                         <Form.Item
                             name="required_skills"
                             label="Yêu cầu kỹ năng"
-                            style={{ flex: 1 }}
+                            style={{ flex: 2 }}
                             rules={[{ required: true, message: 'Hãy nhập kỹ năng yêu cầu!' }]}
                         >
                             <Input placeholder="Nhập kỹ năng yêu cầu" />
                         </Form.Item>
+
+                        <Form.Item
+                            name="experience_required"
+                            label="Kinh nghiệm"
+                            style={{ flex: 1 }}
+                            rules={[{ required: true, message: 'Hãy chọn kinh nghiệm!' }]}
+                        >
+                            <Select placeholder="Chọn kinh nghiệm">
+                                <Option value="no_experience">Không yêu cầu kinh nghiệm</Option>
+                                <Option value="<1">Dưới 1 năm</Option>
+                                <Option value="1-2">1 - 2 năm</Option>
+                                <Option value="2-3">2 - 3 năm</Option>
+                                <Option value="3-4">3 - 4 năm</Option>
+                                <Option value="4-5">4 - 5 năm</Option>
+                                <Option value=">5">Trên 5 năm</Option>
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="education"
+                            label="Học vấn"
+                            style={{ flex: 1 }}
+                            rules={[{ required: true, message: 'Hãy chọn học vấn!' }]}
+                        >
+                            <Select placeholder="Chọn học vấn">
+                                <Option value="university">Đại học</Option>
+                                <Option value="college">Cao đẳng</Option>
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="position"
+                            label="Cấp bậc"
+                            style={{ flex: 1 }}
+                            rules={[{ required: true, message: 'Hãy chọn cấp bậc!' }]}
+                        >
+                            <Select placeholder="Chọn cấp bậc">
+                                <Option value="intern">Thực tập sinh</Option>
+                                <Option value="staff">Nhân viên</Option>
+                            </Select>
+                        </Form.Item>
+
                         <Form.Item
                             name="vacancies"
                             label="Số lượng"
                             style={{ flex: 1 }}
-                        // rules={[{ required: true, type: 'number', min: 1, message: 'Số lượng phải lớn hơn 0!' }]}
                         >
                             <Input type="number" placeholder="Nhập số lượng" />
                         </Form.Item>
@@ -214,16 +255,18 @@ const PostJobPage = () => {
                             </Select>
                         </Form.Item>
                         <Form.Item
-                            name="salary_type"
-                            label="Hình thức lương"
+                            name="work_type"
+                            label="Hình thức làm việc"
                             style={{ flex: 1 }}
-                            rules={[{ required: true, message: 'Hãy chọn hình thức lương!' }]}
+                            rules={[{ required: true, message: 'Hãy chọn hình thức làm việc!' }]}
                         >
-                            <Select>
-                                <Option value="vnd_month">VND/tháng</Option>
-                                <Option value="vnd_week">VND/tuần</Option>
+                            <Select placeholder="Chọn hình thức làm việc">
+                                <Option value="full_time">Toàn thời gian</Option>
+                                <Option value="part_time">Bán thời gian</Option>
+                                <Option value="remote">Làm việc từ xa</Option>
                             </Select>
                         </Form.Item>
+
                         <Form.Item
                             name="deadline"
                             label="Hạn bài đăng"
@@ -239,28 +282,29 @@ const PostJobPage = () => {
                         </Form.Item>
                     </div>
 
-                    {/* Hình thức làm việc */}
+                    {/* Mô tả công việc */}
                     <Form.Item
-                        name="work_type"
-                        label="Hình thức làm việc"
-                        rules={[{ required: true, message: 'Hãy chọn ít nhất 1 hình thức làm việc!' }]}
-                    >
-                        <div>
-                            <label><input type="checkbox" value="fulltime" /> Full-time</label> &nbsp;
-                            <label><input type="checkbox" value="parttime" /> Part-time</label> &nbsp;
-                            <label><input type="checkbox" value="onsite" /> Onsite</label> &nbsp;
-                            <label><input type="checkbox" value="hybrid" /> Hybrid</label>
-                        </div>
-                    </Form.Item>
-
-                    {/* Địa chỉ làm việc */}
-                    <Form.Item
-                        name="work_location"
-                        label="Địa chỉ làm việc"
+                        name="description"
+                        label="Mô tả công việc"
                     >
                         <Input.TextArea
-                            placeholder="Nhập địa chỉ"
-                            autoSize={{ minRows: 2, maxRows: 5 }} // Tuỳ chỉnh độ cao
+                            placeholder="Nhập mô tả công việc"
+                            rows={4}
+                            style={{
+                                fontSize: '14px', // Kích thước chữ
+                                fontFamily: 'Arial, sans-serif', // Font chữ
+                                fontWeight: '500px' // Độ đậm của chữ (tùy chỉnh nếu cần)
+                            }}
+                        />
+                    </Form.Item>
+                    {/* Yêu cầu ứng viên */}
+                    <Form.Item
+                        name="candidate_required"
+                        label="Yêu cầu ứng viên"
+                    >
+                        <Input.TextArea
+                            placeholder="Nhập yêu cầu ứng viên"
+                            rows={4}
                             style={{
                                 fontSize: '14px', // Kích thước chữ
                                 fontFamily: 'Arial, sans-serif', // Font chữ
@@ -275,7 +319,7 @@ const PostJobPage = () => {
                     >
                         <Input.TextArea
                             placeholder="Nhập thời gian làm việc"
-                            autoSize={{ minRows: 2, maxRows: 5 }} // Tuỳ chỉnh độ cao
+                            rows={2}
                             style={{
                                 fontSize: '14px', // Kích thước chữ
                                 fontFamily: 'Arial, sans-serif', // Font chữ
@@ -283,14 +327,29 @@ const PostJobPage = () => {
                             }}
                         />
                     </Form.Item>
-                    {/* Mô tả công việc việc */}
+                    {/* Quyền lợi */}
                     <Form.Item
-                        name="description"
-                        label="Mô tả công việc"
+                        name="benefits"
+                        label="Quyền lợi"
                     >
                         <Input.TextArea
-                            placeholder="Nhập mô tả công việc"
-                            autoSize={{ minRows: 2, maxRows: 5 }} // Tuỳ chỉnh độ cao
+                            placeholder="Nhập quyền lợi"
+                            rows={4}
+                            style={{
+                                fontSize: '14px', // Kích thước chữ
+                                fontFamily: 'Arial, sans-serif', // Font chữ
+                                fontWeight: '500px' // Độ đậm của chữ (tùy chỉnh nếu cần)
+                            }}
+                        />
+                    </Form.Item>
+                    {/* Địa chỉ làm việc */}
+                    <Form.Item
+                        name="work_location"
+                        label="Địa chỉ làm việc"
+                    >
+                        <Input.TextArea
+                            placeholder="Nhập địa chỉ"
+                            rows={4}
                             style={{
                                 fontSize: '14px', // Kích thước chữ
                                 fontFamily: 'Arial, sans-serif', // Font chữ
