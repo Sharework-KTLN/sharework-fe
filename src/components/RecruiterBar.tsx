@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, Col, Row } from 'antd';
 import type { MenuProps } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
@@ -12,7 +12,7 @@ import CustomButton from './CustomButton';
 import UserDropdown from './UserDropdown';
 import MessageDropdown from './MessageDropdown';
 import NotificationDropdown from './NotificationDropdown';
-import { logout } from '@/redux/userSlice';
+import { login, logout } from '@/redux/userSlice';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -26,27 +26,126 @@ const RecruiterBar: React.FC = () => {
     // 🟢 Lấy thông tin user từ Redux store
     const user = useSelector((state: RootState) => state.user);
 
+    useEffect(() => {
+        // Kiểm tra token trong localStorage khi trang được load
+        const savedToken = localStorage.getItem("token");
+        if (savedToken && !user.id) {
+            // Gọi API để lấy thông tin người dùng và cập nhật Redux
+            const fetchUser = async () => {
+                try {
+                    const res = await fetch("http://localhost:8080/auth/me", {
+                        headers: { "Authorization": `Bearer ${savedToken}` },
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        dispatch(login({ ...data, token: savedToken })); // Cập nhật Redux
+                    } else {
+                        localStorage.removeItem("token");
+                        dispatch(logout());
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi lấy user:", error);
+                    localStorage.removeItem("token");
+                    dispatch(logout());
+                }
+            };
+            fetchUser();
+        }
+    }, [dispatch, user.id]);
+
     const menuItems: MenuItem[] = [
         {
-            label: (<div onClick={() => router.push('/recruiter')}>Bảng tin</div>),
+            label: (
+                <div
+                    onClick={() => router.push('/recruiter')}
+                    style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                    onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                    onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                >
+                    Bảng tin
+                </div>
+            ),
             key: 'bangtin',
         },
         {
-            label: 'Đăng tin',
+            label: (
+                <div
+                    style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                    onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                    onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                >
+                    Đăng tin
+                </div>
+            ),
             key: 'dangtin',
             children: [ // 🟢 Thêm submenu
                 {
-                    label: (<div onClick={() => router.push('/recruiter/postjob')}>Đăng tin tuyển dụng</div>),
+                    label: (
+                        <div
+                            onClick={() => router.push('/recruiter/postjob')}
+                            style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                            onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                            onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                        >
+                            Đăng tin tuyển dụng
+                        </div>
+                    ),
                     key: 'dangtin-tuyendung',
                 },
                 {
-                    label: (<div onClick={() => router.push('/recruiter/manage-jobs')}>Quản lý bài đăng</div>),
+                    label: (
+                        <div
+                            onClick={() => router.push('/recruiter/manage-jobs')}
+                            style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                            onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                            onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                        >
+                            Quản lý bài đăng
+                        </div>
+                    ),
                     key: 'quanly-baidang',
                 }
             ]
         },
         {
-            label: 'Tìm CV',
+            label: (
+                <div
+                    onClick={() => router.push('/recruiter/manage-jobs')}
+                    style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                    onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                    onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                >
+                    Công ty
+                </div>
+            ),
+            key: 'congty',
+            children: [
+                {
+                    label: (
+                        <div
+                            onClick={() => router.push('/recruiter/company-information')}
+                            style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                            onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                            onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                        >
+                            Thông tin công ty
+                        </div>
+                    ),
+                    key: 'thongtin-congty',
+                }
+            ]
+        },
+        {
+            label: (
+                <div
+                    onClick={() => router.push('/recruiter/manage-jobs')}
+                    style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
+                    onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
+                    onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
+                >
+                    Tìm CV
+                </div>
+            ),
             key: 'timcv',
         }
     ];
@@ -65,7 +164,7 @@ const RecruiterBar: React.FC = () => {
         localStorage.removeItem("token"); // Xóa token khỏi localStorage
         // setUser(null); // Reset state user
         dispatch(logout());
-        router.push("/auth/candidate/login"); // Chuyển hướng về trang đăng nhập
+        router.push("/auth/recruiter/login"); // Chuyển hướng về trang đăng nhập
     };
     return (
         <div
@@ -122,11 +221,12 @@ const RecruiterBar: React.FC = () => {
                             theme="light"
                             mode="horizontal"
                             selectedKeys={[current]}
-                            // defaultSelectedKeys={['trangchu']}
                             items={menuItems}
-                            style={{ borderBottom: 'none' }}
-                            className="custom-menu"
-                        // hidden={windowWidth < 768}
+
+                            style={{
+                                borderBottom: 'none',
+                                fontFamily: 'Arial, sans-serif', // Chỉnh font chữ cho menu
+                            }}
                         />
                     </div>
                 </Col>
@@ -146,7 +246,7 @@ const RecruiterBar: React.FC = () => {
                             justifyContent: 'center',
                         }}
                     >
-                        {user.id ? (
+                        {user.id !== null ? (
                             <div
                                 style={{
                                     display: 'flex',

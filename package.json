@@ -13,6 +13,7 @@
     "@ant-design/nextjs-registry": "^1.0.2",
     "@reduxjs/toolkit": "^2.6.1",
     "antd": "^5.23.1",
+    "axios": "^1.8.4",
     "dayjs": "^1.11.13",
     "framer-motion": "^12.6.2",
     "jwt-decode": "^4.0.0",
