@@ -63,8 +63,20 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user, onLogout }) => {
     // ], [user, onLogout]);
 
     return (
-        <Dropdown menu={{ items: userMenu }} placement="bottomRight" arrow>
-            <Avatar size="default" src={user.profile_image || undefined} icon={!user.profile_image && <UserOutlined />} style={{ cursor: 'pointer' }} />
+        <Dropdown
+            menu={{
+                items: userMenu
+            }}
+            placement="bottomRight"
+            arrow
+        >
+            <Avatar
+                size="default"
+                src={user.profile_image || undefined} icon={!user.profile_image && <UserOutlined />}
+                style={{
+                    cursor: 'pointer'
+                }}
+            />
         </Dropdown>
     );
 };
