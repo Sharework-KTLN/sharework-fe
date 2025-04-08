@@ -10,8 +10,35 @@ const { Title, Text } = Typography;
 interface CV {
   id: number;
   name: string;
-  image?: string; // ảnh là tùy chọn, có thể không có
+  image?: string;
   positionApply?: string;
+  dob?: string;
+  gender?: string;
+  phone?: string;
+  email?: string;
+  facebook?: string;
+  address?: string;
+  skillName?: string;
+  skillDesc?: string;
+  hobbiesDesc?: string;
+  careerGoalsDesc?: string;
+  universityName?: string;
+  startStudy?: string;
+  endStudy?: string;
+  subjectName?: string;
+  learningProcess?: string;
+  positionName?: string;
+  businessName?: string;
+  startWork?: string;
+  endWork?: string;
+  workingProcess?: string;
+  activeName?: string;
+  OrgaName?: string;
+  startActive?: string;
+  endActive?: string;
+  activeProcess?: string;
+  certificateTime?: string;
+  certificateName?: string;
   createdAt?: string;
 }
 

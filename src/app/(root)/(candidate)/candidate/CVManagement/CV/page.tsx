@@ -22,8 +22,35 @@ const { Title, Text } = Typography;
 interface CV {
     id: number;
     name: string;
-    image?: string;  // Ảnh là tùy chọn, có thể không có
+    image?: string;
     positionApply?: string;
+    dob?: string;
+    gender?: string;
+    phone?: string;
+    email?: string;
+    facebook?: string;
+    address?: string;
+    skillName?: string;
+    skillDesc?: string;
+    hobbiesDesc?: string;
+    careerGoalsDesc?: string;
+    universityName?: string;
+    startStudy?: string;
+    endStudy?: string;
+    subjectName?: string;
+    learningProcess?: string;
+    positionName?: string;
+    businessName?: string;
+    startWork?: string;
+    endWork?: string;
+    workingProcess?: string;
+    activeName?: string;
+    OrgaName?: string;
+    startActive?: string;
+    endActive?: string;
+    activeProcess?: string;
+    certificateTime?: string;
+    certificateName?: string;
     createdAt?: string;
 }
 const CV = () => {
@@ -34,6 +61,12 @@ const CV = () => {
     const [image, setImage] = useState<string>("https://via.placeholder.com/100");
     const [name, setName] = useState("");
     const [positionApply, setpositionApply] = useState("");
+    const [dob, setDob] = useState("");
+    const [gender, setGender] = useState("");
+    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
+    const [facebook, setFacebook] = useState("");
+    const [address, setAddress] = useState("");
     const [skillName, setSkillName] = useState("");
     const [skillDesc, setSkillDesc] = useState("");
     const [hobbiesDesc, setHobbiesDesc] = useState("");
@@ -77,6 +110,12 @@ const CV = () => {
             image,
             name,
             positionApply,
+            dob,
+            gender,
+            phone,
+            email,
+            facebook,
+            address,
             skillName,
             skillDesc,
             hobbiesDesc,
@@ -118,6 +157,11 @@ const CV = () => {
                 setImage(selectedCv.image);
                 setName(selectedCv.name);
                 setpositionApply(selectedCv.positionApply);
+                setDob(selectedCv.dob);
+                setGender(selectedCv.gender);
+                setPhone(selectedCv.phone);
+                setEmail(selectedCv.email);
+                setAddress(selectedCv.address);
                 setSkillName(selectedCv.skillName);
                 setSkillDesc(selectedCv.skillDesc);
                 setHobbiesDesc(selectedCv.hobbiesDesc);
@@ -201,6 +245,9 @@ const CV = () => {
                                     }}
                                 />
                                 <Input
+                                    value={dob}
+                                    onChange={(e) => setDob(e.target.value)}
+                                    spellCheck={false}
                                     placeholder="DD/MM/YYYY"
                                     style={{
                                         paddingLeft: 40, backgroundColor: "transparent", border: "none",
@@ -222,6 +269,8 @@ const CV = () => {
                                 />
                                 <Input
                                     placeholder="Nam/Nữ"
+                                    value={gender}
+                                    onChange={(e) => setGender(e.target.value)}
                                     style={{
                                         paddingLeft: 40, backgroundColor: "transparent", border: "none",
                                         fontSize: "14px", color: "#333", transition: "border-bottom 0.3s ease-in-out"
@@ -242,6 +291,8 @@ const CV = () => {
                                 />
                                 <Input
                                     placeholder="012345689"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
                                     style={{
                                         paddingLeft: 40, backgroundColor: "transparent", border: "none",
                                         fontSize: "14px", color: "#333", transition: "border-bottom 0.3s ease-in-out"
@@ -262,6 +313,8 @@ const CV = () => {
                                 />
                                 <Input
                                     placeholder="email@gmail.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     style={{
                                         paddingLeft: 40, backgroundColor: "transparent", border: "none",
                                         fontSize: "14px", color: "#333", transition: "border-bottom 0.3s ease-in-out"
@@ -282,6 +335,8 @@ const CV = () => {
                                 />
                                 <Input
                                     placeholder="Facebook.com/profile"
+                                    value={facebook}
+                                    onChange={(e) => setFacebook(e.target.value)}
                                     style={{
                                         paddingLeft: 40, backgroundColor: "transparent", border: "none",
                                         fontSize: "14px", color: "#333", transition: "border-bottom 0.3s ease-in-out"
@@ -302,6 +357,8 @@ const CV = () => {
                                 />
                                 <Input
                                     placeholder="Địa chỉ"
+                                    value={address}
+                                    onChange={(e) => setAddress(e.target.value)}
                                     style={{
                                         paddingLeft: 40, backgroundColor: "transparent", border: "none",
                                         fontSize: "14px", color: "#333", transition: "border-bottom 0.3s ease-in-out"

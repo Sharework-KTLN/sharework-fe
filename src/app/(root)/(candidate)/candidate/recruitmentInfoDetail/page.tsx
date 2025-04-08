@@ -8,18 +8,28 @@ import { useEffect, useState } from 'react';
 const { Title, Text } = Typography;
 
 interface Job {
+    id: number;
     title: string;
-    company: string;
-    location: string;
-    specialization: string;
     description: string;
-    requirement: string;
-    jobType: string;
-    salary: string;
-    create_date: string;
-    end_date: string;
-    image: string;
-    savedAt: string;
+    status: string;
+    experience_required: string;
+    salary_range: string;
+    work_location: string; // Địa chỉ làm việc (thay vì location)
+    created_at: string;
+    updated_at: string;
+    company_id: number;
+    recruiter_id: number;
+    required_skills: string; // Yêu cầu kỹ năng
+    industry: string; // Lĩnh vực cần tuyển
+    salary_type: string; // Hình thức lương (net/gross, theo giờ/tháng, v.v.)
+    deadline: string; // Hạn bài đăng
+    work_type: string; // Hình thức làm việc (toàn thời gian, bán thời gian, remote, v.v.)
+    work_schedule: string; // Thời gian làm việc
+    vacancies: number; // Số lượng tuyển dụng
+    benefits: string; // Phúc lợi công việc
+    company_name: string; // Tên công ty
+    company_logo: string;
+    recruiter: string; // Tên người tuyển dụng
 }
 
 const iconStyle = {
@@ -74,18 +84,24 @@ const RecruitmentInfoDetail = () =>{
     };
 
     const descriptionSentences = job.description.split('.').filter(Boolean);
+    const work_ScheduleSentences = job.work_schedule.split('.').filter(Boolean);
+    const required_SkillsSentences = job.required_skills.split('.').filter(Boolean);
 
     const calculateDaysRemaining = (endDate: string) => {
-        const today = new Date(); // Lấy ngày hiện tại
-        today.setHours(0, 0, 0, 0); // Đặt thời gian về 00:00:00 để tránh sai lệch do thời gian
-    
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+      
         const end = new Date(endDate);
-        end.setHours(0, 0, 0, 0); // Đặt thời gian về 00:00:00 để so sánh chính xác
-    
+        end.setHours(0, 0, 0, 0);
+      
         const timeDifference = end.getTime() - today.getTime();
-        const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24)); // Chuyển đổi milliseconds sang ngày
-    
-        return daysRemaining;
+        const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
+      
+        if (daysRemaining < 0) {
+          return "Đã hết hạn nộp hồ sơ";
+        }
+      
+        return `Còn ${daysRemaining} ngày đến hạn nộp hồ sơ`;
     };
 
     // Lưu công việc vào sessionStorage
@@ -132,10 +148,10 @@ const RecruitmentInfoDetail = () =>{
                 <Card className="shadow-md">
                     <Title level={3}>{job.title}</Title>
                     <div className="flex gap-2 items-center mb-3">
-                        <Tag icon={<MoneyCollectOutlined />} color="green">{job.salary}</Tag>
-                        <Tag icon={<EnvironmentOutlined />} color="blue">{job.location}</Tag>
-                        <Tag icon={<HourglassOutlined/>} color="orange">{job.requirement}</Tag>
-                        <Tag icon={<ClockCircleOutlined/>} color="default">Còn {calculateDaysRemaining(job.end_date)} ngày đến hạn nộp hồ sơ</Tag>
+                        <Tag icon={<MoneyCollectOutlined />} color="green">{job.salary_range}</Tag>
+                        <Tag icon={<EnvironmentOutlined />} color="blue">{job.work_location}</Tag>
+                        <Tag icon={<HourglassOutlined/>} color="orange">{job.experience_required}</Tag>
+                        <Tag icon={<ClockCircleOutlined/>} color="default">{calculateDaysRemaining(job.deadline)}</Tag>
                     </div>
                     <Button 
                         type="primary" className="mb-4" 
@@ -169,14 +185,18 @@ const RecruitmentInfoDetail = () =>{
                             {descriptionSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
                             ))}
+                            {required_SkillsSentences.map((sentence, index) => (
+                                <li key={index}>{sentence.trim()}.</li>
+                            ))}
                         </ul>
                     </div>
                     
                     <Title level={4}>Thời gian làm việc</Title>
                     <div style={{marginTop:"-7px", marginBottom:"7px"}}>
                         <ul className="list-disc pl-5">
-                            <li>8:00 - 17:00 từ thứ 2 đến thứ 6</li>
-                            <li>Có thể thực tập tối thiểu 3 ngày/tuần</li>
+                            {work_ScheduleSentences.map((sentence, index) => (
+                                <li key={index}>{sentence.trim()}.</li>
+                            ))}
                         </ul>
                     </div>
                     
@@ -200,21 +220,21 @@ const RecruitmentInfoDetail = () =>{
                         {/* Ảnh công ty */}
                         <div className="w-16 h-16">
                             <Image 
-                            src="https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA"
-                            alt="Logo công ty"
-                            width={64}
-                            height={64}
-                            className="rounded-md object-cover"
+                                src={job.company_logo}
+                                alt={job.company_name}
+                                width={64}
+                                height={64}
+                                className="rounded-md object-cover"
                             />
                         </div>
 
                         {/* Thông tin công ty */}
                         <div>
-                            <Text strong>{job.company}</Text>
+                            <Text strong>{job.company_name}</Text>
                             <br />
-                            <Text>Lĩnh vực: {job.specialization}</Text>
+                            <Text>Lĩnh vực: {job.industry}</Text>
                             <br/>
-                            <Text>Địa điểm: {job.location}</Text>
+                            <Text>Địa điểm: {job.work_location}</Text>
                         </div>
                         </div>
                         <Button 
@@ -246,7 +266,7 @@ const RecruitmentInfoDetail = () =>{
                                 </div>
                                 <div className="flex flex-col ml-2"> {/* Sử dụng flex-col cho 2 span xuống dòng */}
                                     <span className="block" style={info1Style}>Hình thức làm việc</span>
-                                    <span className="block" style={info2Style}>{job.jobType}</span>
+                                    <span className="block" style={info2Style}>{job.work_type}</span>
                                 </div>
                             </div>
                             <div className="flex items-center">
@@ -255,7 +275,7 @@ const RecruitmentInfoDetail = () =>{
                                 </div>
                                 <div className="flex flex-col ml-2">
                                     <span className="block" style={info1Style}>Hạn nộp hồ sơ</span>
-                                    <span className="block" style={info2Style}>{job.end_date}</span>
+                                    <span className="block" style={info2Style}>{job.deadline}</span>
                                 </div>
                             </div>
                         </div>

@@ -3,45 +3,66 @@
 import React, {useState, useEffect} from "react";
 import { Card, Button, Row, Col, Image } from "antd";
 import { EnvironmentOutlined, GlobalOutlined } from "@ant-design/icons";
+import { useSearchParams } from 'next/navigation';
 
-interface Business{
+interface Company {
     id: number;
-    image: string;
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
     logo: string;
-    company: string; // Nếu API trả về 'company', thì giữ nguyên
-    description: string;
-    link?: string; // Có thể undefined
+    specialize: string;
+    image_company: string;
+    link?: string;
     location: string;
-    locationDetail: string;
-    specialization: string;
-    jobCount: number;
-    title?: string; // Nếu thực sự có 'title'
+    job_count: number;
+    description: string;
+    recruiter_name: string;
+    jobs: Job[]; // Thêm thuộc tính jobs để lưu danh sách công việc
 }
 interface Job {
     id: number;
     title: string;
-    salary: string;
-    location: string;
-};
-
-const jobs: Job[] = [
-    { id: 1, title: "Game Designer (Fresher)", salary: "Từ 8 triệu", location: "Hà Nội" },
-    { id: 2, title: "Digital Marketing Intern", salary: "Từ 6-8 triệu", location: "Hà Nội" },
-];
+    salary_range: string;
+    work_location: string;
+}
   
 const InfoBusinessDetail = () => {
-    const [business, setBusiness] = useState<Business | null>(null);
+    const searchParams = useSearchParams(); // Use this to get search params
+    const id = searchParams.get('id');
+    const [companyDetails, setCompanyDetails] = useState<Company | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [expanded, setExpanded] = useState<boolean>(false);
 
     useEffect(() => {
-        const businessDetail = sessionStorage.getItem("infoBusinessDetail");
-        if (businessDetail) {
-            setBusiness(JSON.parse(businessDetail));
-        }
-    }, []);
-    if (!business) return <p>Loading...</p>;
-
-    const fullContent = business?.description || "Chưa có mô tả";
+        const fetchCompanyDetails = async () => {
+          if (!id) return; // Chờ cho đến khi id có sẵn
+    
+          try {
+            const response = await fetch(`http://localhost:8080/companies/${id}`);
+            if (!response.ok) {
+              throw new Error("Failed to fetch company details");
+            }
+            const data = await response.json();
+            setCompanyDetails(data); // Lưu thông tin chi tiết công ty vào state
+          } catch (error) {
+            console.error("Error fetching company details:", error);
+            setError("Unable to load company details.");
+          }
+        };
+    
+        fetchCompanyDetails();
+      }, [id]); // Gọi lại khi id thay đổi
+    
+      if (error) {
+        return <div>{error}</div>;
+      }
+    
+      if (!companyDetails) {
+        return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
+    }
+    const fullContent = companyDetails?.description || "Chưa có mô tả";
     // Rút gọn nội dung
     const shortContent = fullContent.length > 500 ? fullContent.substring(0, 500) + "..." : fullContent;
 
@@ -58,7 +79,7 @@ const InfoBusinessDetail = () => {
                 }}
             >
                 <Image
-                    src={business?.image || "https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-hop-tac-thanh-cong-inkythuatso-07-10-42-07.jpg"}
+                    src={companyDetails?.image_company || "https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-hop-tac-thanh-cong-inkythuatso-07-10-42-07.jpg"}
                     alt="Banner"
                     width="100%" // Kích thước ảnh
                     height="200px"
@@ -84,7 +105,7 @@ const InfoBusinessDetail = () => {
                     <Col>
                         <Row align="middle">
                             <Image
-                                src={business?.logo || "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA"}
+                                src={companyDetails?.logo || "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA"}
                                 alt="Company Logo"
                                 width={100}
                                 height={100}
@@ -99,13 +120,13 @@ const InfoBusinessDetail = () => {
                                 preview={false} // Tắt tính năng xem trước
                             />
                             <Col style={{marginLeft:"15px"}}>
-                                <h1 style={{ fontWeight: "700", fontSize: "24px", color:"#000000" }}>{business.company}</h1>
+                                <h1 style={{ fontWeight: "700", fontSize: "24px", color:"#000000" }}>{companyDetails.name}</h1>
                                 <a 
-                                    href={business?.link} target="_blank" rel="noopener noreferrer" 
+                                    href={companyDetails?.link} target="_blank" rel="noopener noreferrer" 
                                     style={{ fontWeight: "500", fontSize: "13px", color: "black" }}
                                 >
                                     <GlobalOutlined style={{ color: "#000000", fontSize: "13px", marginRight: "8px" }} />
-                                    {business.link}
+                                    {companyDetails.link}
                                 </a>
                             </Col>
                         </Row>
@@ -193,24 +214,58 @@ const InfoBusinessDetail = () => {
                         </div>
 
                         <div style={{ maxHeight: "300px", overflowY: "auto" }}> 
-                            {jobs.map((job) => (
+                            {companyDetails.jobs?.map((job:Job) => (
                                 <Card 
                                     key={job.id} 
                                     className="flex items-center border rounded-lg p-4 shadow mb-3"
                                 >
-                                    <div className="flex items-center">
-                                        <Image 
-                                            src={business?.logo || "https://via.placeholder.com/80"} 
-                                            alt="Company Logo"
-                                            width={60} height={60} 
-                                            className="mr-4 border p-1 bg-white rounded-lg"
-                                        />
-                                        <div>
-                                            <h3 className="font-bold">{job.title}</h3>
-                                            <p className="text-sm text-gray-500">{job.salary} - {job.location}</p>
+                                    <div style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        flexWrap: 'wrap',  // Allow content to wrap on smaller screens
+                                        justifyContent: 'space-between',
+                                        marginBottom: '10px'  // Add some space at the bottom on mobile
+                                    }}>
+                                        <div style={{
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            width: '100%', 
+                                            maxWidth: '700px',  // Set max width to keep it from stretching too much
+                                            marginRight: '20px', 
+                                            marginBottom: '10px'  // Add margin to avoid tight spacing on smaller screens
+                                        }}>
+                                            <Image 
+                                                src={companyDetails?.logo || "https://via.placeholder.com/80"} 
+                                                alt={companyDetails?.logo}
+                                                width={60} height={60} 
+                                                style={{
+                                                    marginRight: '20px', 
+                                                    border: '1px solid', 
+                                                    padding: '4px', 
+                                                    backgroundColor: 'white', 
+                                                    borderRadius: '8px'
+                                                }}
+                                            />
+                                            <div style={{ marginLeft: "15px" }}>
+                                                <h3 style={{ fontSize: 18, fontWeight: 700 }}>{job.title}</h3>
+                                                <p className="text-sm text-gray-500">{job.salary_range} - {job.work_location}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <Button className="mt-2 w-full">Ứng tuyển</Button>
+                                        
+                                        <Button 
+                                            style={{ 
+                                                backgroundColor: "#D4421E", 
+                                                color: "white", 
+                                                border: "none",
+                                                fontWeight: "500", 
+                                                height: "43px", 
+                                                width: '100%',  // Make button full width on smaller screens
+                                                maxWidth: '150px'  // Limit width on larger screens
+                                            }}
+                                        >
+                                            Ứng tuyển
+                                        </Button>
+                                    </div>  
                                 </Card>
                             ))}
                         </div>
@@ -236,7 +291,7 @@ const InfoBusinessDetail = () => {
                             }}>
                             <p className="mt-2 text-black-600 flex items-center">
                                 <EnvironmentOutlined style={{ color: "#D4421E", fontSize: "20px", marginRight: "8px" }} />
-                                {business.locationDetail}
+                                {companyDetails.address}
                             </p>
 
                             {/* Google Map Embed */}
@@ -246,7 +301,7 @@ const InfoBusinessDetail = () => {
                                 height="150" 
                                 frameBorder="0" 
                                 style={{ border: 0, marginTop: "10px" }} 
-                                src={`https://www.google.com/maps?q=${encodeURIComponent(business?.locationDetail)}&output=embed`} 
+                                src={`https://www.google.com/maps?q=${encodeURIComponent(companyDetails?.address)}&output=embed`} 
                                 allowFullScreen
                             ></iframe>
                         </div>

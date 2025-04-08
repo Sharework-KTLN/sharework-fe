@@ -5,104 +5,22 @@ import { Card, Row, Col, Select, Button, Pagination, Input, Image } from 'antd';
 import { EnvironmentOutlined , SearchOutlined, DownOutlined, UpOutlined} from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 
-const { Option } = Select;
-interface Job {
+interface Company {
     id: number;
-    image: string;
-    logo: string;
-    company: string; // Nếu API trả về 'company', thì giữ nguyên
-    description: string;
-    link?: string; // Có thể undefined
-    location: string;
-    locationDetail: string;
-    specialization: string;
-    jobCount: number;
-    title?: string; // Nếu thực sự có 'title'
+    name: string; // Tên công ty
+    address: string; // Địa chỉ công ty
+    phone: string; // Số điện thoại công ty
+    email: string; // Email công ty
+    logo: string; // Logo công ty
+    specialize: string; // Lĩnh vực chuyên môn
+    image_company: string; // Hình ảnh công ty
+    link?: string; // Link trang web công ty (có thể undefined)
+    location: string; // Địa chỉ làm việc
+    job_count: number; // Số lượng công việc tuyển dụng
+    description: string; // Mô tả công ty
+    recruiter_name: string; // Tên người tuyển dụng
 }
-// Dữ liệu
-const jobs = [
-    {
-        id: 1,
-        image: "https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-hop-tac-thanh-cong-inkythuatso-07-10-42-07.jpg", // Ảnh nền công ty
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA", // Logo công ty
-        company: "CÔNG TY CỔ PHẦN CÔNG NGHỆ",
-        description: "All Your Applications In One Place",
-        link: "https://iuh.edu.vn/",
-        location: "Hồ Chí Minh",
-        locationDetail:"12 Nguyễn Văn Bảo, Phường 1, Gò Vấp, Hồ Chí Minh",
-        specialization: "Dịch vụ doanh nghiệp, B2B Solutions",
-        jobCount: 1
-    },
-    {
-        id: 2,
-        image: "https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-hop-tac-thanh-cong-inkythuatso-07-10-42-07.jpg",
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
-        company: "CÔNG TY TNHH PHẦN MỀM ABC",
-        description: "Innovative Tech Solutions",
-        link: "https://www.haui.edu.vn/vn",
-        location: "Hà Nội",
-        locationDetail: "Số 298 Đ. Cầu Diễn, Minh Khai, Bắc Từ Liêm, Hà Nội",
-        specialization: "Phần mềm, Công nghệ thông tin",
-        jobCount: 3
-    },
-    {
-        id: 3,
-        image: "https://dplusvn.com/wp-content/uploads/2020/02/hinh-anh-van-phong-cong-ty-zola.jpg",
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
-        company: "TECH STARTUP XYZ",
-        description: "Future of AI & ML",
-        link: "https://www.udn.vn/",
-        location: "Đà Nẵng",
-        locationDetail: "41 Đ. Lê Duẩn, Hải Châu 1, Hải Châu, Đà Nẵng 550000",
-        specialization: "Trí tuệ nhân tạo, Machine Learning",
-        jobCount: 2
-    },
-    {
-        id: 4,
-        image: "https://dplusvn.com/wp-content/uploads/2020/02/hinh-anh-van-phong-cong-ty-zola.jpg",
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
-        company: "Công ty du lịch Vietravel",
-        description: "Đưa bạn đi đến mọi nơi",
-        location: "Hồ Chí Minh",
-        locationDetail:"12 Nguyễn Văn Bảo, Phường 1, Gò Vấp, Hồ Chí Minh",
-        specialization: "Du lịch",
-        jobCount: 4
-    },
-    {
-        id: 5,
-        image: "https://dplusvn.com/wp-content/uploads/2020/02/hinh-anh-van-phong-cong-ty-zola.jpg",
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
-        company: "Công ty du lịch Vietravel",
-        description: "Đưa bạn đi đến mọi nơi",
-        location: "Hồ Chí Minh",
-        locationDetail:"12 Nguyễn Văn Bảo, Phường 1, Gò Vấp, Hồ Chí Minh",
-        specialization: "Kế toán, Du lịch",
-        jobCount: 3
-    },
-    {
-        id: 6,
-        image: "https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-hop-tac-thanh-cong-inkythuatso-07-10-42-07.jpg",
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
-        company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn",
-        description: "Niềm vui của mọi người",
-        location: "Bắc Giang",
-        locationDetail: "TT. Bích Động, Việt Yên, Bắc Giang",
-        specialization: "Quản trị kinh doanh, Công nghệ thông tin",
-        jobCount: 4
-    },
-    {
-        id: 7,
-        image: "https://dplusvn.com/wp-content/uploads/2020/02/hinh-anh-van-phong-cong-ty-zola.jpg",
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA",
-        company: "Ngân hàng TMCP Công thương Việt Nam",
-        description: "Niềm tin của mọi nhà",
-        location: "Hồ Chí Minh",
-        locationDetail:"12 Nguyễn Văn Bảo, Phường 1, Gò Vấp, Hồ Chí Minh",
-        specialization: "Kế toán",
-        jobCount: 3
-    }
-];
-
+const { Option } = Select;
 const filters = [
     {
         key: "location",
@@ -112,7 +30,7 @@ const filters = [
     {
         key: "specialization",
         placeholder: "Chọn chuyên môn",
-        options: ["Công nghệ thông tin", "Quản trị kinh doanh", "Du lịch", "Kế toán", "Trí tuệ nhân tạo", "Dịch vụ doanh nghiệp"]
+        options: ["Công nghệ thông tin", "Quản trị kinh doanh", "Du lịch", "Kế toán", "Trí tuệ nhân tạo", "Dịch vụ doanh nghiệp", "Thương mại", "Dịch vụ"]
     },
 ];
 
@@ -126,11 +44,38 @@ const InfoBusiness = () => {
     });
     const [hoveredCard, setHoveredCard] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1); // Theo dõi trang hiện tại
-    const [filteredJobs, setFilteredJobs] = useState(jobs); // Danh sách công việc đã lọc
+    const [companies, setCompanies] = useState<Company[]>([]); // Chỉ định kiểu cho jobs
+    const [loading, setLoading] = useState(true); // Loading state
+    const [error, setError] = useState<string | null>(null); // Error state có kiểu string hoặc null
+    const [filteredCompanies, setFilteredCompanies] = useState(companies); // Danh sách công việc đã lọc
     const [openSelect, setOpenSelect] = useState<Record<string, boolean>>({}); // Trạng thái của Select
     const [searchTerm, setSearchTerm] = useState("");
     const router = useRouter(); 
     
+    useEffect(() => {
+        const fetchCompanies = async () => {
+            try {
+                // Đảm bảo URL này trỏ đến backend của bạn chạy trên port 8080
+                const response = await fetch("http://localhost:8080/companies");
+            if (!response.ok) {
+                throw new Error("Failed to fetch companies");
+            }
+                const data = await response.json();
+                setCompanies(data);
+                setFilteredCompanies(data);
+            } 
+            catch (err) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("An unknown error occurred");
+                }
+            } finally {
+                setLoading(false);
+              }
+        };
+        fetchCompanies();
+    }, []);
     // Hàm cập nhật trạng thái mở/đóng Select
     const handleDropdownVisibleChange = (key: string, open: boolean) => {
         setOpenSelect(prev => ({ ...prev, [key]: open }));
@@ -144,33 +89,45 @@ const InfoBusiness = () => {
     
     // Hàm lọc dữ liệu dựa trên bộ lọc và tìm kiếm
     useEffect(() => {
-        const updatedJobs = jobs.filter(job => {
+        const updatedCompanies = companies.filter(company => {
             const matchLocation =
-                !selectedFilters.location || job.location.toLowerCase() === selectedFilters.location.toLowerCase();
+                !selectedFilters.location || company.location.toLowerCase() === selectedFilters.location.toLowerCase();
             const matchSpecialization =
-                !selectedFilters.specialization || job.specialization.toLowerCase().includes(selectedFilters.specialization.toLowerCase());
+                !selectedFilters.specialization || company.specialize.toLowerCase().includes(selectedFilters.specialization.toLowerCase());
     
             const matchSearch =
                 searchTerm === "" ||
-                job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                job.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                job.specialization.toLowerCase().includes(searchTerm.toLowerCase()); // 🔥 Mở rộng tìm kiếm
+                company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                company.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                company.specialize.toLowerCase().includes(searchTerm.toLowerCase()); // 🔥 Mở rộng tìm kiếm
     
             return matchLocation && matchSpecialization && matchSearch;
         });
     
-        setFilteredJobs(updatedJobs);
+        setFilteredCompanies(updatedCompanies);
         setCurrentPage(1);
-    }, [selectedFilters, searchTerm]);
+    }, [companies, selectedFilters, searchTerm]);
 
     // Tính toán danh sách job hiển thị dựa trên trang hiện tại
     const startIndex = (currentPage - 1) * pageSize; // Vị trí bắt đầu
     const endIndex = startIndex + pageSize; //Vị trí kết thúc
-    const displayedJobs = filteredJobs.slice(startIndex, endIndex); //Lấy danh sách công việc hiển thị
+    const displayedCompanies = filteredCompanies.slice(startIndex, endIndex); //Lấy danh sách công việc hiển thị
 
-    const handleCardClick = (job: Job) => {
-        sessionStorage.setItem("infoBusinessDetail", JSON.stringify(job));
-        router.push(`/candidate/infoBusinessDetail?id=${job.id}`); // Chuyển đến trang chi tiết
+    const handleCardClick = async (company: Company) => {
+        try {
+          // Gọi API để lấy thông tin chi tiết của công ty
+          const response = await fetch(`http://localhost:8080/companies/${company.id}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch company detailssssss");
+          }
+          const companyDetails = await response.json();
+    
+          // Sau khi lấy thông tin chi tiết công ty, điều hướng đến trang chi tiết công ty
+          router.push(`/candidate/infoBusinessDetail?id=${company.id}`);
+        } catch (error) {
+          console.error("Error fetching company details:", error);
+          setError("Unable to load company details.");
+        }
     };
 
     return (
@@ -267,8 +224,8 @@ const InfoBusiness = () => {
             <div style={{ width: "100%", overflow: "hidden" }}>
             {/* Danh sách việc làm */}
             <Row gutter={[24, 24]}>
-                {displayedJobs.map(job => (
-                    <Col xs={24} sm={12} md={8} key={job.id}>
+                {displayedCompanies.map(companies => (
+                    <Col xs={24} sm={12} md={8} key={companies.id}>
                         <Card hoverable 
                             style={{ 
                                 borderRadius: "10px",
@@ -276,34 +233,34 @@ const InfoBusiness = () => {
                                 height: "100%",
                                 display: 'flex',
                                 flexDirection: "column",
-                                boxShadow: hoveredCard === job.id ? "0 6px 15px rgba(0,0,0,0.3)" : "0 4px 10px rgba(0,0,0,0.2)",
-                                background: hoveredCard === job.id ? "#f0f8ff" : "#ffffff",
+                                boxShadow: hoveredCard === companies.id ? "0 6px 15px rgba(0,0,0,0.3)" : "0 4px 10px rgba(0,0,0,0.2)",
+                                background: hoveredCard === companies.id ? "#f0f8ff" : "#ffffff",
                                 transition: "all 0.3s ease",
-                                transform: hoveredCard === job.id ? "translateY(-5px)" : "translateY(-2px)", 
+                                transform: hoveredCard === companies.id ? "translateY(-5px)" : "translateY(-2px)", 
                             }}
-                            onMouseEnter={() => setHoveredCard(job.id)}
+                            onMouseEnter={() => setHoveredCard(companies.id)}
                             onMouseLeave={() => setHoveredCard(null)}
-                            onClick={()=>handleCardClick(job)}
+                            onClick={()=>handleCardClick(companies)}
                             >
                             <div style={{ position: "relative", height: "140px" ,overflow: "hidden" }}>
                                 <Image 
-                                    src={job.image}
-                                    alt={job.company} 
+                                    src={companies.image_company}
+                                    alt={companies.name} 
                                     style={{ width: "100%", height: "100%", objectFit: "cover" }} 
                                 />
                                 <div style={{ position: "absolute", bottom: "-10px", left: "10px", background: "#fff", padding: "5px", borderRadius: "5px" }}>
                                     <Image 
-                                        src={job.logo} 
-                                        alt={job.company} 
+                                        src={companies.logo} 
+                                        alt={companies.name} 
                                         style={{ width: "60px", height: "60px", borderRadius: "5px" }} 
                                     />
                                 </div>
                             </div>
                             <div style={{ padding: "15px", paddingTop: "25px" }}>
-                                <h3 style={{ fontSize: "16px", fontWeight: "bold" }}>{job.company}</h3>
-                                <p style={{ fontSize: "14px", color: "#666" }}><EnvironmentOutlined /> {job.location}</p>
-                                <p style={{ fontSize: "14px", color: "#666" }}>{job.specialization}</p>
-                                <p style={{ fontSize: "14px", fontWeight: "bold", color: "#D4421E" }}>{job.jobCount} Job →</p>
+                                <h3 style={{ fontSize: "16px", fontWeight: "bold" }}>{companies.name}</h3>
+                                <p style={{ fontSize: "14px", color: "#666" }}><EnvironmentOutlined /> {companies.location}</p>
+                                <p style={{ fontSize: "14px", color: "#666" }}>{companies.specialize}</p>
+                                <p style={{ fontSize: "14px", fontWeight: "bold", color: "#D4421E" }}>{companies.job_count} Job →</p>
                             </div>
                         </Card>
                     </Col>
@@ -314,7 +271,7 @@ const InfoBusiness = () => {
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
                     <Pagination 
                         current={currentPage} 
-                        total={jobs.length} 
+                        total={companies.length} 
                         pageSize={pageSize} 
                         onChange={setCurrentPage} 
                     />
