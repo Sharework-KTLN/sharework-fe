@@ -19,7 +19,7 @@ export default function JobDetailPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const jobRes = await fetch(`http://localhost:8080/jobs/job/${id}`);
+                const jobRes = await fetch(`http://localhost:8080/jobs/detail/${id}`);
                 if (!jobRes.ok) throw new Error("Lỗi khi tải công việc");
                 const jobData = await jobRes.json();
                 setJob(jobData);

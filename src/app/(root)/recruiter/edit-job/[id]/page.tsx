@@ -22,7 +22,7 @@ const EditJobPage = () => {
     useEffect(() => {
         const fetchJobData = async () => {
             try {
-                const res = await axios.get(`http://localhost:8080/jobs/job/${id}`);
+                const res = await axios.get(`http://localhost:8080/jobs/detail/${id}`);
                 if (res.status !== 200) {
                     console.log('Không thể tải dữ liệu công việc!');
                     return;
@@ -37,8 +37,12 @@ const EditJobPage = () => {
                 form.setFieldsValue({
                     title: job.title,
                     required_skills: job.required_skills,
+                    experience_required: job.experience_required,
+                    education: job.educational_level,
+                    position: job.work_level,
                     vacancies: job.vacancies,
-                    industry: job.industry,
+                    industry: job.specialize,
+                    education_level: job.education_level,
                     salary_range: job.salary_range,
                     salary_type: job.salary_type,
                     deadline: job.deadline ? dayjs(job.deadline) : null,
@@ -46,6 +50,8 @@ const EditJobPage = () => {
                     work_location: job.work_location,
                     work_schedule: job.work_schedule,
                     description: job.description,
+                    candidate_required: job.candidate_required,
+                    benefits: job.benefits,
                 });
             } catch (error) {
                 message.error('Không thể tải dữ liệu công việc!');
@@ -239,7 +245,7 @@ const EditJobPage = () => {
                     </div>
 
                     {/* Trình độ học vấn - Cấp bậc - Kinh nghiệm */}
-                    <div style={{ display: 'flex', gap: '10px' }}>
+                    {/* <div style={{ display: 'flex', gap: '10px' }}>
                         <Form.Item name="education_level" label="Trình độ học vấn" style={{ flex: 1 }} rules={[{ required: true }]}>
                             <Select placeholder="Chọn trình độ học vấn">
                                 <Option value="Không yêu cầu">Không yêu cầu</Option>
@@ -266,7 +272,7 @@ const EditJobPage = () => {
                                 <Option value="Trên 2 năm">Trên 2 năm</Option>
                             </Select>
                         </Form.Item>
-                    </div>
+                    </div> */}
 
                     {/* Mô tả công việc */}
                     <Form.Item

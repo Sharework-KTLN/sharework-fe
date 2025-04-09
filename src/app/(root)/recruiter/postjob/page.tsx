@@ -53,6 +53,8 @@ const PostJobPage = () => {
 
     const onFinish = async (values: Record<string, unknown>) => {
         try {
+            // console.log("values", values);
+            // alert("Đăng bài tuyển dụng thành công!");
             // 🔹 Gọi API để tạo bài đăng
             const response = await fetch("http://localhost:8080/jobs", {
                 method: "POST",
@@ -198,7 +200,7 @@ const PostJobPage = () => {
                         </Form.Item>
 
                         <Form.Item
-                            name="education"
+                            name="educational_level"
                             label="Học vấn"
                             style={{ flex: 1 }}
                             rules={[{ required: true, message: 'Hãy chọn học vấn!' }]}
@@ -210,7 +212,7 @@ const PostJobPage = () => {
                         </Form.Item>
 
                         <Form.Item
-                            name="position"
+                            name="work_level"
                             label="Cấp bậc"
                             style={{ flex: 1 }}
                             rules={[{ required: true, message: 'Hãy chọn cấp bậc!' }]}
@@ -233,7 +235,7 @@ const PostJobPage = () => {
                     {/* Lĩnh vực, Mức lương, Hình thức lương, Hạn bài đăng */}
                     <div style={{ display: 'flex', gap: '10px' }}>
                         <Form.Item
-                            name="industry"
+                            name="specialize"
                             label="Lĩnh vực"
                             style={{ flex: 1 }}
                             rules={[{ required: true, message: 'Hãy chọn lĩnh vực!' }]}
@@ -266,7 +268,6 @@ const PostJobPage = () => {
                                 <Option value="remote">Làm việc từ xa</Option>
                             </Select>
                         </Form.Item>
-
                         <Form.Item
                             name="deadline"
                             label="Hạn bài đăng"
