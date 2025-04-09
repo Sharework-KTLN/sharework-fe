@@ -81,10 +81,11 @@ const RecuiterLogin = () => {
                 id: userData.id,
                 full_name: userData.full_name,
                 email: userData.email,
-                candidateId: userData.candidateId || "", // Nếu là recruiter thì candidateId có thể không cần
                 profile_image: userData.profile_image || "",
                 token: data.token,
-                role: userData.role
+                role: userData.role,
+                password: "",  // Thêm giá trị mặc định cho password
+                file_url: userData.file_url || ""  // Thêm file_url (hoặc giá trị mặc định nếu không có)
             }));
             // console.log('userData', userData);
             // setUser(userData);
