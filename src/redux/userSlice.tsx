@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {User} from '../types/user';
 
 interface UserState extends User {
-    token: string | null;
+    token: string | null; // check
 }
 
 // Giá trị ban đầu của state
