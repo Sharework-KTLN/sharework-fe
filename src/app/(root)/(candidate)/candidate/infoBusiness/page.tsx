@@ -30,7 +30,7 @@ const filters = [
     {
         key: "specialization",
         placeholder: "Chọn chuyên môn",
-        options: ["Công nghệ thông tin", "Quản trị kinh doanh", "Du lịch", "Kế toán", "Trí tuệ nhân tạo", "Dịch vụ doanh nghiệp", "Thương mại", "Dịch vụ"]
+        options: ["Công nghệ thông tin", "Quản trị kinh doanh", "Du lịch", "Kế toán", "Trí tuệ nhân tạo", "Dịch vụ doanh nghiệp", "Thương mại", "Dịch vụ", "Game", "Cloud"]
     },
 ];
 
@@ -147,7 +147,7 @@ const InfoBusiness = () => {
                 {/* Tiêu đề */}
                 <div style={{ maxWidth: "900px", width: "100%", textAlign: "left", marginLeft: "155px"}}>
                     <h2 style={{ fontSize: '24px', fontWeight: 'bold'}}>
-                        Tìm kiếm <span style={{ background: '#D4421E', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}>Việc làm</span>
+                        Tìm kiếm <span style={{ background: '#D4421E', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}>Công ty</span>
                     </h2>
                 </div>
                 
@@ -246,13 +246,15 @@ const InfoBusiness = () => {
                                 <Image 
                                     src={companies.image_company}
                                     alt={companies.name} 
-                                    style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                    preview={false}
                                 />
                                 <div style={{ position: "absolute", bottom: "-10px", left: "10px", background: "#fff", padding: "5px", borderRadius: "5px" }}>
                                     <Image 
                                         src={companies.logo} 
                                         alt={companies.name} 
                                         style={{ width: "60px", height: "60px", borderRadius: "5px" }} 
+                                        preview={false}
                                     />
                                 </div>
                             </div>

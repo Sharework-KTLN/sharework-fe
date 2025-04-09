@@ -1,53 +1,54 @@
 'use client';  // Thêm dòng này nếu chưa có
 
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { Table, Tag, Space } from "antd";
 import CustomButton from "@/components/CustomButton"; // Import button của bạn
 import { useRouter } from "next/navigation"; // Để điều hướng đến trang chi tiết
+import dayjs from 'dayjs';
 
 interface JobPost {
     id: number;
     title: string;
-    salary_range: string;
-    work_type: string;
+    company_name: string;
+    recruiter_name: string;
     work_location: string;
-    company_name: string; // Thêm thông tin công ty
-    vacancies: number; // Số lượng tuyển dụng
+    created_at: string;
     status: string;
-    recruiter_name: string; // Tên người đăng
 }
 
 const ManagePostPage = () => {
     const router = useRouter(); // Để điều hướng đến trang chi tiết
-    const jobPosts: JobPost[] = [
-        {
-            id: 1,
-            title: "Frontend Developer",
-            salary_range: "$1,500 - $2,500",
-            work_type: "Full-time",
-            work_location: "Hà Nội, Vietnam",
-            company_name: "ABC Tech",
-            vacancies: 3,
-            status: "open",
-            recruiter_name: "Nguyễn Văn A"
-        },
-        {
-            id: 2,
-            title: "Backend Developer",
-            salary_range: "$1,800 - $3,000",
-            work_type: "Full-time",
-            work_location: "TP. Hồ Chí Minh, Vietnam",
-            company_name: "XYZ Solutions",
-            vacancies: 2,
-            status: "closed",
-            recruiter_name: "Lê Thị B"
-        },
-        // Thêm dữ liệu giả lập để kiểm tra
-    ];
+    const [jobs, setJobs] = useState<JobPost[]>([]); // Chỉ định kiểu cho jobs
+    const [loading, setLoading] = useState(true); // Loading state
+    const [error, setError] = useState<string | null>(null); // Error state có kiểu string hoặc null
+    
+    useEffect(() => {
+            const fetchJobs = async () => {
+              try {
+                // Đảm bảo URL này trỏ đến backend của bạn chạy trên port 8080
+                const response = await fetch("http://localhost:8080/jobs/admin");
+                if (!response.ok) {
+                  throw new Error("Failed to fetch jobs");
+                }
+                const data = await response.json();
+                setJobs(data);
+              } catch (err) {
+                if (err instanceof Error) {
+                  setError(err.message);
+                } else {
+                  setError("An unknown error occurred");
+                }
+              } finally {
+                setLoading(false);
+              }
+            };
+          
+            fetchJobs();
+    }, []);
 
     const columns = [
         {
-            title: "Vị trí",
+            title: "Tiêu đề",
             dataIndex: "title",
             key: "title",
             render: (text: string) => <b>{text}</b>,
@@ -58,24 +59,20 @@ const ManagePostPage = () => {
             key: "company_name",
         },
         {
-            title: "Số lượng tuyển",
-            dataIndex: "vacancies",
-            key: "vacancies",
-        },
-        {
-            title: "Lương",
-            dataIndex: "salary_range",
-            key: "salary_range",
-        },
-        {
-            title: "Hình thức",
-            dataIndex: "work_type",
-            key: "work_type",
+            title: "Nhà tuyển dụng",
+            dataIndex: "recruiter_name",
+            key: "recruiter_name",
         },
         {
             title: "Địa điểm",
             dataIndex: "work_location",
             key: "work_location",
+        },
+        {
+            title: "Ngày đăng",
+            dataIndex: "created_at",
+            key: "created_at",
+            render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
         },
         {
             title: "Trạng thái",
@@ -95,11 +92,17 @@ const ManagePostPage = () => {
                     <CustomButton
                         text="Duyệt"
                         onClick={() => handleApprove(record.id)}
-                        backgroundColor="green"
-                        hoverColor="darkgreen"
+                        backgroundColor="#4CAF50" // ✅ Xanh lá thường
+                        hoverColor="#388E3C"
+                        textColor="white"
                         style={{
-                            flex: 1,
-                            fontFamily: 'Roboto, sans-serif',
+                            width: '100px',
+                            height: '80px',
+                            fontSize: '15px', 
+                            fontWeight: '700',
+                            borderRadius: '6px',
+                            border: 'none',
+                            transition: 'background-color 0.3s ease',
                         }}
                     />
                     <CustomButton
@@ -108,18 +111,13 @@ const ManagePostPage = () => {
                         backgroundColor="orange"
                         hoverColor="darkorange"
                         style={{
-                            flex: 1,
-                            fontFamily: 'Roboto, sans-serif',
-                        }}
-                    />
-                    <CustomButton
-                        text="Xoá"
-                        onClick={() => handleDelete(record.id)}
-                        backgroundColor="red"
-                        hoverColor="darkred"
-                        style={{
-                            flex: 1,
-                            fontFamily: 'Roboto, sans-serif',
+                            width: '100px',
+                            height: '80px',
+                            fontSize: '15px', 
+                            fontWeight: '700',
+                            borderRadius: '6px',
+                            border: 'none',
+                            transition: 'background-color 0.3s ease',
                         }}
                     />
                     <CustomButton
@@ -128,8 +126,13 @@ const ManagePostPage = () => {
                         backgroundColor="blue"
                         hoverColor="darkblue"
                         style={{
-                            flex: 1,
-                            fontFamily: 'Roboto, sans-serif',
+                            width: '100px',
+                            height: '80px',
+                            fontSize: '15px', 
+                            fontWeight: '700',
+                            borderRadius: '6px',
+                            border: 'none',
+                            transition: 'background-color 0.3s ease',
                         }}
                     />
                 </div>
@@ -144,23 +147,22 @@ const ManagePostPage = () => {
         console.log("Từ chối bài đăng:", id);
     };
 
-    const handleDelete = (id: number) => {
-        console.log("Xóa bài đăng:", id);
-    };
-
     const handleViewDetail = (id: number) => {
-        // Điều hướng đến trang chi tiết, có thể sử dụng router.push()
-        router.push(`/admin/post-detail/${id}`);
+        router.push(`/admin/postDetail?id=${id}`);
+
     };
 
     return (
         <div className="p-6 bg-white rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold mb-4">Quản lý bài đăng</h2>
-            <Table
-                columns={columns}
-                dataSource={jobPosts.map(job => ({ ...job, key: job.id }))}
-                pagination={{ pageSize: 5 }}
-            />
+            <div style={{ maxHeight: 400, overflowY: 'auto' }}>
+                <Table
+                    columns={columns}
+                    dataSource={jobs.map((job) => ({ ...job, key: job.id }))}
+                    loading={loading}
+                    pagination={{ pageSize: 5 }}
+                />
+            </div>
         </div>
     );
 };

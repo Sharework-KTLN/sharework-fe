@@ -5,6 +5,7 @@ import { EnvironmentOutlined, MoneyCollectOutlined, ClockCircleOutlined , Laptop
     ExportOutlined, RiseOutlined, TeamOutlined} from "@ant-design/icons";
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import CustomButton from "@/components/CustomButton";
 
 const { Title, Text } = Typography;
 
@@ -62,15 +63,13 @@ const RecruitmentInfoDetail = () =>{
     const id = searchParams.get('id');
     const [jobDetails, setJobDetails] = useState<Job | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [savedJob, setSavedJob] = useState(false);
-    const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
 
     useEffect(() => {
             const fetchJobDetails = async () => {
               if (!id) return; // Chờ cho đến khi id có sẵn
         
               try {
-                const response = await fetch(`http://localhost:8080/jobs/detail/${id}`);
+                const response = await fetch(`http://localhost:8080/jobs/admin/${id}`);
                 if (!response.ok) {
                   throw new Error("Failed to fetch job details");
                 }
@@ -92,17 +91,6 @@ const RecruitmentInfoDetail = () =>{
           if (!jobDetails) {
             return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
         }
-
-    // useEffect(() => {
-    //     // Lấy danh sách công việc đã ứng tuyển từ sessionStorage
-    //     const storedAppliedJobs = JSON.parse(sessionStorage.getItem('appliedJobs') || '[]');
-    //     setAppliedJobs(storedAppliedJobs);
-    // }, []);
-
-    // // Kiểm tra nếu chưa có job, hiển thị thông báo hoặc placeholder
-    // if (!job) {
-    //     return <div>Đang tải dữ liệu...</div>;
-    // };
 
     const descriptionSentences = jobDetails.description.split('.').filter(Boolean);
     const work_ScheduleSentences = jobDetails.work_schedule.split('.').filter(Boolean);
@@ -127,42 +115,49 @@ const RecruitmentInfoDetail = () =>{
         return `Còn ${daysRemaining} ngày đến hạn nộp hồ sơ`;
     };
 
-    // Lưu công việc vào sessionStorage
-    // const handleSaveJob = () => {
-    //     if (!job) return;
+    const handleApproveJob = async (id: number) => {
+        try {
+            // Giả sử bạn gửi yêu cầu duyệt bài qua API
+            const response = await fetch(`http://localhost:8080/jobs/approve/${id}`, {
+                method: 'POST', // Hoặc PUT tùy theo API của bạn
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
     
-    //     let savedJobs = JSON.parse(sessionStorage.getItem('savedJobs') || '[]');
+            if (response.ok) {
+                console.log(`Bài đăng ${id} đã được duyệt.`);
+                // Xử lý khi duyệt thành công
+            } else {
+                console.error(`Duyệt bài thất bại: ${response.status}`);
+                // Xử lý khi duyệt thất bại
+            }
+        } catch (error) {
+            console.error('Lỗi duyệt bài:', error);
+        }
+    };
 
-    //     if (savedJob) {
-    //         // Nếu công việc đã được lưu, xóa nó khỏi danh sách
-    //         savedJobs = savedJobs.filter((savedJob: Job) => savedJob.title !== job.title);
-    //     } else {
-    //         // Nếu chưa lưu, thêm công việc vào danh sách với thời gian hiện tại
-    //         const savedJobData = { ...job, savedAt: new Date().toISOString() };
-    //         savedJobs.push(savedJobData);
-    //     }
-
-    //     sessionStorage.setItem('savedJobs', JSON.stringify(savedJobs));
-    //     setSavedJob(!savedJob); // Cập nhật UI
-    // };
-
-    // const handleApplyJob = () => {
-    //     if (!job) return;
-
-    //     let appliedJobsList = JSON.parse(sessionStorage.getItem('appliedJobs') || '[]');
-
-    //     if (appliedJobs.includes(job.title)) {
-    //         // Nếu đã ứng tuyển, xóa công việc khỏi danh sách
-    //         appliedJobsList = appliedJobsList.filter((appliedJob: Job) => appliedJob.title !== job.title);
-    //     } else {
-    //         // Nếu chưa ứng tuyển, thêm công việc vào danh sách
-    //         const today = new Date().toISOString().split('T')[0]; // Lấy ngày hiện tại
-    //         appliedJobsList.push({ ...job, appliedAt: today });
-    //     }
-
-    //     sessionStorage.setItem('appliedJobs', JSON.stringify(appliedJobsList));
-    //     setAppliedJobs(appliedJobsList.map((appliedJob: Job) => appliedJob.title)); // Cập nhật UI
-    // };
+    const handleRejectJob = async (id: number) => {
+        try {
+            // Giả sử bạn gửi yêu cầu từ chối bài qua API
+            const response = await fetch(`http://localhost:8080/jobs/reject/${id}`, {
+                method: 'POST', // Hoặc PUT tùy theo API của bạn
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            if (response.ok) {
+                console.log(`Bài đăng ${id} đã bị từ chối.`);
+                // Xử lý khi từ chối thành công
+            } else {
+                console.error(`Từ chối bài thất bại: ${response.status}`);
+                // Xử lý khi từ chối thất bại
+            }
+        } catch (error) {
+            console.error('Lỗi từ chối bài:', error);
+        }
+    };
 
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
@@ -176,31 +171,40 @@ const RecruitmentInfoDetail = () =>{
                         <Tag icon={<HourglassOutlined/>} color="orange">{jobDetails.experience_required}</Tag>
                         <Tag icon={<ClockCircleOutlined/>} color="default">{calculateDaysRemaining(jobDetails.deadline)}</Tag>
                     </div>
-                    <Button 
-                        type="primary" className="mb-4" 
+                    <CustomButton
+                        text="Duyệt"
+                        onClick={() => handleApproveJob(Number(id))}
+                        backgroundColor="#4CAF50" // ✅ Xanh lá thường
+                        hoverColor="#388E3C"
+                        textColor="white"
                         style={{
-                            background: appliedJobs.includes(jobDetails.title) ? "#4CAF50" : "#D4421E",
-                            fontWeight:"500",
-                            marginRight:"10px"
+                            width: '80px',
+                            height: '40px',
+                            fontSize: '15px', 
+                            fontWeight: '700',
+                            borderRadius: '6px',
+                            border: 'none',
+                            transition: 'background-color 0.3s ease',
+                            marginRight: '10px'
                         }}
-                        icon={<SendOutlined/>}
-                        // onClick={handleApplyJob}
-                    >
-                        {appliedJobs.includes(jobDetails.title) ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
-                    </Button>
+                    />
 
-                    <Button 
-                        type="primary" className="mb-4" ghost
+                    <CustomButton
+                        text="Từ chối"
+                        onClick={() => handleRejectJob(Number(id))}
+                        backgroundColor="orange"
+                        hoverColor="darkorange"
                         style={{
-                            color: savedJob ? "#D4421E" : "#D4421E", 
-                            borderColor: "#D4421E", 
-                            fontWeight: "500"
+                            width: '120px',
+                            height: '40px',
+                            fontSize: '15px', 
+                            fontWeight: '700',
+                            borderRadius: '6px',
+                            border: 'none',
+                            transition: 'background-color 0.3s ease',
+                            
                         }}
-                        // onClick={handleSaveJob}
-                        icon={savedJob ? <HeartFilled style={{ color: "#D4421E" }} /> : <HeartOutlined />} // Đổi icon
-                    >
-                            {savedJob ? "Đã lưu" : "Lưu tin"} 
-                    </Button>
+                    />
                     
                     <Title level={4}>Mô tả công việc</Title>
                     <div style={{marginTop:"-7px", marginBottom:"7px"}}>

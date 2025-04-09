@@ -24,39 +24,14 @@ interface Job {
     work_schedule: string; // Thời gian làm việc
     vacancies: number; // Số lượng tuyển dụng
     benefits: string; // Phúc lợi công việc
+    educational_level: string; // Trình độ học vấn
+    work_level: string; // Cấp bậc làm việc
+    candidate_required: string; // Yêu cầu ứng viên
     company_name: string; // Tên công ty
     company_logo: string;
     recruiter: string; // Tên người tuyển dụng
 }
 const { Option } = Select;
-// }
-// Dữ liệu
-// const jobs = [
-//     { 
-//         id: 1,
-//         title: "Thực Tập Sinh IT Support", 
-//         company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc", 
-//         location: "Hà Nội", 
-//         specialization: "Công nghệ thông tin", 
-//         description:"Biết ngôn ngữ Unity. Biết họp tác làm việc nhóm, lắng nghe và học hỏi. Hỗ trợ người dùng về phần mềm.", 
-//         requirement:"Không yêu cầu kinh nghiệm", 
-//         jobType: "Thực tập", 
-//         salary: "5 triệu",
-//         create_date: "3/3/2025",
-//         end_date:"4/3/2025",
-//         image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" 
-//     },
-//     { id: 2, title: "Thực Tập Sinh Graphic Design", company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc", location: "Hồ Chí Minh", specialization: "Công nghệ thông tin",requirement:"Không yêu cầu kinh nghiệm", description:"Biết ngôn ngữ Unity. Biết họp tác làm việc nhóm, lắng nghe và học hỏi. Hỗ trợ người dùng về phần mềm.",jobType: "Thực tập", salary: "5 triệu",create_date: "3/12/2024", end_date:"3/15/2025" ,image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-//     { id: 3, title: "Lập Trình Viên Thực Tập", company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc", location: "Đà Nẵng", specialization: "Công nghệ thông tin", description:"Biết ngôn ngữ Unity. Biết họp tác làm việc nhóm, lắng nghe và học hỏi. Hỗ trợ người dùng về phần mềm.",requirement:"1-2 năm kinh nghiệm", jobType: "Part-time", salary: "5 triệu", create_date: "3/12/2024", end_date:"4/25/2025",image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-//     { id: 4, title: "Thực Tập Sinh Game Unity", company: "Công ty Game Nhất Trí", location: "Đà Nẵng", specialization: "Công nghệ thông tin", description:"Biết ngôn ngữ Unity. Biết họp tác làm việc nhóm, lắng nghe và học hỏi. Hỗ trợ người dùng về phần mềm.", requirement:"Không yêu cầu kinh nghiệm", jobType: "Thực tập", salary: "5 triệu", create_date: "3/12/2024", end_date:"4/25/2025",image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-//     { id: 5, title: "Thực Tập Sinh Kế Toán", company: "Ngân hàng TMCP Á Châu", location: "Bình Dương", specialization: "Kế toán", description:"Biết ngôn ngữ Unity. Biết họp tác làm việc nhóm, lắng nghe và học hỏi. Hỗ trợ người dùng về phần mềm.", requirement:"Không yêu cầu kinh nghiệm", jobType: "Thực tập", salary: "4 triệu", create_date: "3/12/2024", end_date:"4/25/2025",image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-//     { id: 6, title: "Thực Tập Sinh Kinh doanh", company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn", location: "Bắc Giang", specialization: "Quản trị kinh doanh", requirement:"Không yêu cầu kinh nghiệm", jobType: "Part-time", salary: "6 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-//     { id: 7, title: "Thực Tập Sinh Sale Marketing", company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn", location: "Bắc Giang", specialization: "Quản trị kinh doanh", requirement:"Không yêu cầu kinh nghiệm", jobType: "Full-time", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-//     { id: 8, title: "Thực Tập Sinh Du Lịch", company: "Công ty du lịch Booking", location: "Bình Dương", specialization: "Du lịch", jobType: "Thực tập", requirement:"Không yêu cầu kinh nghiệm", salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-//     { id: 9, title: "Thực Tập Sinh Ngân Hàng", company: "Ngân hàng TMCP Công thương Việt Nam", location: "Hồ Chí Minh", specialization: "Kế toán", jobType: "Thực tập", requirement:"Không yêu cầu kinh nghiệm",salary: "5 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" },
-//     { id: 10, title: "Quản Trị Dịch Vụ Du Lịch Và Lữ Hành", company: "Công ty du lịch Vietravel", location: "Hồ Chí Minh", specialization: "Du lịch", requirement:"Không yêu cầu kinh nghiệm", jobType: "Full-time", salary: "12 triệu", image: "https://topdev.vn/blog/wp-content/uploads/2019/04/developer.jpg" }
-// ];
-
 const filters = [
     {
         key: "location",
@@ -340,6 +315,7 @@ const Home = () => {
                                             src={job.company_logo}
                                             alt={job.company_name}
                                             style={{ width: "100%", height: "100px", borderRadius: "8px", objectFit: "cover" }}
+                                            preview={false}
                                         />
                                     </Col>
                                     {/* Nội dung bên phải */}

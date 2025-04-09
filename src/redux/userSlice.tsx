@@ -1,13 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {User} from '../types/user';
 
-interface UserState {
-    id: number | null;
-    full_name: string;
-    email: string;
-    candidateId: string;
-    profile_image: string;
+interface UserState extends User {
     token: string | null;
-    role: string;
 }
 
 // Giá trị ban đầu của state
@@ -15,10 +10,18 @@ const initialState: UserState = {
     id: null,
     full_name: "",
     email: "",
-    candidateId: "",
+    password: "",
+    role: "CANDIDATE",
+    phone: "",
     profile_image: "",
-    token: null,
-    role: ""
+    gender: "",
+    date_of_birth: "",
+    address: "",
+    school: "",
+    course: "",
+    specialize: "",
+    file_url: "",
+    token: null
 };
 
 const userSlice = createSlice({

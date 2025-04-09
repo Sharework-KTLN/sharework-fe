@@ -17,20 +17,32 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     textColor = 'white',
     style = {},
 }) => {
+    const baseStyle: React.CSSProperties = {
+        backgroundColor,
+        color: textColor,
+        border: '1px solid transparent',
+        borderRadius: '12px',
+        padding: '12px 20px',
+        fontSize: '1.125rem',
+        fontWeight: 600,
+        lineHeight: '1.5rem',
+        fontFamily: `sans-serif`,
+        textAlign: 'center',
+        userSelect: 'none',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease-in-out',
+    };
+
+    // Kết hợp style mặc định + style truyền vào
+    const combinedStyle: React.CSSProperties = {
+        ...baseStyle,
+        ...style,
+    };
+
     return (
         <button
             onClick={onClick}
-            style={{
-                padding: '2px 5px',
-                borderRadius: '5px',
-                border: 'none',
-                backgroundColor: backgroundColor,
-                color: textColor,
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                // fontSize: 'clamp(12px, 3vw, 18px)',
-                ...style,
-            }}
+            style={combinedStyle}
             onMouseOver={(e) =>
                 (e.currentTarget.style.backgroundColor = hoverColor)
             }

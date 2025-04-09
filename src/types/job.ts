@@ -1,20 +1,22 @@
 export interface Job {
     id: number;
-    title: string;
-    required_skills?: string;
-    industry?: string;
-    salary_range: string;
-    salary_type?: string;
-    deadline?: string;
-    work_type?: string;
-    work_location?: string;
-    work_schedule?: string;
-    description?: string;
-    vacancies?: number;
-    status?: 'open' | 'closed' | 'expired' | 'draft';
-    benefits?: string;
-    experience_required?: string;
-    company_id?: number;
-    recruiter_id: number;
-    created_at?: string;
-}
+    title: string;                          // Vị trí cần tuyển
+    required_skills?: string;              // Yêu cầu kỹ năng
+    specialize?: string;                   // Lĩnh vực cần tuyển
+    salary_range: string;                  // Mức lương
+    educational_level?: string;            // Trình độ học vấn
+    work_level?: string;                   // Cấp bậc làm việc
+    deadline?: string;                     // Hạn bài đăng (date dạng string ISO)
+    work_type?: string;                    // Hình thức làm việc
+    work_location?: string;                // Địa chỉ làm việc
+    work_schedule?: string;                // Thời gian làm việc
+    description?: string;                  // Mô tả công việc
+    vacancies?: number;                    // Số lượng tuyển dụng
+    status?: 'open' | 'closed' | 'expired' | 'draft'; // Trạng thái công việc
+    benefits?: string;                     // Phúc lợi công việc
+    experience_required?: string;          // Kinh nghiệm yêu cầu
+    candidate_required?: string;           // Yêu cầu ứng viên
+    company_id?: number;                   // Công ty đăng tuyển
+    recruiter_id: number;                  // Nhà tuyển dụng đăng bài
+    created_at?: string;                   // Ngày tạo bài (nếu backend có)
+  }
