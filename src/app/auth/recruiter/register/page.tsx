@@ -76,14 +76,14 @@ const RecruiterRegister: React.FC = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                messageApi.success("Đăng ký thành công!");
+                alert("Đăng ký thành công!");
                 form.resetFields();
             } else {
-                messageApi.error(data.message || "Đăng ký thất bại!");
+                alert(data.message || "Đăng ký thất bại!");
             }
         } catch (error) {
             console.error("Lỗi khi đăng ký:", error);
-            messageApi.error("Có lỗi xảy ra, vui lòng thử lại!");
+            alert("Có lỗi xảy ra, vui lòng thử lại!");
         }
     };
     return (

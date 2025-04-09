@@ -1,7 +1,7 @@
 export interface Job {
     id: number;
     title: string;                          // Vị trí cần tuyển
-    required_skills?: string;              // Yêu cầu kỹ năng
+    required_skills?: string;              // Yêu cầu kỹ năng(có thể null)
     specialize?: string;                   // Lĩnh vực cần tuyển
     salary_range: string;                  // Mức lương
     educational_level?: string;            // Trình độ học vấn
@@ -20,3 +20,4 @@ export interface Job {
     recruiter_id: number;                  // Nhà tuyển dụng đăng bài
     created_at?: string;                   // Ngày tạo bài (nếu backend có)
   }
+  

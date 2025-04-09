@@ -19,7 +19,7 @@ export default function JobDetailPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const jobRes = await fetch(`http://localhost:8080/jobs/job/${id}`);
+                const jobRes = await fetch(`http://localhost:8080/jobs/detail/${id}`);
                 if (!jobRes.ok) throw new Error("Lỗi khi tải công việc");
                 const jobData = await jobRes.json();
                 setJob(jobData);
@@ -77,10 +77,16 @@ export default function JobDetailPage() {
             <div className="bg-white p-6 rounded-lg shadow-md mt-6">
                 <h2 className="text-xl font-bold text-gray-700">Thông tin công việc</h2>
                 <div className="grid grid-cols-2 gap-4 mt-3 text-gray-600">
-                    <p><strong>💰 Mức lương:</strong> {job.salary_range} ({job.salary_type})</p>
+                    <p><strong>💰 Mức lương:</strong> {job.salary_range}</p>
                     <p><strong>📍 Địa điểm:</strong> {job.work_location}</p>
                     <p><strong>🕒 Hình thức:</strong> {job.work_type}</p>
                     <p><strong>⏳ Hạn nộp:</strong> {dayjs(job.deadline).format("DD-MM-YYYY")}</p>
+                    <p><strong>👤 Kinh nghiệm:</strong> {job.experience_required}</p>
+                    <p><strong>🎓 Trình độ học vấn:</strong> {job.educational_level}</p>
+                    <p><strong>🏆 Cấp bậc:</strong> {job.work_level}</p>
+                    <p><strong>👥 Số lượng tuyển:</strong> {job.vacancies}</p>
+                    <p><strong>📚 Lĩnh vực:</strong> {job.specialize}</p>
+                    <p><strong>🗓 Thời gian làm việc:</strong> {job.work_schedule}</p>
                 </div>
             </div>
 
@@ -106,6 +112,12 @@ export default function JobDetailPage() {
             <div className="bg-white p-6 rounded-lg shadow-md mt-6">
                 <h2 className="text-xl font-bold text-gray-700">🎁 Phúc lợi</h2>
                 <p className="mt-2 text-gray-600">{job.benefits}</p>
+            </div>
+
+            {/* Yêu cầu ứng viên */}
+            <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+                <h2 className="text-xl font-bold text-gray-700">🧾 Yêu cầu ứng viên</h2>
+                <p className="mt-2 text-gray-600">{job.candidate_required}</p>
             </div>
 
             {/* Hành động */}
