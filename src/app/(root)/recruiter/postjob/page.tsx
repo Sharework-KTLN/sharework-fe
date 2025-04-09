@@ -8,6 +8,7 @@ import { RootState, AppDispatch } from '@/redux/store';
 import { Form, Input, Select, Avatar, DatePicker } from 'antd';
 import CustomButton from '@/components/CustomButton';
 import { Company } from '@/types/company';
+import { industries } from '@/constants/industries';
 
 
 const { Option } = Select;
@@ -240,9 +241,12 @@ const PostJobPage = () => {
                             style={{ flex: 1 }}
                             rules={[{ required: true, message: 'Hãy chọn lĩnh vực!' }]}
                         >
-                            <Select>
-                                <Option value="it">Công nghệ thông tin</Option>
-                                <Option value="marketing">Marketing</Option>
+                            <Select placeholder="Chọn lĩnh vực">
+                                {industries.map((item) => (
+                                    <Select.Option key={item.value} value={item.value}>
+                                        {item.label}
+                                    </Select.Option>
+                                ))}
                             </Select>
                         </Form.Item>
                         <Form.Item
@@ -253,7 +257,11 @@ const PostJobPage = () => {
                         >
                             <Select>
                                 <Option value="negotiable">Thỏa thuận</Option>
-                                <Option value="100">100$</Option>
+                                <Option value="<10_trieu">Dưới 10 triệu</Option>
+                                <Option value="10-15_trieu">10 - 15 triệu</Option>
+                                <Option value="15-20_trieu">15 - 20 triệu</Option>
+                                <Option value="20-25_trieu">20 - 25 triệu</Option>
+                                <Option value=">30_trieu">Trên 30 triệu</Option>
                             </Select>
                         </Form.Item>
                         <Form.Item

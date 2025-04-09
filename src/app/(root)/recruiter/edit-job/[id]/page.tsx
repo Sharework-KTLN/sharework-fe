@@ -7,6 +7,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { formatDate } from '@/utils/dateUltil';
 import { useParams } from 'next/navigation';
+import { industries } from '@/constants/industries';
 
 const { Option } = Select;
 
@@ -200,9 +201,12 @@ const EditJobPage = () => {
                             style={{ flex: 1 }}
                             rules={[{ required: true, message: 'Hãy chọn lĩnh vực!' }]}
                         >
-                            <Select>
-                                <Option value="it">Công nghệ thông tin</Option>
-                                <Option value="marketing">Marketing</Option>
+                            <Select placeholder="Chọn lĩnh vực">
+                                {industries.map((item) => (
+                                    <Select.Option key={item.value} value={item.value}>
+                                        {item.label}
+                                    </Select.Option>
+                                ))}
                             </Select>
                         </Form.Item>
                         <Form.Item
