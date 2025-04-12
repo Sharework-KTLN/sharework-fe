@@ -4,21 +4,21 @@ import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Pagination, Image, Button, Tag } from "antd";
 import { EnvironmentOutlined, DeleteOutlined, SendOutlined } from "@ant-design/icons";
 
-interface jobSaved {
-    id : number;
+type jobSaved = {
+    id: number;
     title: string;
-    company: string;
-    location: string;
-    specialization: string;
-    description: string;
-    requirement: string;
-    jobType: string;
-    salary: string;
-    create_date: string;
-    end_date: string;
-    image: string;
-    savedAt: string;
-    appliedAt?: string;
+    salary_range: string;
+    status: string;
+    company_id: number;
+    work_location: string;
+    specialize: string;
+    deadline: string;
+    company: {
+      id: number;
+      name: string;
+      logo: string;
+    };
+    saved_at: string;
 };
 
 const jobSuggestions = [
@@ -47,54 +47,39 @@ const WorkFavorites = () =>{
     const [savedJobs, setSavedJobs] = useState<jobSaved[]>([]);
 
     useEffect(() => {
-        const savedJobs = JSON.parse(sessionStorage.getItem("savedJobs") || "[]");
-        const appliedJobs = JSON.parse(sessionStorage.getItem("appliedJobs") || "[]");
-    
-        // Kiểm tra xem job trong savedJobs có trong appliedJobs không
-        const updatedSavedJobs = savedJobs.map((job: jobSaved) => {
-            const appliedJob = appliedJobs.find((applied: jobSaved) => applied.id === job.id);
-            return {
-                ...job,
-                savedAt: job.savedAt || new Date().toISOString(), // Nếu chưa có savedAt, đặt thời gian hiện tại
-                appliedAt: appliedJob ? appliedJob.appliedAt : job.appliedAt, // Cập nhật nếu đã ứng tuyển trước
-            };
-        });
-        setSavedJobs(updatedSavedJobs);
-    }, []);
-    
-    const handleUnsaveJob = (jobId: number) => {
-        const updatedSavedJobs = savedJobs.filter((saved) => saved.id !== jobId);
-        setSavedJobs(updatedSavedJobs);
-        sessionStorage.setItem('savedJobs', JSON.stringify(updatedSavedJobs));
-    };
-    
-    const handleApplyJob = (jobId: number) => {
-        // Tìm công việc từ savedJobs
-        const appliedJob = savedJobs.find((job) => job.id === jobId);
-    
-        if (!appliedJob) return; // Nếu không tìm thấy, thoát luôn
-    
-        // Lấy danh sách appliedJobs từ sessionStorage (nếu có)
-        const storedAppliedJobs = JSON.parse(sessionStorage.getItem("appliedJobs") || "[]");
-    
-        // Kiểm tra xem job đã có trong danh sách applied chưa
-        const isAlreadyApplied = storedAppliedJobs.some((job: jobSaved) => job.id === jobId);
-    
-        if (!isAlreadyApplied) {
-            const newAppliedJob = { ...appliedJob, appliedAt: new Date().toISOString().split("T")[0] };
-    
-            // Cập nhật appliedJobs trong sessionStorage
-            const updatedAppliedJobs = [...storedAppliedJobs, newAppliedJob];
-            sessionStorage.setItem("appliedJobs", JSON.stringify(updatedAppliedJobs));
-    
-            // 🔹 Cập nhật lại state savedJobs để giao diện thay đổi ngay lập tức
-            const updatedSavedJobs = savedJobs.map((job) =>
-                job.id === jobId ? { ...job, appliedAt: newAppliedJob.appliedAt } : job
-            );
-            setSavedJobs(updatedSavedJobs);
+        if (typeof window !== 'undefined') {
+          const token = localStorage.getItem("token");
+      
+          if (!token) {
+            console.warn("Không tìm thấy token!");
+            return;
+          }
+      
+          const fetchSavedJobs = async () => {
+            try {
+              const res = await fetch("http://localhost:8080/user/favorites", {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`,
+                },
+              });
+      
+              if (!res.ok) {
+                console.error("Status code:", res.status);
+                throw new Error("Lỗi khi fetch công việc đã lưu");
+              }
+      
+              const data = await res.json();
+              setSavedJobs(data.savedJobs);
+            } catch (error) {
+              console.error("Lỗi khi lấy công việc đã lưu:", error);
+            }
+          };
+      
+          fetchSavedJobs();
         }
-    };
-
+      }, []);
     // Phân trang cho danh sách jobsSaved
     const [currentSavesPage, setCurrentSavesPage] = useState(1);
     const SavesPageSize = 6;
@@ -132,8 +117,9 @@ const WorkFavorites = () =>{
                                 {/* Hình ảnh bên trái */}
                                 <Col span={8}>
                                     <Image
-                                        src={job.image}
+                                        src={job.company.logo}
                                         alt={job.title}
+                                        preview={false}
                                         style={{
                                             width: "100%",
                                             height: "100px",
@@ -148,10 +134,10 @@ const WorkFavorites = () =>{
                                 <Col span={16} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%", width:"480px"}}>
                                     <div>
                                         <h3 style={{ marginBottom: 5, fontSize: "16px", fontWeight: "bold" }}>{job.title}</h3>
-                                        <p style={{ fontSize: "14px" }}><strong>Công ty:</strong> {job.company}</p>
-                                        <p style={{ fontSize: "14px" }}><strong>Lương:</strong> {job.salary}</p>
-                                        <p style={{ fontSize: "14px" }}><strong>Đã lưu:</strong> {new Date(job.savedAt).toLocaleDateString()} - {new Date(job.savedAt).toLocaleTimeString()}</p>
-                                        <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.location}</p>
+                                        <p style={{ fontSize: "14px" }}><strong>Công ty:</strong> {job.company.name}</p>
+                                        <p style={{ fontSize: "14px" }}><strong>Lương:</strong> {job.salary_range}</p>
+                                        <p style={{ fontSize: "14px" }}><strong>Đã lưu:</strong> {new Date(job.saved_at).toLocaleDateString()} - {new Date(job.saved_at).toLocaleTimeString()}</p>
+                                        <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.work_location}</p>
                                     </div>
                                     {/* Nút hủy lưu */}
                                     <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "8px" }}>
@@ -159,14 +145,12 @@ const WorkFavorites = () =>{
                                             type="primary" className="mb-4"
                                             style={{ alignSelf: "flex-start", marginTop: "8px", background:"#D4421E",fontWeight:"500"}}
                                             icon={<SendOutlined/>}
-                                            onClick={() => handleApplyJob(job.id)}
-                                            disabled={!!job.appliedAt}
                                         >
-                                            {job.appliedAt ? `Đã ứng tuyển` : "Ứng tuyển"}
+                                            Ứng tuyển
                                         </Button>
                                         <Button 
                                             style={{ alignSelf: "flex-start", marginTop: "8px",fontWeight:"500" }} 
-                                            onClick={() => handleUnsaveJob(job.id)} 
+                                            // onClick={() => handleUnsaveJob(job.id)} 
                                             icon={<DeleteOutlined />}
                                         >
                                             Hủy lưu
