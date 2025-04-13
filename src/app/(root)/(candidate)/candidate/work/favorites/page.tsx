@@ -48,38 +48,65 @@ const WorkFavorites = () =>{
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-          const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token");
       
-          if (!token) {
+            if (!token) {
+                console.warn("Không tìm thấy token!");
+                return;
+            }
+      
+            const fetchSavedJobs = async () => {
+                try {
+                    const res = await fetch("http://localhost:8080/user/favorites", {
+                        method: "GET",
+                        headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                        },
+                    });
+      
+                    if (!res.ok) {
+                        console.error("Status code:", res.status);
+                        throw new Error("Lỗi khi fetch công việc đã lưu");
+                    }
+      
+                    const data = await res.json();
+                    setSavedJobs(data.savedJobs);
+                } catch (error) {
+                console.error("Lỗi khi lấy công việc đã lưu:", error);
+                }
+            };
+            fetchSavedJobs();
+        }
+    }, []);
+
+    const handleUnsaveJob = async (jobId: number) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
             console.warn("Không tìm thấy token!");
             return;
-          }
-      
-          const fetchSavedJobs = async () => {
-            try {
-              const res = await fetch("http://localhost:8080/user/favorites", {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`,
-                },
-              });
-      
-              if (!res.ok) {
-                console.error("Status code:", res.status);
-                throw new Error("Lỗi khi fetch công việc đã lưu");
-              }
-      
-              const data = await res.json();
-              setSavedJobs(data.savedJobs);
-            } catch (error) {
-              console.error("Lỗi khi lấy công việc đã lưu:", error);
-            }
-          };
-      
-          fetchSavedJobs();
         }
-      }, []);
+        try {
+            const res = await fetch(`http://localhost:8080/user/unsavejob/${jobId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (!res.ok) {
+                throw new Error("Lỗi khi bỏ lưu công việc");
+            }
+            // Xoá công việc khỏi danh sách savedJobs trong state
+            setSavedJobs((prevSavedJobs) =>
+                prevSavedJobs.filter((job) => job.id !== jobId)
+            );
+            console.log("Công việc đã bị bỏ lưu");
+        } catch (error) {
+            console.error("Lỗi khi bỏ lưu công việc:", error);
+        }
+    };
+    
     // Phân trang cho danh sách jobsSaved
     const [currentSavesPage, setCurrentSavesPage] = useState(1);
     const SavesPageSize = 6;
@@ -150,7 +177,7 @@ const WorkFavorites = () =>{
                                         </Button>
                                         <Button 
                                             style={{ alignSelf: "flex-start", marginTop: "8px",fontWeight:"500" }} 
-                                            // onClick={() => handleUnsaveJob(job.id)} 
+                                            onClick={() => handleUnsaveJob(job.id)} 
                                             icon={<DeleteOutlined />}
                                         >
                                             Hủy lưu
