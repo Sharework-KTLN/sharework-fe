@@ -93,23 +93,10 @@ const RecruitmentInfoDetail = () =>{
         fetchJobDetails();
     }, [id]); // Gọi lại khi id thay đổi
 
-
-
-    // useEffect(() => {
-    //     // Lấy danh sách công việc đã ứng tuyển từ sessionStorage
-    //     const storedAppliedJobs = JSON.parse(sessionStorage.getItem('appliedJobs') || '[]');
-    //     setAppliedJobs(storedAppliedJobs);
-    // }, []);
-
-    // // Kiểm tra nếu chưa có job, hiển thị thông báo hoặc placeholder
-    // if (!job) {
-    //     return <div>Đang tải dữ liệu...</div>;
-    // };
-
     const descriptionSentences = jobDetails?.description.split('.').filter(Boolean) || [];
     const work_ScheduleSentences = jobDetails?.work_schedule.split('.').filter(Boolean) || [];
     const required_SkillsSentences = jobDetails?.required_skills.split('.').filter(Boolean) || [];
-    const benifitsSentences = jobDetails?.benefits.split(/(?<!\d)\.(?!\d)/).map(s => s.trim()).filter(Boolean) || [];
+    const benefitsSentences = jobDetails?.benefits.split(/(?<!\d)\.(?!\d)/).map(s => s.trim()).filter(Boolean) || [];
     const candidate_requiredSentences = jobDetails?.candidate_required.split('.').filter(Boolean) || [];
 
     const calculateDaysRemaining = (endDate: string) => {
@@ -136,7 +123,7 @@ const RecruitmentInfoDetail = () =>{
                 setError("Bạn chưa đăng nhập hoặc thiếu token");
                 return;
             }
-
+    
             try {
                 const res = await fetch("http://localhost:8080/user/favorites", {
                     headers: {
@@ -144,25 +131,23 @@ const RecruitmentInfoDetail = () =>{
                     },
                 });
                 if (!res.ok) {
-                    throw new Error("Không thể lấy danh sách công việc đã thích");
+                    // Bỏ qua lỗi này để không ảnh hưởng đến giao diện chi tiết công việc
+                    return;
                 }
                 const data = await res.json();
                 setSavedJobs(data.savedJobs.map((item: SavedJob) => item.id)); // Lấy id của các công việc đã lưu
             } catch (err) {
-                if (err instanceof Error) {
-                    setError(err.message);
-                } else {
-                    setError("Lỗi không xác định khi lấy danh sách công việc đã thích");
-                }
+                // Không làm gì cả, không log hay thông báo lỗi
             }
         };
         fetchSavedJobs();
     }, []); // Chạy lần đầu khi component mount
-
+    
+    // Phần còn lại của bạn vẫn giữ nguyên, chẳng hạn khi không có công việc chi tiết:
     if (error) {
         return <div>{error}</div>;
     }
-
+    
     if (!jobDetails) {
         return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
     }
@@ -230,25 +215,6 @@ const RecruitmentInfoDetail = () =>{
             setError(err instanceof Error ? err.message : "Lỗi không xác định khi hủy lưu công việc");
         }
     };
-
-    // const handleApplyJob = () => {
-    //     if (!job) return;
-
-    //     let appliedJobsList = JSON.parse(sessionStorage.getItem('appliedJobs') || '[]');
-
-    //     if (appliedJobs.includes(job.title)) {
-    //         // Nếu đã ứng tuyển, xóa công việc khỏi danh sách
-    //         appliedJobsList = appliedJobsList.filter((appliedJob: Job) => appliedJob.title !== job.title);
-    //     } else {
-    //         // Nếu chưa ứng tuyển, thêm công việc vào danh sách
-    //         const today = new Date().toISOString().split('T')[0]; // Lấy ngày hiện tại
-    //         appliedJobsList.push({ ...job, appliedAt: today });
-    //     }
-
-    //     sessionStorage.setItem('appliedJobs', JSON.stringify(appliedJobsList));
-    //     setAppliedJobs(appliedJobsList.map((appliedJob: Job) => appliedJob.title)); // Cập nhật UI
-    // };
-
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
             {/* Job Details Section */}
@@ -324,7 +290,7 @@ const RecruitmentInfoDetail = () =>{
                     <Title level={4}>Quyền lợi</Title>
                     <div style={{marginTop:"-7px", marginBottom:"7px"}}>
                         <ul className="list-disc pl-5">
-                            {benifitsSentences.map((sentence, index) => (
+                            {benefitsSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
                             ))}
                         </ul>
