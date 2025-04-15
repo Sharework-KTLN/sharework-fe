@@ -270,6 +270,7 @@ const RecruitmentInfoDetail = () =>{
                                 width={64}
                                 height={64}
                                 className="rounded-md object-cover"
+                                preview={false}
                             />
                         </div>
 

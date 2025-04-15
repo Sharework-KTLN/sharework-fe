@@ -31,6 +31,14 @@ interface Job {
     company_logo: string;
     recruiter: string; // Tên người tuyển dụng
 }
+
+interface SavedJob {
+    id: number;
+    job_id: number; // Tham chiếu đến job đã lưu
+    candidate_id: number; // Tham chiếu đến người dùng (ứng viên) đã lưu công việc
+    saved_at: string; // Thời gian lưu công việc
+    job: Job; // Thông tin công việc đã lưu, liên kết với bảng Job
+}
 const { Option } = Select;
 const filters = [
     {
@@ -70,7 +78,7 @@ const Home = () => {
     const [openSelect, setOpenSelect] = useState<Record<string, boolean>>({}); // Trạng thái của Select
     const [searchTerm, setSearchTerm] = useState("");
     const router = useRouter(); // Khởi tạo router
-    const [savedJobs, setSavedJobs] = useState<Job[]>([]);
+    const [savedJobs, setSavedJobs] = useState<number[]>([]); // mảng id của job đã lưu
     const [jobs, setJobs] = useState<Job[]>([]); // Chỉ định kiểu cho jobs
     const [filteredJobs, setFilteredJobs] = useState(jobs); // Danh sách công việc đã lọc
     const [loading, setLoading] = useState(true); // Loading state
@@ -99,8 +107,38 @@ const Home = () => {
         };
       
         fetchJobs();
-      }, []);
+    }, []);
     
+    useEffect(() => {
+        const fetchSavedJobs = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setError("Bạn chưa đăng nhập hoặc thiếu token");
+                return;
+            }
+    
+            try {
+                const res = await fetch("http://localhost:8080/user/favorites", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (!res.ok) {
+                    throw new Error("Không thể lấy danh sách công việc đã thích");
+                }
+                const data = await res.json();
+                setSavedJobs(data.savedJobs.map((item: SavedJob) => item.id)); // Lấy id của các công việc đã lưu
+            } catch (err) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("Lỗi không xác định khi lấy danh sách công việc đã thích");
+                }
+            }
+        };
+        fetchSavedJobs();
+    }, []);
+
     // Hàm cập nhật trạng thái mở/đóng Select
     const handleDropdownVisibleChange = (key: string, open: boolean) => {
         setOpenSelect(prev => ({ ...prev, [key]: open }));
@@ -163,38 +201,121 @@ const Home = () => {
     const endIndex = startIndex + pageSize; //Vị trí kết thúc
     const displayedJobs = filteredJobs.slice(startIndex, endIndex); //Lấy danh sách công việc hiển thị
 
-    const handleCardClick = (jobId: number) => {
-        const selectedJob = jobs.find(job => job.id === jobId);
-        if (selectedJob) {
-            sessionStorage.setItem('selectedJob', JSON.stringify(selectedJob));
+    const handleCardClick = async (jobId: number) => {
+        try {
+            // Lấy token từ localStorage nếu có
+            const token = localStorage.getItem("token");
+    
+            // Nếu không có token, có thể gửi yêu cầu không có Authorization header
+            const headers: HeadersInit = {
+                "Content-Type": "application/json",
+            };
+    
+            if (token) {
+                // Nếu có token, thêm Authorization header
+                headers["Authorization"] = `Bearer ${token}`;
+            }
+    
+            // Gửi yêu cầu API để lấy chi tiết công việc
+            const response = await fetch(`http://localhost:8080/jobs/detail/${jobId}`, {
+                method: "GET",
+                headers,
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Không thể lấy thông tin công việc");
+            }
+    
+            const jobDetail = await response.json();
+            
+            // Lưu thông tin công việc vào sessionStorage nếu cần
+            sessionStorage.setItem('selectedJob', JSON.stringify(jobDetail));
+    
+            // Điều hướng đến trang chi tiết công việc
+            router.push(`/candidate/recruitmentInfoDetail?id=${jobId}`);
+        } catch (error: unknown) { // Chỉ định kiểu 'unknown' cho error
+            if (error instanceof Error) {
+                console.error("Lỗi khi lấy thông tin công việc:", error.message);
+            } else {
+                console.error("Lỗi không xác định:", error);
+            }
         }
-        router.push(`/candidate/recruitmentInfoDetail?id=${jobId}`); // Điều hướng đến trang chi tiết công việc
+    };
+    
+    const handleSaveJob = async (jobId: number) => {
+        try {
+            const token = localStorage.getItem("token");
+    
+            if (!token) {
+                throw new Error("Bạn chưa đăng nhập hoặc thiếu token");
+            }
+    
+            // Gửi yêu cầu POST đến /user/savejob để lưu công việc
+            const response = await fetch(`http://localhost:8080/user/savejob/${jobId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ jobId }),
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Lưu công việc thất bại");
+            }
+    
+            // Nếu lưu thành công, cập nhật lại trạng thái savedJobs
+            setSavedJobs((prev) =>
+                prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
+            );
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Lỗi khi lưu công việc:", error.message);
+            } else {
+                console.error("Lỗi không xác định:", error);
+            }
+            throw error;
+        }
     };
 
-    // // Lưu công việc yêu thích và thông tin công việc vào sessionStorage
-    // const handleSaveJob = (jobId: number) => {
-    //     setSavedJobs(prev => {
-    //         const jobToSave = jobs.find(job => job.id === jobId);
-    //         if (jobToSave) {
-    //             const now = new Date().toISOString(); // Lưu dưới dạng ISO format
+    const handleUnsaveJob = async (jobId: number) => {
+        try {
+            const token = localStorage.getItem("token");
     
-    //             const updatedJobs = prev.some(job => job.id === jobId)
-    //                 ? prev.filter(job => job.id !== jobId) // Xóa nếu đã lưu trước đó
-    //                 : [...prev, { ...jobToSave, savedAt: now }]; // Thêm ngày giờ
+            if (!token) {
+                throw new Error("Bạn chưa đăng nhập hoặc thiếu token");
+            }
     
-    //             sessionStorage.setItem("savedJobs", JSON.stringify(updatedJobs));
-    //             return updatedJobs;
-    //         }
-    //         return prev;
-    //     });
-    // };
+            // Gửi yêu cầu DELETE đến /user/unsavejob để xóa công việc đã lưu
+            const response = await fetch(`http://localhost:8080/user/unsavejob/${jobId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ jobId }), // Gửi jobId trong body request
+            });
     
-    // // Dùng useEffect để lấy savedJobs khi component mount
-    // useEffect(() => {
-    //     const saved = JSON.parse(sessionStorage.getItem("savedJobs") || "[]");
-    //     setSavedJobs(saved);  // Cập nhật trạng thái với danh sách công việc đã lưu từ sessionStorage
-    // }, []);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Bỏ lưu công việc thất bại");
+            }
     
+            // Nếu xóa thành công, cập nhật lại trạng thái savedJobs
+            setSavedJobs((prev) =>
+                prev.includes(jobId) ? prev.filter((id) => id !== jobId) : prev
+            );
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Lỗi khi bỏ lưu công việc:", error.message);
+            } else {
+                console.error("Lỗi không xác định:", error);
+            }
+            throw error;
+        }
+    };
      return (
         <div style={{ width: "100%", overflow: "hidden" }}>
             <div style={{
@@ -312,7 +433,7 @@ const Home = () => {
                                     {/* Hình ảnh bên trái */}
                                     <Col span={8}>
                                         <Image
-                                            src={job.company_logo}
+                                            src={job.company_logo||'fallback_image_url.jpg'}
                                             alt={job.company_name}
                                             style={{ width: "100%", height: "100px", borderRadius: "8px", objectFit: "cover" }}
                                             preview={false}
@@ -327,39 +448,39 @@ const Home = () => {
                                         <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.work_location}</p>
                                     </Col>
                                 </Row>
-                                {savedJobs.some(savedJob => savedJob.id === job.id) ? (
-                            <HeartFilled 
-                                // onClick={(e) => {
-                                //     e.stopPropagation(); // Ngăn chặn sự kiện click vào card
-                                //     handleSaveJob(job.id);
-                                // }}
-                                style={{
-                                    position: "absolute",
-                                    bottom: "10px",
-                                    right: "10px",
-                                    fontSize: "20px",
-                                    cursor: "pointer",
-                                    color: "#D4421E",
-                                    transition: "color 0.2s ease"
-                                }}
-                            />
-                        ) : (
-                            <HeartOutlined 
-                                // onClick={(e) => {
-                                //     e.stopPropagation();
-                                //     handleSaveJob(job.id);
-                                // }}
-                                style={{
-                                    position: "absolute",
-                                    bottom: "10px",
-                                    right: "10px",
-                                    fontSize: "20px",
-                                    cursor: "pointer",
-                                    color: "#D4421E",
-                                    transition: "color 0.2s ease"
-                                }}
-                            />
-                        )}
+                                    {savedJobs.some(savedJob => savedJob === job.id) ? (
+                                        <HeartFilled 
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Ngăn chặn sự kiện click vào card
+                                                handleUnsaveJob(job.id);
+                                            }}
+                                            style={{
+                                                position: "absolute",
+                                                bottom: "10px",
+                                                right: "10px",
+                                                fontSize: "20px",
+                                                cursor: "pointer",
+                                                color: "#D4421E",
+                                                transition: "color 0.2s ease"
+                                            }}
+                                        />
+                                    ) : (
+                                        <HeartOutlined 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleSaveJob(job.id);
+                                            }}
+                                            style={{
+                                                position: "absolute",
+                                                bottom: "10px",
+                                                right: "10px",
+                                                fontSize: "20px",
+                                                cursor: "pointer",
+                                                color: "#D4421E",
+                                                transition: "color 0.2s ease"
+                                            }}
+                                        />
+                                    )}
                             </Card>
                         </Col>
                     ))}
@@ -375,9 +496,7 @@ const Home = () => {
                     />
                 </div>
             </div>
-        </div>
-        
-        
+        </div> 
     );
 };
 

@@ -223,7 +223,13 @@ const NavigationBar: React.FC = () => {
                                     textColor="orange"
                                     style={{
                                         fontWeight: 'bold',
-                                        border: '1px solid orange'
+                                        fontSize:14,
+                                        height:40,
+                                        width:120,
+                                        border:"1px solid orange",
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 />
                                 <CustomButton
@@ -233,7 +239,13 @@ const NavigationBar: React.FC = () => {
                                     hoverColor="darkblue"
                                     textColor="white"
                                     style={{
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        height:40,
+                                        width:120,
+                                        fontSize:14,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 />
                                 <CustomButton
@@ -243,7 +255,13 @@ const NavigationBar: React.FC = () => {
                                     hoverColor="darkblue"
                                     textColor="white"
                                     style={{
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        height:40,
+                                        width:180,
+                                        fontSize:14,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 />
                             </div>

@@ -12,5 +12,6 @@ export interface User {
     school?: string;
     course?: string;
     specialize?: string;
-    file_url: string;
+    file_url?: string;
+    introduce_yourself?: string;
 }
