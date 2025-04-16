@@ -2,17 +2,17 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
+import { useRouter } from 'next/navigation';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
 const Sidebar = () => {
 
     const router = useRouter();
-
+    const router = useRouter();
     const items: MenuItem[] = [
         {
             key: '1',
@@ -37,6 +37,7 @@ const Sidebar = () => {
             >
                 Quản lý bài đăng
             </span>,
+            onClick: () => router.push('/admin/posts')
         },
         {
             key: '4',

@@ -5,6 +5,7 @@ import { EnvironmentOutlined, MoneyCollectOutlined, ClockCircleOutlined , Laptop
     ExportOutlined, RiseOutlined, TeamOutlined} from "@ant-design/icons";
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import CustomButton from "@/components/CustomButton";
 
 const { Title, Text } = Typography;
 
@@ -36,14 +37,6 @@ interface Job {
     recruiter: string; // Tên người tuyển dụng
 }
 
-interface SavedJob {
-    id: number;
-    job_id: number; // Tham chiếu đến job đã lưu
-    candidate_id: number; // Tham chiếu đến người dùng (ứng viên) đã lưu công việc
-    saved_at: string; // Thời gian lưu công việc
-    job: Job; // Thông tin công việc đã lưu, liên kết với bảng Job
-}
-
 const iconStyle = {
     backgroundColor: "#52c41a", // Màu nền cho icon
     borderRadius: "50%", // Tạo hình tròn
@@ -70,34 +63,40 @@ const RecruitmentInfoDetail = () =>{
     const id = searchParams.get('id');
     const [jobDetails, setJobDetails] = useState<Job | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [savedJobs, setSavedJobs] = useState<number[]>([]);
-    const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
 
     useEffect(() => {
-        const fetchJobDetails = async () => {
-            if (!id) return; // Chờ cho đến khi id có sẵn
-
-            try {
-                const response = await fetch(`http://localhost:8080/jobs/detail/${id}`);
+            const fetchJobDetails = async () => {
+              if (!id) return; // Chờ cho đến khi id có sẵn
+        
+              try {
+                const response = await fetch(`http://localhost:8080/jobs/admin/${id}`);
                 if (!response.ok) {
-                    throw new Error("Failed to fetch job details");
+                  throw new Error("Failed to fetch job details");
                 }
                 const data = await response.json();
-                setJobDetails(data); // Lưu thông tin chi tiết công việc vào state
-            } catch (error) {
-                console.error("Error fetching job details:", error);
-                setError("Unable to load job details.");
-            }
-        };
+                setJobDetails(data); // Lưu thông tin chi tiết công ty vào state
+              } catch (error) {
+                console.error("Error fetching company details:", error);
+                setError("Unable to load company details.");
+              }
+            };
+        
+            fetchJobDetails();
+          }, [id]); // Gọi lại khi id thay đổi
+        
+          if (error) {
+            return <div>{error}</div>;
+          }
+        
+          if (!jobDetails) {
+            return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
+        }
 
-        fetchJobDetails();
-    }, [id]); // Gọi lại khi id thay đổi
-
-    const descriptionSentences = jobDetails?.description.split('.').filter(Boolean) || [];
-    const work_ScheduleSentences = jobDetails?.work_schedule.split('.').filter(Boolean) || [];
-    const required_SkillsSentences = jobDetails?.required_skills.split('.').filter(Boolean) || [];
-    const benefitsSentences = jobDetails?.benefits.split(/(?<!\d)\.(?!\d)/).map(s => s.trim()).filter(Boolean) || [];
-    const candidate_requiredSentences = jobDetails?.candidate_required.split('.').filter(Boolean) || [];
+    const descriptionSentences = jobDetails.description.split('.').filter(Boolean);
+    const work_ScheduleSentences = jobDetails.work_schedule.split('.').filter(Boolean);
+    const required_SkillsSentences = jobDetails.required_skills.split('.').filter(Boolean);
+    const benifitsSentences = jobDetails.benefits.split(/(?<!\d)\.(?!\d)/).map(s => s.trim()).filter(Boolean);
+    const candidate_requiredSentences = jobDetails.candidate_required.split('.').filter(Boolean);
 
     const calculateDaysRemaining = (endDate: string) => {
         const today = new Date();
@@ -115,106 +114,51 @@ const RecruitmentInfoDetail = () =>{
       
         return `Còn ${daysRemaining} ngày đến hạn nộp hồ sơ`;
     };
-    // Effect để lấy công việc đã lưu
-    useEffect(() => {
-        const fetchSavedJobs = async () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                setError("Bạn chưa đăng nhập hoặc thiếu token");
-                return;
-            }
-    
-            try {
-                const res = await fetch("http://localhost:8080/user/favorites", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                if (!res.ok) {
-                    // Bỏ qua lỗi này để không ảnh hưởng đến giao diện chi tiết công việc
-                    return;
-                }
-                const data = await res.json();
-                setSavedJobs(data.savedJobs.map((item: SavedJob) => item.id)); // Lấy id của các công việc đã lưu
-            } catch (err) {
-                // Không làm gì cả, không log hay thông báo lỗi
-            }
-        };
-        fetchSavedJobs();
-    }, []); // Chạy lần đầu khi component mount
-    
-    // Phần còn lại của bạn vẫn giữ nguyên, chẳng hạn khi không có công việc chi tiết:
-    if (error) {
-        return <div>{error}</div>;
-    }
-    
-    if (!jobDetails) {
-        return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
-    }
-    
-    const handleSaveJob = async (jobId: number) => {
+
+    const handleApproveJob = async (id: number) => {
         try {
-            const token = localStorage.getItem("token");
-    
-            if (!token) {
-                throw new Error("Bạn chưa đăng nhập hoặc thiếu token");
-            }
-    
-            // Gửi yêu cầu POST đến /user/savejob để lưu công việc
-            const response = await fetch(`http://localhost:8080/user/savejob/${jobId}`, {
-                method: "POST",
+            // Giả sử bạn gửi yêu cầu duyệt bài qua API
+            const response = await fetch(`http://localhost:8080/jobs/approve/${id}`, {
+                method: 'POST', // Hoặc PUT tùy theo API của bạn
                 headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ jobId }),
             });
     
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Lưu công việc thất bại");
-            }
-    
-            // Nếu lưu thành công, cập nhật lại trạng thái savedJobs
-            setSavedJobs((prev) =>
-                prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
-            );
-        } catch (error) {
-            if (error instanceof Error) {
-                console.error("Lỗi khi lưu công việc:", error.message);
+            if (response.ok) {
+                console.log(`Bài đăng ${id} đã được duyệt.`);
+                // Xử lý khi duyệt thành công
             } else {
-                console.error("Lỗi không xác định:", error);
+                console.error(`Duyệt bài thất bại: ${response.status}`);
+                // Xử lý khi duyệt thất bại
             }
-            throw error;
+        } catch (error) {
+            console.error('Lỗi duyệt bài:', error);
         }
     };
 
-    const handleUnsaveJob = async (jobId: number) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            setError("Bạn chưa đăng nhập hoặc thiếu token");
-            return;
-        }
-    
+    const handleRejectJob = async (id: number) => {
         try {
-            const res = await fetch(`http://localhost:8080/user/unsavejob/${jobId}`, {
-                method: "DELETE",
+            // Giả sử bạn gửi yêu cầu từ chối bài qua API
+            const response = await fetch(`http://localhost:8080/jobs/reject/${id}`, {
+                method: 'POST', // Hoặc PUT tùy theo API của bạn
                 headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
                 },
             });
     
-            if (!res.ok) {
-                throw new Error("Không thể hủy lưu công việc");
+            if (response.ok) {
+                console.log(`Bài đăng ${id} đã bị từ chối.`);
+                // Xử lý khi từ chối thành công
+            } else {
+                console.error(`Từ chối bài thất bại: ${response.status}`);
+                // Xử lý khi từ chối thất bại
             }
-    
-            // Cập nhật lại savedJobs sau khi hủy lưu công việc thành công
-            setSavedJobs((prev) => prev.filter(id => id !== jobId));
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "Lỗi không xác định khi hủy lưu công việc");
+        } catch (error) {
+            console.error('Lỗi từ chối bài:', error);
         }
     };
+
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
             {/* Job Details Section */}
@@ -227,35 +171,40 @@ const RecruitmentInfoDetail = () =>{
                         <Tag icon={<HourglassOutlined/>} color="orange">{jobDetails.experience_required}</Tag>
                         <Tag icon={<ClockCircleOutlined/>} color="default">{calculateDaysRemaining(jobDetails.deadline)}</Tag>
                     </div>
-                    <Button 
-                        type="primary" className="mb-4" 
+                    <CustomButton
+                        text="Duyệt"
+                        onClick={() => handleApproveJob(Number(id))}
+                        backgroundColor="#4CAF50" // ✅ Xanh lá thường
+                        hoverColor="#388E3C"
+                        textColor="white"
                         style={{
-                            background: appliedJobs.includes(jobDetails.title) ? "#4CAF50" : "#D4421E",
-                            fontWeight:"500",
-                            marginRight:"10px"
+                            width: '80px',
+                            height: '40px',
+                            fontSize: '15px', 
+                            fontWeight: '700',
+                            borderRadius: '6px',
+                            border: 'none',
+                            transition: 'background-color 0.3s ease',
+                            marginRight: '10px'
                         }}
-                        icon={<SendOutlined/>}
-                        // onClick={handleApplyJob}
-                    >
-                        {appliedJobs.includes(jobDetails.title) ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
-                    </Button>
+                    />
 
-                    <Button 
-                        type="primary" 
-                        className="mb-4" 
-                        ghost
+                    <CustomButton
+                        text="Từ chối"
+                        onClick={() => handleRejectJob(Number(id))}
+                        backgroundColor="orange"
+                        hoverColor="darkorange"
                         style={{
-                            color: "#D4421E", 
-                            borderColor: "#D4421E", 
-                            fontWeight: "500"
+                            width: '120px',
+                            height: '40px',
+                            fontSize: '15px', 
+                            fontWeight: '700',
+                            borderRadius: '6px',
+                            border: 'none',
+                            transition: 'background-color 0.3s ease',
+                            
                         }}
-                        onClick={() => 
-                            savedJobs.includes(jobDetails.id) ? handleUnsaveJob(jobDetails.id) : handleSaveJob(jobDetails.id)
-                        }
-                        icon={savedJobs.includes(jobDetails.id) ? <HeartFilled style={{ color: "#D4421E" }} /> : <HeartOutlined />}
-                    >
-                        {savedJobs.includes(jobDetails.id) ? "Đã lưu" : "Lưu tin"}
-                    </Button>
+                    />
                     
                     <Title level={4}>Mô tả công việc</Title>
                     <div style={{marginTop:"-7px", marginBottom:"7px"}}>
@@ -290,7 +239,7 @@ const RecruitmentInfoDetail = () =>{
                     <Title level={4}>Quyền lợi</Title>
                     <div style={{marginTop:"-7px", marginBottom:"7px"}}>
                         <ul className="list-disc pl-5">
-                            {benefitsSentences.map((sentence, index) => (
+                            {benifitsSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
                             ))}
                         </ul>
@@ -321,6 +270,7 @@ const RecruitmentInfoDetail = () =>{
                                 width={64}
                                 height={64}
                                 className="rounded-md object-cover"
+                                preview={false}
                             />
                         </div>
 

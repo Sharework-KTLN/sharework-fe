@@ -14,19 +14,8 @@ import { RootState, AppDispatch } from '@/redux/store';
 import { login, logout } from '@/redux/userSlice';
 
 type MenuItem = Required<MenuProps>['items'][number];
-type User = {
-    id: string;
-    full_name: string;
-    email: string;
-    candidateId: string;
-    profile_image: string;
-    role: string;
-}
 
 const NavigationBar: React.FC = () => {
-
-    // const [isLogin, setIsLogin] = useState(false);
-    // const [user, setUser] = useState<User | null>(null);
 
     const dispatch = useDispatch<AppDispatch>();
     const windowWidth = useWindowWidth();
@@ -103,37 +92,6 @@ const NavigationBar: React.FC = () => {
             fetchUser();
         }
     }, [dispatch, user.id]);
-
-    // useEffect(() => {
-
-    //     const fetchUser = async () => {
-    //         const savedToken = localStorage.getItem("token");
-    //         if (!savedToken) {
-    //             setUser(null);
-    //             return;
-    //         }
-    //         try {
-    //             const res = await fetch("http://localhost:8080/auth/me", {
-    //                 headers: { "Authorization": `Bearer ${savedToken}` },
-    //             });
-
-    //             const data = await res.json();
-    //             if (res.ok) {
-    //                 setUser(data); // Lưu thông tin user vào state
-    //             } else {
-    //                 localStorage.removeItem("token"); // Xóa token nếu không hợp lệ
-    //                 setUser(null);
-    //             }
-    //         } catch (error) {
-    //             console.error("Lỗi khi lấy user:", error);
-    //             localStorage.removeItem("token");
-    //             setUser(null);
-    //         }
-    //     };
-
-    //     fetchUser();
-
-    // }, [router, searchParams]);
 
     const handleButtonLogin = () => {
         router.push('/auth/candidate/login');
@@ -265,7 +223,13 @@ const NavigationBar: React.FC = () => {
                                     textColor="orange"
                                     style={{
                                         fontWeight: 'bold',
-                                        border: '1px solid orange'
+                                        fontSize:14,
+                                        height:40,
+                                        width:120,
+                                        border:"1px solid orange",
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 />
                                 <CustomButton
@@ -275,7 +239,13 @@ const NavigationBar: React.FC = () => {
                                     hoverColor="darkblue"
                                     textColor="white"
                                     style={{
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        height:40,
+                                        width:120,
+                                        fontSize:14,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 />
                                 <CustomButton
@@ -285,7 +255,13 @@ const NavigationBar: React.FC = () => {
                                     hoverColor="darkblue"
                                     textColor="white"
                                     style={{
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        height:40,
+                                        width:180,
+                                        fontSize:14,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 />
                             </div>

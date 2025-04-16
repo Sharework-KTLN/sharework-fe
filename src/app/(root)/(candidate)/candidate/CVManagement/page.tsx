@@ -10,8 +10,35 @@ const { Title, Text } = Typography;
 interface CV {
   id: number;
   name: string;
-  image?: string; // ảnh là tùy chọn, có thể không có
+  image?: string;
   positionApply?: string;
+  dob?: string;
+  gender?: string;
+  phone?: string;
+  email?: string;
+  facebook?: string;
+  address?: string;
+  skillName?: string;
+  skillDesc?: string;
+  hobbiesDesc?: string;
+  careerGoalsDesc?: string;
+  universityName?: string;
+  startStudy?: string;
+  endStudy?: string;
+  subjectName?: string;
+  learningProcess?: string;
+  positionName?: string;
+  businessName?: string;
+  startWork?: string;
+  endWork?: string;
+  workingProcess?: string;
+  activeName?: string;
+  OrgaName?: string;
+  startActive?: string;
+  endActive?: string;
+  activeProcess?: string;
+  certificateTime?: string;
+  certificateName?: string;
   createdAt?: string;
 }
 
@@ -45,21 +72,17 @@ const CVManager = () => {
     setUploadedCVs(updatedCVs);
     sessionStorage.setItem("uploadedCVs", JSON.stringify(updatedCVs));
   };
-  const handleDeleteCV = (index: number) => {
-      // Lấy danh sách CV hiện tại từ sessionStorage
+  const handleDeleteCV = (id: number) => {
     const updatedCvData = JSON.parse(sessionStorage.getItem("cvData") || "[]");
-      // Xóa CV tại vị trí chỉ định
-    updatedCvData.splice(index, 1);
-      // Cập nhật lại sessionStorage với danh sách CV mới
-    sessionStorage.setItem("cvData", JSON.stringify(updatedCvData));
-      // Cập nhật state cvData để re-render lại giao diện
-    setCvData(updatedCvData);
+    const filteredData = updatedCvData.filter((cv: CV) => cv.id !== id);
+    sessionStorage.setItem("cvData", JSON.stringify(filteredData));
+    setCvData(filteredData);
     alert("CV đã được xóa!");
   };
 
   const handleViewDetails = (cv: CV) => {
     // Chuyển hướng đến trang chi tiết với dữ liệu CV
-    router.push(`/candidate/CVManagerment/CV?cvId=${cv.id}`);
+    router.push(`/candidate/CVManagement/CV?cvId=${cv.id}`);
   };
   
   return (
@@ -74,8 +97,8 @@ const CVManager = () => {
               <Empty description="Bạn chưa tạo CV nào" />
           ) : (
               <Row gutter={[16, 16]}>
-                  {cvData.map((cv, index) => (
-                      <Col xs={24} sm={12} md={8} lg={6} key={index}>
+                 {cvData.map((cv) => (
+                    <Col xs={24} sm={12} md={8} lg={6} key={cv.id}>
                           <Card 
                               hoverable
                               style={{ 
@@ -115,7 +138,7 @@ const CVManager = () => {
                                       <Col span={12}>
                                           <Button
                                               type="primary"
-                                              onClick={()=>handleViewDetails}
+                                              onClick={() => handleViewDetails(cv)}
                                               style={{ width: "100px", marginRight:"10px" }}
                                           >
                                               Xem chi tiết
@@ -125,7 +148,7 @@ const CVManager = () => {
                                           <Button
                                               type="default"
                                               danger={true}
-                                              onClick={() => handleDeleteCV(index)}
+                                              onClick={() => handleDeleteCV(cv.id)}
                                               style={{ width: "100%" }}
                                           >
                                               Xóa
