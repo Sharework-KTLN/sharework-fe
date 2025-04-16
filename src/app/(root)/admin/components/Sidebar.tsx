@@ -5,13 +5,11 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
-import { useRouter } from 'next/navigation';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
 const Sidebar = () => {
 
-    const router = useRouter();
     const router = useRouter();
     const items: MenuItem[] = [
         {
