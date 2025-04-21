@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Select, Button, Pagination, Input, Image } from 'antd';
 import { EnvironmentOutlined , SearchOutlined, DownOutlined, UpOutlined} from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
+import CustomButton from '@/components/CustomButton';
 
 interface Company {
     id: number;
@@ -193,27 +194,26 @@ const InfoBusiness = () => {
 
                         {/* Nút tìm kiếm */}
                         <Col flex="none">
-                            <Button
-                                type="primary"
-                                size="large"
+                        <CustomButton
+                                text="Tìm kiếm"
+                                onClick={()=>{}}
+                                backgroundColor="#D4421E"
+                                hoverColor="#ff5733"
+                                textColor="white"
                                 style={{
-                                    height: "38px",
-                                    background: "#D4421E",
+                                    height: '39px',
                                     borderColor: "#D4421E",
                                     transition: "background 0.3s, border-color 0.3s",
-                                    whiteSpace: "nowrap", // Đảm bảo nút không bị cắt chữ
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    display: 'flex',
+                                    gap: '8px',
+                                    padding: '0 20px',
+                                    borderRadius:"8px"
                                 }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = "#ff5733";
-                                    e.currentTarget.style.borderColor = "#ff5733";
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = "#D4421E";
-                                    e.currentTarget.style.borderColor = "#D4421E";
-                                }}    
                             >
-                                <SearchOutlined /> Tìm kiếm
-                            </Button>
+                                <SearchOutlined />
+                            </CustomButton>
                         </Col>
                     </Row>
                 </div>

@@ -5,6 +5,7 @@ import { Card, Button, Row, Col, Image } from "antd";
 import { EnvironmentOutlined, GlobalOutlined } from "@ant-design/icons";
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from "next/navigation";
+import CustomButton from "@/components/CustomButton";
 
 interface Company {
     id: number;
@@ -181,13 +182,25 @@ const InfoBusinessDetail = () => {
                         </Row>
                     </Col>
                     <Col>
-                        <Button 
-                            style={{ 
-                                backgroundColor: "#D4421E", color: "white", border: "none",
-                                fontWeight: "500", height: "43px"
-                            }}>
-                            + Theo dõi công ty
-                        </Button>
+                        <CustomButton
+                            text="+ Theo dõi công ty"
+                            onClick={()=>{}}
+                            backgroundColor="#D4421E"
+                            hoverColor="#ff5733"
+                            textColor="white"
+                            style={{
+                                height: '50px',
+                                borderColor: "#D4421E",
+                                transition: "background 0.3s, border-color 0.3s",
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                display: 'flex',
+                                gap: '8px',
+                                padding: '0 20px',
+                                borderRadius:"8px",
+                            }}
+                        >
+                        </CustomButton>
                     </Col>
                 </Row>
             </Card>
@@ -252,13 +265,25 @@ const InfoBusinessDetail = () => {
                                     <option>Hà Nội</option>
                                     <option>TP.HCM</option>
                                 </select>
-                                <Button
-                                    style={{ 
-                                        backgroundColor: "#D4421E", color: "white", border: "none",
-                                        fontWeight: "500", height: "43px"
-                                    }}>
-                                    Tìm kiếm
-                                </Button>
+                                <CustomButton
+                                    text="Tìm kiếm"
+                                    onClick={()=>{}}
+                                    backgroundColor="#D4421E"
+                                    hoverColor="#ff5733"
+                                    textColor="white"
+                                    style={{
+                                        height: '40px',
+                                        borderColor: "#D4421E",
+                                        transition: "background 0.3s, border-color 0.3s",
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        display: 'flex',
+                                        gap: '8px',
+                                        padding: '0 20px',
+                                        borderRadius:"8px"
+                                    }}
+                                >
+                                </CustomButton>
                             </div>
                         </div>
 
@@ -315,19 +340,25 @@ const InfoBusinessDetail = () => {
                                             </div>
                                         </div>
                                         
-                                        <Button 
-                                            style={{ 
-                                                backgroundColor: "#D4421E", 
-                                                color: "white", 
-                                                border: "none",
-                                                fontWeight: "500", 
-                                                height: "43px", 
-                                                width: '100%',  // Make button full width on smaller screens
-                                                maxWidth: '150px'  // Limit width on larger screens
+                                        <CustomButton
+                                            text="Ứng tuyển"
+                                            onClick={() => {}}
+                                            backgroundColor="#D4421E"
+                                            hoverColor="#E9552D"
+                                            textColor="white"
+                                            style={{
+                                                alignSelf: "flex-start",
+                                                marginTop: "8px",
+                                                fontWeight: "600",
+                                                height: "32px",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "8px",
+                                                borderRadius:"8px",
+                                                fontSize:"14px"
                                             }}
                                         >
-                                            Ứng tuyển
-                                        </Button>
+                                        </CustomButton>
                                     </div>  
                                 </Card>
                             ))}

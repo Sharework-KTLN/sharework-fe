@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Card, Input, Select, Button, Row, Col, Upload } from 'antd';
+import { Card, Input, Select, Row, Col, Upload } from 'antd';
 import { RcFile } from "antd/lib/upload";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
@@ -9,7 +9,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { login, logout } from '@/redux/userSlice';
 import { EditOutlined , UploadOutlined} from '@ant-design/icons';
 import Image from 'next/image';
-import { a } from 'framer-motion/client';
+import CustomButton from '@/components/CustomButton';
 
 const { Option } = Select;
 
@@ -646,9 +646,27 @@ const CVManager = () => {
                     return false; // Ngừng upload tự động
                   }}
                 >
-                  <Button icon={<UploadOutlined />} style={{ border: "none" }}>
-                    Chọn tệp
-                  </Button>
+                  <CustomButton
+                    text="Chọn tệp"
+                    onClick={() => {
+                      // Xử lý chọn file tại đây
+                    }}
+                    backgroundColor="#FFFFFF"
+                    hoverColor="#F0F0F0"
+                    textColor="black"
+                    style={{
+                      border: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      height: "35px",
+                      fontWeight: "600",
+                      fontSize: "14",
+                      borderRadius: "8px"
+                    }}
+                  >
+                    <UploadOutlined />
+                  </CustomButton>
                 </Upload>
               }
             />
@@ -672,20 +690,25 @@ const CVManager = () => {
       {/* Button update */}
       <Row justify="center" style={{ marginTop: 24 }}>
         <Col>
-          <Button
-            type="primary"
-            style={{
-              width: 150,
-              background: '#D4421E',
-              borderColor: '#D4421E',
-              fontWeight: 600,
-              height: 45,
-              fontSize: 16
-            }}
-            disabled={!isEditable} // Disable button if not editable
-          >
-            Cập nhật
-          </Button>
+        <CustomButton
+          text="Cập nhật"
+          onClick={() => {}} // Thêm logic cập nhật nếu có
+          backgroundColor="#D4421E"
+          hoverColor="#e9552d"
+          textColor="white"
+          style={{
+            width: 150,
+            height: 45,
+            fontWeight: 600,
+            fontSize: 18,
+            borderColor: "#D4421E",
+            opacity: !isEditable ? 0.6 : 1,
+            cursor: !isEditable ? "not-allowed" : "pointer",
+            alignItems: 'center',
+            justifyContent: 'center',
+            display: 'flex',
+          }}
+        />
         </Col>
       </Row>
     </div>

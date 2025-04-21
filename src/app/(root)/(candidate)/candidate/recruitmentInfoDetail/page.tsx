@@ -5,6 +5,7 @@ import { EnvironmentOutlined, MoneyCollectOutlined, ClockCircleOutlined , Laptop
     ExportOutlined, RiseOutlined, TeamOutlined} from "@ant-design/icons";
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import CustomButton from "@/components/CustomButton";
 
 const { Title, Text } = Typography;
 
@@ -215,6 +216,8 @@ const RecruitmentInfoDetail = () =>{
     const handleViewCompanyDetail = () => {
         router.push(`/candidate/infoBusinessDetail?id=${jobDetails.company_id}`);
     };
+
+    const handleApplyJob = ()=>{};
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
             {/* Job Details Section */}
@@ -227,36 +230,60 @@ const RecruitmentInfoDetail = () =>{
                         <Tag icon={<HourglassOutlined/>} color="orange">{jobDetails.experience_required}</Tag>
                         <Tag icon={<ClockCircleOutlined/>} color="default">{calculateDaysRemaining(jobDetails.deadline)}</Tag>
                     </div>
-                    <Button 
-                        type="primary" className="mb-4" 
-                        style={{
-                            background: appliedJobs.includes(jobDetails.title) ? "#4CAF50" : "#D4421E",
-                            fontWeight:"500",
-                            marginRight:"10px"
+                    <CustomButton
+                        text={appliedJobs.includes(jobDetails.title) ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
+                        onClick={() => {
+                            if (!appliedJobs.includes(jobDetails.title)) {
+                                handleApplyJob(); // chỉ gọi nếu chưa ứng tuyển
+                            }
                         }}
-                        icon={<SendOutlined/>}
-                        // onClick={handleApplyJob}
-                    >
-                        {appliedJobs.includes(jobDetails.title) ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
-                    </Button>
-
-                    <Button 
-                        type="primary" 
-                        className="mb-4" 
-                        ghost
+                        backgroundColor={appliedJobs.includes(jobDetails.title) ? "#4CAF50" : "#D4421E"}
+                        hoverColor={appliedJobs.includes(jobDetails.title) ? "#45A049" : "#E44A26"}
+                        textColor="#FFF"
                         style={{
-                            color: "#D4421E", 
-                            borderColor: "#D4421E", 
-                            fontWeight: "500"
+                            fontWeight: "600",
+                            marginRight: "10px",
+                            height: "32px",
+                            fontSize: "14px",
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            padding: '0 20px',
+                            borderRadius:'8px'
                         }}
-                        onClick={() => 
-                            savedJobs.includes(jobDetails.id) ? handleUnsaveJob(jobDetails.id) : handleSaveJob(jobDetails.id)
-                        }
-                        icon={savedJobs.includes(jobDetails.id) ? <HeartFilled style={{ color: "#D4421E" }} /> : <HeartOutlined />}
                     >
-                        {savedJobs.includes(jobDetails.id) ? "Đã lưu" : "Lưu tin"}
-                    </Button>
+                        <SendOutlined />
+                    </CustomButton>
                     
+                    <CustomButton
+                        text={savedJobs.includes(jobDetails.id) ? "Đã lưu" : "Lưu tin"}
+                        onClick={() =>
+                            savedJobs.includes(jobDetails.id)
+                                ? handleUnsaveJob(jobDetails.id)
+                                : handleSaveJob(jobDetails.id)
+                        }
+                        backgroundColor="transparent"
+                        hoverColor="#ffece8"
+                        textColor="#D4421E"
+                        style={{
+                            border: "1px solid #D4421E",
+                            fontWeight: "600",
+                            alignItems: "center",
+                            height: "32px",
+                            fontSize: "14px",     // 👈 canh giữa theo chiều dọc
+                            justifyContent: 'center',
+                            gap: "8px",
+                            padding: '0 20px',
+                            borderRadius:'8px',
+                        }}
+                    >
+                        {savedJobs.includes(jobDetails.id) ? (
+                            <HeartFilled style={{ color: "#D4421E" }} />
+                        ) : (
+                            <HeartOutlined />
+                        )}
+                    </CustomButton>
+
                     <Title level={4}>Mô tả công việc</Title>
                     <div style={{marginTop:"-7px", marginBottom:"7px"}}>
                         <ul className="list-disc pl-5">

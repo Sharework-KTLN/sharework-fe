@@ -1,8 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Select, Button, Pagination, Input, Image } from 'antd';
+import { Card, Row, Col, Select, Pagination, Input, Image } from 'antd';
 import { EnvironmentOutlined, SearchOutlined, FilterOutlined, DownOutlined, UpOutlined, HeartOutlined, HeartFilled } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
+import CustomButton from '@/components/CustomButton';
 
 interface Job {
     id: number;
@@ -322,6 +323,8 @@ const Home = () => {
             throw error;
         }
     };
+
+    const handleSearch = () =>{};
      return (
         <div style={{ width: "100%", overflow: "hidden" }}>
             <div style={{
@@ -356,25 +359,26 @@ const Home = () => {
                                 />
                             </Col>
                             <Col>
-                                <Button type="primary"
-                                    size="large"
-                                    style={{
-                                        height: "39px",
-                                        background: "#D4421E",
-                                        borderColor: "#D4421E",
-                                        transition: "background 0.3s, border-color 0.3s"
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.background = "#ff5733"; // Màu sáng hơn khi hover
-                                        e.currentTarget.style.borderColor = "#ff5733";
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.background = "#D4421E"; // Quay lại màu cũ
-                                        e.currentTarget.style.borderColor = "#D4421E";
-                                    }}
-                                >
-                                    <SearchOutlined /> Tìm kiếm
-                                </Button>
+                            <CustomButton
+                                text="Tìm kiếm"
+                                onClick={handleSearch}
+                                backgroundColor="#D4421E"
+                                hoverColor="#ff5733"
+                                textColor="white"
+                                style={{
+                                    height: '39px',
+                                    borderColor: "#D4421E",
+                                    transition: "background 0.3s, border-color 0.3s",
+                                    alignItems: 'center',       // 👈 canh giữa theo chiều dọc
+                                    justifyContent: 'center',
+                                    display: 'flex',
+                                    gap: '8px',
+                                    padding: '0 20px',
+                                    borderRadius: "8px"
+                                }}
+                            >
+                                <SearchOutlined />
+                            </CustomButton>
                             </Col>
                         </Row>
                     </div>
@@ -403,9 +407,24 @@ const Home = () => {
                             ))}
                             {/* Nút xóa bộ lọc */}
                             <Col flex="none" >
-                                <Button size="large" icon={<FilterOutlined />} onClick={resetFilters}>
-                                    Xóa bộ lọc
-                                </Button>
+                                <CustomButton
+                                    text="Xóa bộ lọc"
+                                    onClick={resetFilters}
+                                    backgroundColor="#FFFFFF"
+                                    hoverColor="#E0E0E0"
+                                    textColor="#333"
+                                    style={{
+                                        height:'40px',
+                                        alignItems: 'center',       // 👈 canh giữa theo chiều dọc
+                                        justifyContent: 'center',
+                                        display: 'flex',
+                                        gap: '8px',
+                                        padding: '0 20px',
+                                        borderRadius: "8px"
+                                    }}
+                                >
+                                    <FilterOutlined />
+                                </CustomButton>
                             </Col>
                         </Row>
                     </div>
