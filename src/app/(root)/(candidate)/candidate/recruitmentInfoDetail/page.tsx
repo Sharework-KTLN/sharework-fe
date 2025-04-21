@@ -4,7 +4,7 @@ import { EnvironmentOutlined, MoneyCollectOutlined, ClockCircleOutlined , Laptop
     SolutionOutlined , CalendarOutlined , HourglassOutlined, SendOutlined , HeartOutlined, HeartFilled, 
     ExportOutlined, RiseOutlined, TeamOutlined} from "@ant-design/icons";
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 const { Title, Text } = Typography;
 
@@ -72,6 +72,7 @@ const RecruitmentInfoDetail = () =>{
     const [error, setError] = useState<string | null>(null);
     const [savedJobs, setSavedJobs] = useState<number[]>([]);
     const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchJobDetails = async () => {
@@ -118,12 +119,7 @@ const RecruitmentInfoDetail = () =>{
     // Effect để lấy công việc đã lưu
     useEffect(() => {
         const fetchSavedJobs = async () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                setError("Bạn chưa đăng nhập hoặc thiếu token");
-                return;
-            }
-    
+            const token = localStorage.getItem("token");  
             try {
                 const res = await fetch("http://localhost:8080/user/favorites", {
                     headers: {
@@ -214,6 +210,10 @@ const RecruitmentInfoDetail = () =>{
         } catch (err) {
             setError(err instanceof Error ? err.message : "Lỗi không xác định khi hủy lưu công việc");
         }
+    };
+
+    const handleViewCompanyDetail = () => {
+        router.push(`/candidate/infoBusinessDetail?id=${jobDetails.company_id}`);
     };
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
@@ -337,6 +337,7 @@ const RecruitmentInfoDetail = () =>{
                             type="link" 
                             className="mt-3" 
                             style={{ color: "#D4421E", fontWeight: "500" }}
+                            onClick={handleViewCompanyDetail}
                         >
                             Xem trang chi tiết <ExportOutlined />
                         </Button>

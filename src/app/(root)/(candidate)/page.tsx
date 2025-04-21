@@ -205,6 +205,10 @@ const Home = () => {
         try {
             // Lấy token từ localStorage nếu có
             const token = localStorage.getItem("token");
+            if (!token) {
+                router.push("/auth/candidate/login");
+                return;
+            }
     
             // Nếu không có token, có thể gửi yêu cầu không có Authorization header
             const headers: HeadersInit = {
@@ -248,7 +252,8 @@ const Home = () => {
             const token = localStorage.getItem("token");
     
             if (!token) {
-                throw new Error("Bạn chưa đăng nhập hoặc thiếu token");
+                router.push("/auth/candidate/login");
+                return;
             }
     
             // Gửi yêu cầu POST đến /user/savejob để lưu công việc
@@ -285,7 +290,8 @@ const Home = () => {
             const token = localStorage.getItem("token");
     
             if (!token) {
-                throw new Error("Bạn chưa đăng nhập hoặc thiếu token");
+                router.push("/auth/candidate/login");
+                return;
             }
     
             // Gửi yêu cầu DELETE đến /user/unsavejob để xóa công việc đã lưu
