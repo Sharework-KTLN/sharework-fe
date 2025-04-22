@@ -87,26 +87,29 @@ const Home = () => {
 
     useEffect(() => {
         const fetchJobs = async () => {
-          try {
-            // Đảm bảo URL này trỏ đến backend của bạn chạy trên port 8080
-            const response = await fetch("http://localhost:8080/jobs");
-            if (!response.ok) {
-              throw new Error("Failed to fetch jobs");
+            try {
+                const token = localStorage.getItem("token");
+        
+                const response = await fetch("http://localhost:8080/jobs", {
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}) // Có cũng được, không có cũng không sao
+                }
+                });
+        
+                if (!response.ok) {
+                throw new Error("Failed to fetch jobs");
+                }
+        
+                const data = await response.json();
+                setJobs(data);
+                setFilteredJobs(data);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : "An unknown error occurred");
+            } finally {
+                setLoading(false);
             }
-            const data = await response.json();
-            setJobs(data);
-            setFilteredJobs(data);
-          } catch (err) {
-            if (err instanceof Error) {
-              setError(err.message);
-            } else {
-              setError("An unknown error occurred");
-            }
-          } finally {
-            setLoading(false);
-          }
         };
-      
         fetchJobs();
     }, []);
     
@@ -325,7 +328,7 @@ const Home = () => {
     };
 
     const handleSearch = () =>{};
-     return (
+    return (
         <div style={{ width: "100%", overflow: "hidden" }}>
             <div style={{
                 background: '#FFEFE5',
