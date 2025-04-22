@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Pagination, Image, Button, Tag } from "antd";
 import { EnvironmentOutlined, DeleteOutlined, SendOutlined } from "@ant-design/icons";
+import CustomButton from "@/components/CustomButton";
 
 type jobSaved = {
     id: number;
@@ -117,6 +118,8 @@ const WorkFavorites = () =>{
     const SuggestionsPageSize = 4;
     const paginatedJobsSuggestions = jobSuggestions.slice((currentSuggestionsPage - 1) * SuggestionsPageSize, currentSuggestionsPage * SuggestionsPageSize);
 
+    
+    // const handleApplyJob = ()=>{}
     return (
         <div style={{ padding: "20px" }}>
             <div>
@@ -168,20 +171,47 @@ const WorkFavorites = () =>{
                                     </div>
                                     {/* Nút hủy lưu */}
                                     <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "8px" }}>
-                                        <Button 
-                                            type="primary" className="mb-4"
-                                            style={{ alignSelf: "flex-start", marginTop: "8px", background:"#D4421E",fontWeight:"500"}}
-                                            icon={<SendOutlined/>}
+                                    <CustomButton
+                                        text="Ứng tuyển"
+                                        onClick={() => {}}
+                                        backgroundColor="#D4421E"
+                                        hoverColor="#E9552D"
+                                        textColor="white"
+                                        style={{
+                                            alignSelf: "flex-start",
+                                            marginTop: "8px",
+                                            fontWeight: "600",
+                                            height: "32px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "8px",
+                                            borderRadius:"8px",
+                                            fontSize:"14px"
+                                        }}
+                                    >
+                                        <SendOutlined />
+                                    </CustomButton>
+                                    
+                                    <CustomButton
+                                            text="Hủy lưu"
+                                            onClick={() => handleUnsaveJob(job.id)}
+                                            backgroundColor="#FFFFFF"
+                                            textColor="#333"
+                                            hoverColor="#E0E0E0"
+                                            style={{
+                                                alignSelf: "flex-start",
+                                                marginTop: "8px",
+                                                fontWeight: "600",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                borderRadius:"8px",
+                                                height: "32px",
+                                                fontSize:"14px",
+                                                gap: "8px",
+                                            }}
                                         >
-                                            Ứng tuyển
-                                        </Button>
-                                        <Button 
-                                            style={{ alignSelf: "flex-start", marginTop: "8px",fontWeight:"500" }} 
-                                            onClick={() => handleUnsaveJob(job.id)} 
-                                            icon={<DeleteOutlined />}
-                                        >
-                                            Hủy lưu
-                                        </Button>
+                                            <DeleteOutlined />
+                                        </CustomButton>
                                     </div>
                                 </Col>
                             </Row>

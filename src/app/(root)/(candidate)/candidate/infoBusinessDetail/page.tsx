@@ -4,6 +4,8 @@ import React, {useState, useEffect} from "react";
 import { Card, Button, Row, Col, Image } from "antd";
 import { EnvironmentOutlined, GlobalOutlined } from "@ant-design/icons";
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import CustomButton from "@/components/CustomButton";
 
 interface Company {
     id: number;
@@ -29,11 +31,13 @@ interface Job {
 }
   
 const InfoBusinessDetail = () => {
+    const [hoveredCard, setHoveredCard] = useState<number | null>(null);
     const searchParams = useSearchParams(); // Use this to get search params
     const id = searchParams.get('id');
     const [companyDetails, setCompanyDetails] = useState<Company | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [expanded, setExpanded] = useState<boolean>(false);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchCompanyDetails = async () => {
@@ -65,6 +69,52 @@ const InfoBusinessDetail = () => {
     const fullContent = companyDetails?.description || "Chưa có mô tả";
     // Rút gọn nội dung
     const shortContent = fullContent.length > 500 ? fullContent.substring(0, 500) + "..." : fullContent;
+
+    const handleCardClick = async (jobId: number) => {
+        try {
+            // Lấy token từ localStorage nếu có
+            const token = localStorage.getItem("token");
+            if (!token) {
+                router.push("/auth/candidate/login");
+                return;
+            }
+    
+            // Nếu không có token, có thể gửi yêu cầu không có Authorization header
+            const headers: HeadersInit = {
+                "Content-Type": "application/json",
+            };
+    
+            if (token) {
+                // Nếu có token, thêm Authorization header
+                headers["Authorization"] = `Bearer ${token}`;
+            }
+    
+            // Gửi yêu cầu API để lấy chi tiết công việc
+            const response = await fetch(`http://localhost:8080/jobs/detail/${jobId}`, {
+                method: "GET",
+                headers,
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Không thể lấy thông tin công việc");
+            }
+    
+            const jobDetail = await response.json();
+            
+            // Lưu thông tin công việc vào sessionStorage nếu cần
+            sessionStorage.setItem('selectedJob', JSON.stringify(jobDetail));
+    
+            // Điều hướng đến trang chi tiết công việc
+            router.push(`/candidate/recruitmentInfoDetail?id=${jobId}`);
+        } catch (error: unknown) { // Chỉ định kiểu 'unknown' cho error
+            if (error instanceof Error) {
+                console.error("Lỗi khi lấy thông tin công việc:", error.message);
+            } else {
+                console.error("Lỗi không xác định:", error);
+            }
+        }
+    };
 
     return (
         <div className="container mx-auto p-6">
@@ -132,13 +182,25 @@ const InfoBusinessDetail = () => {
                         </Row>
                     </Col>
                     <Col>
-                        <Button 
-                            style={{ 
-                                backgroundColor: "#D4421E", color: "white", border: "none",
-                                fontWeight: "500", height: "43px"
-                            }}>
-                            + Theo dõi công ty
-                        </Button>
+                        <CustomButton
+                            text="+ Theo dõi công ty"
+                            onClick={()=>{}}
+                            backgroundColor="#D4421E"
+                            hoverColor="#ff5733"
+                            textColor="white"
+                            style={{
+                                height: '50px',
+                                borderColor: "#D4421E",
+                                transition: "background 0.3s, border-color 0.3s",
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                display: 'flex',
+                                gap: '8px',
+                                padding: '0 20px',
+                                borderRadius:"8px",
+                            }}
+                        >
+                        </CustomButton>
                     </Col>
                 </Row>
             </Card>
@@ -203,13 +265,25 @@ const InfoBusinessDetail = () => {
                                     <option>Hà Nội</option>
                                     <option>TP.HCM</option>
                                 </select>
-                                <Button
-                                    style={{ 
-                                        backgroundColor: "#D4421E", color: "white", border: "none",
-                                        fontWeight: "500", height: "43px"
-                                    }}>
-                                    Tìm kiếm
-                                </Button>
+                                <CustomButton
+                                    text="Tìm kiếm"
+                                    onClick={()=>{}}
+                                    backgroundColor="#D4421E"
+                                    hoverColor="#ff5733"
+                                    textColor="white"
+                                    style={{
+                                        height: '40px',
+                                        borderColor: "#D4421E",
+                                        transition: "background 0.3s, border-color 0.3s",
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        display: 'flex',
+                                        gap: '8px',
+                                        padding: '0 20px',
+                                        borderRadius:"8px"
+                                    }}
+                                >
+                                </CustomButton>
                             </div>
                         </div>
 
@@ -218,6 +292,20 @@ const InfoBusinessDetail = () => {
                                 <Card 
                                     key={job.id} 
                                     className="flex items-center border rounded-lg p-4 shadow mb-3"
+                                    onMouseEnter={() => setHoveredCard(job.id)}
+                                    onMouseLeave={() => setHoveredCard(null)}
+                                    onClick={() => handleCardClick(job.id)}
+                                    style={{
+                                        width: "100%",
+                                        height: "150px",
+                                        cursor: "pointer",
+                                        boxShadow: hoveredCard === job.id ? "0 6px 15px rgba(0,0,0,0.3)" : "0 4px 10px rgba(0,0,0,0.2)",
+                                        borderRadius: "10px",
+                                        background: hoveredCard === job.id ? "#f0f8ff" : "#ffffff",
+                                        transition: "all 0.3s ease",
+                                        display: "flex",
+                                        alignItems: "center"
+                                    }}
                                 >
                                     <div style={{ 
                                         display: 'flex', 
@@ -252,19 +340,25 @@ const InfoBusinessDetail = () => {
                                             </div>
                                         </div>
                                         
-                                        <Button 
-                                            style={{ 
-                                                backgroundColor: "#D4421E", 
-                                                color: "white", 
-                                                border: "none",
-                                                fontWeight: "500", 
-                                                height: "43px", 
-                                                width: '100%',  // Make button full width on smaller screens
-                                                maxWidth: '150px'  // Limit width on larger screens
+                                        <CustomButton
+                                            text="Ứng tuyển"
+                                            onClick={() => {}}
+                                            backgroundColor="#D4421E"
+                                            hoverColor="#E9552D"
+                                            textColor="white"
+                                            style={{
+                                                alignSelf: "flex-start",
+                                                marginTop: "8px",
+                                                fontWeight: "600",
+                                                height: "32px",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "8px",
+                                                borderRadius:"8px",
+                                                fontSize:"14px"
                                             }}
                                         >
-                                            Ứng tuyển
-                                        </Button>
+                                        </CustomButton>
                                     </div>  
                                 </Card>
                             ))}

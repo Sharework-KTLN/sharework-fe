@@ -7,6 +7,7 @@ interface CustomButtonProps {
     hoverColor?: string; // Màu nền khi hover
     textColor?: string; // Màu chữ
     style?: React.CSSProperties; // Bổ sung style nếu cần
+    children?: React.ReactNode; // <-- thêm dòng này để nhận children
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -16,6 +17,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     hoverColor = 'darkblue',
     textColor = 'white',
     style = {},
+    children, // <-- nhận children
 }) => {
     const baseStyle: React.CSSProperties = {
         backgroundColor,
@@ -52,7 +54,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
             onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
             onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         >
-            {text}
+            {children}
+            <span>{text}</span>
         </button>
     );
 };
