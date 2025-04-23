@@ -35,7 +35,7 @@ const PostJobPage = () => {
                 console.error("Lỗi khi lấy dữ liệu công ty:", error);
             }
         };
-
+        console.log("user id in post job page", user.id);
         if (user?.id) {
             fetchCompany();
         }

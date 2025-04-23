@@ -138,7 +138,7 @@ const RecruiterBar: React.FC = () => {
         {
             label: (
                 <div
-                    onClick={() => router.push('/recruiter/manage-jobs')}
+                    onClick={() => router.push('/recruiter/find-candidate')}
                     style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
                     onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
                     onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
