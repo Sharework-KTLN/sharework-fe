@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Input, Select, Row, Col, Card, Pagination, Typography, Modal } from 'antd';
 import { User } from '@/types/user'; // Đường dẫn đến file user.ts
 import { useRouter } from 'next/navigation';
@@ -30,23 +30,22 @@ const FindCandidatePage = () => {
     const [searchIndustry, setSearchIndustry] = useState('');
     const [searchSkills, setSearchSkills] = useState<string[]>([]);
 
-    const fetchCandidates = async () => {
+    const fetchCandidates = useCallback(async () => {
         try {
             const token = localStorage.getItem("token");
 
-            // Kiểm tra nếu không có token thì quay lại trang login và hiển thị thông báo
             if (!token) {
                 setModalMessage("Bạn cần đăng nhập để truy cập vào danh sách ứng viên.");
                 setShowModal(true);
-                return; // Ngừng thực thi hàm fetch nếu không có token
+                return;
             }
+
             const searchParams = {
-                name: searchName, // tên người dùng tìm kiếm
-                location: searchLocation, // trường học
-                industry: searchIndustry, // vị trí
-                skills: searchSkills.join(','), // kỹ năng đã chọn
+                name: searchName,
+                location: searchLocation,
+                industry: searchIndustry,
+                skills: searchSkills.join(','),
             };
-            // Tạo query string từ các tham số tìm kiếm
             const queryString = new URLSearchParams(searchParams).toString();
 
             const res = await fetch(`http://localhost:8080/user/getAllCandidates/${user.id}?${queryString}`, {
@@ -55,11 +54,10 @@ const FindCandidatePage = () => {
                 },
             });
 
-            // Kiểm tra lỗi 403 (Forbidden)
             if (res.status === 403) {
                 setModalMessage("Token không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.");
                 setShowModal(true);
-                return; // Ngừng thực thi hàm nếu bị lỗi 403
+                return;
             }
 
             if (!res.ok) throw new Error("Lỗi khi lấy danh sách ứng viên");
@@ -68,18 +66,18 @@ const FindCandidatePage = () => {
             setCandidates(data);
         } catch (error) {
             console.error("Lỗi fetch ứng viên:", error);
-            // Xử lý lỗi nếu cần
         }
-    };
+    }, [user?.id, searchName, searchLocation, searchIndustry, searchSkills]);
     useEffect(() => {
         const debounceTimeout = setTimeout(() => {
             if (user?.id) {
-                fetchCandidates(); // gọi API sau 500ms
+                fetchCandidates();
             }
-        }, 500); // thời gian debounce (ms)
+        }, 500);
 
-        return () => clearTimeout(debounceTimeout); // hủy timeout nếu người dùng gõ tiếp
-    }, [router, user?.id, searchName, searchLocation, searchIndustry, searchSkills]);
+        return () => clearTimeout(debounceTimeout);
+    }, [fetchCandidates, user?.id]);
+
 
     const handleSearchNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchName(e.target.value);
     const handleLocationChange = (value: string) => setSearchLocation(value);
