@@ -111,7 +111,7 @@ const PostJobPage = () => {
                 <div style={{ display: 'flex', alignItems: 'center', width: '50%' }}>
                     <Avatar
                         size={70}
-                        src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                        src={user.profile_image || 'https://www.w3schools.com/howto/img_avatar.png'} // Thay bằng URL ảnh thật nếu có
                         alt="Recruiter Avatar"
                     />
                     <div style={{ marginLeft: '15px' }}>
