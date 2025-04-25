@@ -5,6 +5,8 @@ import { Form, Input, Select, DatePicker, message } from 'antd';
 import CustomButton from '@/components/CustomButton';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 import { formatDate } from '@/utils/dateUltil';
 import { useParams } from 'next/navigation';
 import { industries } from '@/constants/industries';
@@ -13,12 +15,15 @@ const { Option } = Select;
 
 const EditJobPage = () => {
 
+    const user = useSelector((state: RootState) => state.user);
+
     const [messageApi, contextHolder] = message.useMessage();
 
 
     const [form] = Form.useForm();
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
+
 
     useEffect(() => {
         const fetchJobData = async () => {
@@ -58,9 +63,11 @@ const EditJobPage = () => {
                 message.error('Không thể tải dữ liệu công việc!');
             }
         };
+        if (user.id) {
+            fetchJobData();
+        }
 
-        fetchJobData();
-    }, [id, form]);
+    }, [id, form, user.id]);
 
     const normalizeWorkType = (workType: string) => {
         switch (workType.toLowerCase()) {
@@ -93,12 +100,40 @@ const EditJobPage = () => {
 
     const onFinish = async (values: Record<string, unknown>) => {
         try {
-            console.log('Dữ liệu mới nhất:', values);
             setLoading(true);
+            const token = localStorage.getItem("token");
 
-            messageApi.success('Cập nhật thành công!');
-        } catch (error) {
-            messageApi.error('Cập nhật thất bại!');
+            if (!token) {
+                messageApi.error("Bạn cần đăng nhập để cập nhật bài đăng.");
+                return;
+            }
+
+            // Format lại deadline về định dạng YYYY-MM-DD (nếu cần)
+            if (values.deadline && dayjs(String(values.deadline)).isValid()) {
+                if (values.deadline && (typeof values.deadline === 'string' || dayjs.isDayjs(values.deadline))) {
+                    values.deadline = dayjs(values.deadline).format("YYYY-MM-DD");
+                }
+            }
+
+            // Gửi request PUT để cập nhật
+            const res = await fetch(`http://localhost:8080/jobs/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(values),
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.message || "Lỗi không xác định khi cập nhật.");
+            }
+
+            messageApi.success("Cập nhật thành công!");
+        } catch (error: any) {
+            console.error("Lỗi khi cập nhật bài đăng:", error);
+            messageApi.error(`Cập nhật thất bại! ${error.message}`);
         } finally {
             setLoading(false);
         }
@@ -127,7 +162,11 @@ const EditJobPage = () => {
                 }}
             >
                 <h2>Chỉnh sửa bài đăng</h2>
-                <Form form={form} layout="vertical" style={{ marginTop: '20px' }}>
+                <Form
+                    form={form}
+                    layout="vertical"
+                    style={{ marginTop: '20px' }}
+                >
                     {/* Vị trí cần tuyển */}
                     <Form.Item name="title" label="Vị trí cần tuyển" rules={[{ required: true }]}>
                         <Input placeholder="Nhập vị trí" />
