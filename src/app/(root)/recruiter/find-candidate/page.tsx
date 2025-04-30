@@ -4,14 +4,19 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Input, Select, Row, Col, Card, Pagination, Typography, Modal } from 'antd';
 import { User } from '@/types/user'; // Đường dẫn đến file user.ts
 import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { openChatWithUser } from '@/redux/slice/chatSlice';
+import StandaloneChatbox from '@/components/ui/StandaloneChatbox';
 import Image from 'next/image';
 
 const { Title, Paragraph } = Typography;
 const { Option } = Select;
 
 const FindCandidatePage = () => {
+
+    // Redux
+    const dispatch = useDispatch();
 
     const user = useSelector((state: RootState) => state.user);
 
@@ -29,6 +34,9 @@ const FindCandidatePage = () => {
     const [searchLocation, setSearchLocation] = useState('');
     const [searchIndustry, setSearchIndustry] = useState('');
     const [searchSkills, setSearchSkills] = useState<string[]>([]);
+
+    // State để lưu ID ứng viên đang chat
+    const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(null);
 
     const fetchCandidates = useCallback(async () => {
         try {
@@ -95,7 +103,10 @@ const FindCandidatePage = () => {
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
-
+    // Mở chat khi nhấn vào ứng viên
+    const handleCardClick = (candidateId: number) => {
+        setSelectedCandidateId(candidateId);
+    };
     return (
         <div className="w-[95%] max-w-screen-xl mx-auto py-6">
             <Title level={2}>Tìm kiếm ứng viên</Title>
@@ -155,29 +166,33 @@ const FindCandidatePage = () => {
             {candidates.length > 0 ? (
                 <>
                     <Row gutter={[16, 16]}>
-                        {paginatedData.map((user) => (
-                            <Col span={8} key={user.id}>
-                                <Card hoverable className="p-4">
+                        {paginatedData.map((candidate) => (
+                            <Col span={8} key={candidate.id}>
+                                <Card
+                                    hoverable
+                                    className="p-4"
+                                    onClick={() => candidate.id !== null && handleCardClick(candidate.id)}
+                                >
                                     <div className="flex flex-row">
                                         <div className="w-1/3 pr-4 flex items-center">
                                             <Image
-                                                alt={user.full_name}
+                                                alt={candidate.full_name}
                                                 width={100}
                                                 height={100}
-                                                src={user.profile_image || '/default-profile.png'}
+                                                src={candidate.profile_image || 'https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg'}
                                                 className="w-full h-auto rounded object-cover"
                                             />
                                         </div>
                                         <div className="w-2/3">
-                                            <h3 className="font-semibold text-lg mb-1">{user.full_name}</h3>
+                                            <h3 className="font-semibold text-lg mb-1">{candidate.full_name}</h3>
                                             <p className="mb-1">
-                                                <strong>Trường:</strong> {user.school}
+                                                <strong>Trường:</strong> {candidate.school}
                                             </p>
                                             <p className="mb-1">
-                                                <strong>Chuyên ngành:</strong> {user.specialize}
+                                                <strong>Chuyên ngành:</strong> {candidate.specialize}
                                             </p>
                                             <p className="text-gray-600 line-clamp-2">
-                                                {user.introduce_yourself}
+                                                {candidate.introduce_yourself}
                                             </p>
                                         </div>
                                     </div>
@@ -200,6 +215,10 @@ const FindCandidatePage = () => {
                 <div className="text-center text-gray-500 mt-12 text-lg italic">
                     Hiện tại chưa có ứng viên nào phù hợp với tiêu chí tìm kiếm.
                 </div>
+            )}
+            {/* Hiển thị StandaloneChatbox nếu có ứng viên được chọn */}
+            {selectedCandidateId && (
+                <StandaloneChatbox conversationId={selectedCandidateId} />
             )}
             {/* Modal cảnh báo đăng nhập */}
             <Modal

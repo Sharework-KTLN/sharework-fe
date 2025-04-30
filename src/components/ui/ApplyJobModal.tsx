@@ -9,7 +9,7 @@ import { useState } from 'react';
 interface ApplyJobModalProps {
   open: boolean;
   onCancel: () => void;
-  onSubmit: (values: any) => void;
+  onSubmit: (values: unknown) => void;
   jobTitle: string;
 }
 

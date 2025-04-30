@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {User} from '../types/user';
+import { User } from '../../types/user';
 
 interface UserState extends User {
     token: string | null; // check
@@ -11,7 +11,7 @@ const initialState: UserState = {
     full_name: "",
     email: "",
     password: "",
-    role: "CANDIDATE",
+    role: "candidate",
     phone: "",
     profile_image: "",
     gender: "",

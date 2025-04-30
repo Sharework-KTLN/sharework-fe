@@ -81,7 +81,7 @@ const RecruitmentInfoDetail = () => {
     // Ứng tuyển
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleApplySubmit = (values: any) => {
+    const handleApplySubmit = (values: unknown) => {
         console.log('Dữ liệu ứng tuyển:', values);
         setIsModalOpen(false);
         // Gửi API nộp đơn tại đây

@@ -131,9 +131,13 @@ const EditJobPage = () => {
             }
 
             messageApi.success("Cập nhật thành công!");
-        } catch (error: any) {
+        } catch (error) {
             console.error("Lỗi khi cập nhật bài đăng:", error);
-            messageApi.error(`Cập nhật thất bại! ${error.message}`);
+            if (error instanceof Error) {
+                messageApi.error(`Cập nhật thất bại! ${error.message}`);
+            } else {
+                messageApi.error('Cập nhật thất bại! Lỗi không xác định.');
+            }
         } finally {
             setLoading(false);
         }

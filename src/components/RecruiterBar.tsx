@@ -12,7 +12,7 @@ import CustomButton from './CustomButton';
 import UserDropdown from './UserDropdown';
 import MessageDropdown from './MessageDropdown';
 import NotificationDropdown from './NotificationDropdown';
-import { login, logout } from '@/redux/userSlice';
+import { login, logout } from '@/redux/slice/userSlice';
 
 type MenuItem = Required<MenuProps>['items'][number];
 

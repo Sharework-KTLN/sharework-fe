@@ -3,7 +3,7 @@ export interface User {
     email: string;
     password: string;
     full_name: string;
-    role: 'CANDIDATE' | 'RECRUITER' | 'ADMIN'; // tùy theo enum role_users của bạn
+    role: 'candidate' | 'recruiter' | 'admin'; // tùy theo enum role_users của bạn
     phone?: string;
     profile_image?: string;
     gender?: string;
