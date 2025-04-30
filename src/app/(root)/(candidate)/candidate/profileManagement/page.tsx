@@ -6,8 +6,8 @@ import { RcFile } from "antd/lib/upload";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { login, logout } from '@/redux/userSlice';
-import { EditOutlined , UploadOutlined} from '@ant-design/icons';
+import { login, logout } from '@/redux/slice/userSlice';
+import { EditOutlined, UploadOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import CustomButton from '@/components/CustomButton';
 
@@ -28,7 +28,7 @@ interface User {
   email: string;
   password: string;
   full_name: string;
-  role: 'CANDIDATE' | 'RECRUITER' | 'ADMIN';
+  role: 'candidate' | 'recruiter' | 'admin';
   phone?: string;
   profile_image?: string;
   gender?: string;
@@ -59,7 +59,7 @@ const CVManager = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<number[]>([]);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [editableUser, setEditableUser] = useState(user);
   const [file, setFile] = useState<RcFile | null>(null);
   const [fileName, setFileName] = useState<string>("");
@@ -131,10 +131,10 @@ const CVManager = () => {
         console.error("Failed to fetch majors:", error);
       }
     };
-  
+
     fetchMajors();
   }, []);
-  
+
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -145,28 +145,28 @@ const CVManager = () => {
         console.error("Failed to fetch skills:", error);
       }
     };
-  
+
     fetchSkills();
   }, []);
 
   useEffect(() => {
     const fetchUserMajors = async () => {
       const token = localStorage.getItem('token');
-  
+
       if (!token) {
         console.error('Token không tồn tại!');
         return;
       }
-  
+
       // Giải mã token để lấy userId
       const decodedToken = JSON.parse(atob(token.split('.')[1])); // Giải mã JWT token
       const userId = decodedToken.id;
-  
+
       if (!userId) {
         console.error('User ID không có trong token!');
         return;
       }
-  
+
       try {
         // Fetch ngành nghề mà người dùng quan tâm
         const majorsRes = await fetch(`http://localhost:8080/user/${userId}/majors`, {
@@ -176,15 +176,15 @@ const CVManager = () => {
             'Authorization': `Bearer ${token}`,
           },
         });
-  
+
         if (!majorsRes.ok) {
           console.log('Không có ngành nghề nào mà người dùng quan tâm');
           return;  // Dừng lại nếu không có dữ liệu
         }
-  
+
         const majorsData = await majorsRes.json() as { majorId: number; majorName: string }[];
         setSelectedMajors(majorsData.map((item) => item.majorId));
-  
+
         // Fetch tất cả ngành nghề có sẵn
         const allMajorsRes = await fetch('http://localhost:8080/majors', {
           method: 'GET',
@@ -193,14 +193,14 @@ const CVManager = () => {
             'Authorization': `Bearer ${token}`,
           },
         });
-  
+
         if (!allMajorsRes.ok) {
           throw new Error('Không thể lấy danh sách ngành nghề');
         }
-  
+
         const allMajorsData = await allMajorsRes.json() as Major[];
         setMajors(allMajorsData);  // Đã có `id` và `name` trong `allMajorsData`
-  
+
       } catch (err: unknown) {
         if (err instanceof Error) {
           console.error('Lỗi khi lấy ngành nghề:', err.message);
@@ -211,7 +211,7 @@ const CVManager = () => {
         }
       }
     };
-  
+
     fetchUserMajors();
   }, []);  // Chạy khi component mount
 
@@ -225,28 +225,28 @@ const CVManager = () => {
         console.error("Failed to fetch skills:", error);
       }
     };
-  
+
     fetchSkills();
   }, []);
-  
+
   useEffect(() => {
     const fetchUserSkills = async () => {
       const token = localStorage.getItem('token');
-  
+
       if (!token) {
         console.error('Token không tồn tại!');
         return;
       }
-  
+
       // Giải mã token để lấy userId
       const decodedToken = JSON.parse(atob(token.split('.')[1])); // Giải mã JWT token
       const userId = decodedToken.id;
-  
+
       if (!userId) {
         console.error('User ID không có trong token!');
         return;
       }
-  
+
       try {
         // Fetch kỹ năng mà người dùng có
         const skillsRes = await fetch(`http://localhost:8080/user/${userId}/skills`, {
@@ -256,15 +256,15 @@ const CVManager = () => {
             'Authorization': `Bearer ${token}`,
           },
         });
-  
+
         if (!skillsRes.ok) {
           console.log('Không có kỹ năng nào của người dùng');
           return;  // Dừng lại nếu không có dữ liệu
         }
-  
+
         const skillsData = await skillsRes.json() as { skillId: number; skillName: string }[];
         setSelectedSkills(skillsData.map((item) => item.skillId));
-  
+
         // Fetch tất cả kỹ năng có sẵn
         const allSkillsRes = await fetch('http://localhost:8080/skills', {
           method: 'GET',
@@ -273,14 +273,14 @@ const CVManager = () => {
             'Authorization': `Bearer ${token}`,
           },
         });
-  
+
         if (!allSkillsRes.ok) {
           throw new Error('Không thể lấy danh sách kỹ năng');
         }
-  
+
         const allSkillsData = await allSkillsRes.json() as Skill[];
         setSkills(allSkillsData);  // Đã có `id` và `name` trong `allSkillsData`
-  
+
       } catch (err: unknown) {
         if (err instanceof Error) {
           console.error('Lỗi khi lấy kỹ năng:', err.message);
@@ -291,7 +291,7 @@ const CVManager = () => {
         }
       }
     };
-  
+
     fetchUserSkills();
   }, []);  // Chạy khi component mount
 
@@ -528,7 +528,7 @@ const CVManager = () => {
           </Col>
         </Row>
       </div>
-      
+
       {/* Header: Thông tin học vấn */}
       <div style={{
         background: "linear-gradient(to right, #D4421E, #FFA07A)",
@@ -682,7 +682,7 @@ const CVManager = () => {
               placeholder="Hãy giới thiệu về bản thân bạn"
               value={user.introduce_yourself}
               disabled={!isEditable}
-              // onChange={(e) => handleFieldChange('introduce_yourself', e.target.value)}
+            // onChange={(e) => handleFieldChange('introduce_yourself', e.target.value)}
             />
           </Col>
         </Row>
@@ -690,25 +690,25 @@ const CVManager = () => {
       {/* Button update */}
       <Row justify="center" style={{ marginTop: 24 }}>
         <Col>
-        <CustomButton
-          text="Cập nhật"
-          onClick={() => {}} // Thêm logic cập nhật nếu có
-          backgroundColor="#D4421E"
-          hoverColor="#e9552d"
-          textColor="white"
-          style={{
-            width: 150,
-            height: 45,
-            fontWeight: 600,
-            fontSize: 18,
-            borderColor: "#D4421E",
-            opacity: !isEditable ? 0.6 : 1,
-            cursor: !isEditable ? "not-allowed" : "pointer",
-            alignItems: 'center',
-            justifyContent: 'center',
-            display: 'flex',
-          }}
-        />
+          <CustomButton
+            text="Cập nhật"
+            onClick={() => { }} // Thêm logic cập nhật nếu có
+            backgroundColor="#D4421E"
+            hoverColor="#e9552d"
+            textColor="white"
+            style={{
+              width: 150,
+              height: 45,
+              fontWeight: 600,
+              fontSize: 18,
+              borderColor: "#D4421E",
+              opacity: !isEditable ? 0.6 : 1,
+              cursor: !isEditable ? "not-allowed" : "pointer",
+              alignItems: 'center',
+              justifyContent: 'center',
+              display: 'flex',
+            }}
+          />
         </Col>
       </Row>
     </div>

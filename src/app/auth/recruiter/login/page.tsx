@@ -8,7 +8,7 @@ import { jwtDecode, JwtPayload } from 'jwt-decode';
 import AuthFormRecruiter from '@/components/AuthFormRecruiter';
 import { message, Spin } from 'antd';
 import { useDispatch } from 'react-redux';
-import { login } from '@/redux/userSlice';
+import { login } from '@/redux/slice/userSlice';
 import { AppDispatch } from '@/redux/store';
 
 const RecuiterLogin = () => {

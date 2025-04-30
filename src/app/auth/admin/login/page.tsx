@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import CustomButton from '@/components/CustomButton';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
-import { login } from '@/redux/userSlice';
+import { login } from '@/redux/slice/userSlice';
 import { AppDispatch } from '@/redux/store';
 
 const AdminLoginPage = () => {

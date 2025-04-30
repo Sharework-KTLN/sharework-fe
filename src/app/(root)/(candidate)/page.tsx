@@ -89,18 +89,18 @@ const Home = () => {
         const fetchJobs = async () => {
             try {
                 const token = localStorage.getItem("token");
-        
+
                 const response = await fetch("http://localhost:8080/jobs", {
-                headers: {
-                    "Content-Type": "application/json",
-                    ...(token ? { Authorization: `Bearer ${token}` } : {}) // Có cũng được, không có cũng không sao
-                }
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}) // Có cũng được, không có cũng không sao
+                    }
                 });
-        
+
                 if (!response.ok) {
-                throw new Error("Failed to fetch jobs");
+                    throw new Error("Failed to fetch jobs");
                 }
-        
+
                 const data = await response.json();
                 setJobs(data);
                 setFilteredJobs(data);
@@ -112,7 +112,7 @@ const Home = () => {
         };
         fetchJobs();
     }, []);
-    
+
     useEffect(() => {
         const fetchSavedJobs = async () => {
             const token = localStorage.getItem("token");
@@ -120,7 +120,7 @@ const Home = () => {
                 setError("Bạn chưa đăng nhập hoặc thiếu token");
                 return;
             }
-    
+
             try {
                 const res = await fetch("http://localhost:8080/user/favorites", {
                     headers: {
@@ -213,33 +213,33 @@ const Home = () => {
                 router.push("/auth/candidate/login");
                 return;
             }
-    
+
             // Nếu không có token, có thể gửi yêu cầu không có Authorization header
             const headers: HeadersInit = {
                 "Content-Type": "application/json",
             };
-    
+
             if (token) {
                 // Nếu có token, thêm Authorization header
                 headers["Authorization"] = `Bearer ${token}`;
             }
-    
+
             // Gửi yêu cầu API để lấy chi tiết công việc
             const response = await fetch(`http://localhost:8080/jobs/detail/${jobId}`, {
                 method: "GET",
                 headers,
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || "Không thể lấy thông tin công việc");
             }
-    
+
             const jobDetail = await response.json();
-            
+
             // Lưu thông tin công việc vào sessionStorage nếu cần
             sessionStorage.setItem('selectedJob', JSON.stringify(jobDetail));
-    
+
             // Điều hướng đến trang chi tiết công việc
             router.push(`/candidate/recruitmentInfoDetail?id=${jobId}`);
         } catch (error: unknown) { // Chỉ định kiểu 'unknown' cho error
@@ -250,16 +250,16 @@ const Home = () => {
             }
         }
     };
-    
+
     const handleSaveJob = async (jobId: number) => {
         try {
             const token = localStorage.getItem("token");
-    
+
             if (!token) {
                 router.push("/auth/candidate/login");
                 return;
             }
-    
+
             // Gửi yêu cầu POST đến /user/savejob để lưu công việc
             const response = await fetch(`http://localhost:8080/user/savejob/${jobId}`, {
                 method: "POST",
@@ -269,12 +269,12 @@ const Home = () => {
                 },
                 body: JSON.stringify({ jobId }),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || "Lưu công việc thất bại");
             }
-    
+
             // Nếu lưu thành công, cập nhật lại trạng thái savedJobs
             setSavedJobs((prev) =>
                 prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
@@ -292,12 +292,12 @@ const Home = () => {
     const handleUnsaveJob = async (jobId: number) => {
         try {
             const token = localStorage.getItem("token");
-    
+
             if (!token) {
                 router.push("/auth/candidate/login");
                 return;
             }
-    
+
             // Gửi yêu cầu DELETE đến /user/unsavejob để xóa công việc đã lưu
             const response = await fetch(`http://localhost:8080/user/unsavejob/${jobId}`, {
                 method: "DELETE",
@@ -307,12 +307,12 @@ const Home = () => {
                 },
                 body: JSON.stringify({ jobId }), // Gửi jobId trong body request
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || "Bỏ lưu công việc thất bại");
             }
-    
+
             // Nếu xóa thành công, cập nhật lại trạng thái savedJobs
             setSavedJobs((prev) =>
                 prev.includes(jobId) ? prev.filter((id) => id !== jobId) : prev
@@ -327,7 +327,7 @@ const Home = () => {
         }
     };
 
-    const handleSearch = () =>{};
+    const handleSearch = () => { };
     return (
         <div style={{ width: "100%", overflow: "hidden" }}>
             <div style={{
@@ -362,26 +362,26 @@ const Home = () => {
                                 />
                             </Col>
                             <Col>
-                            <CustomButton
-                                text="Tìm kiếm"
-                                onClick={handleSearch}
-                                backgroundColor="#D4421E"
-                                hoverColor="#ff5733"
-                                textColor="white"
-                                style={{
-                                    height: '39px',
-                                    borderColor: "#D4421E",
-                                    transition: "background 0.3s, border-color 0.3s",
-                                    alignItems: 'center',       // 👈 canh giữa theo chiều dọc
-                                    justifyContent: 'center',
-                                    display: 'flex',
-                                    gap: '8px',
-                                    padding: '0 20px',
-                                    borderRadius: "8px"
-                                }}
-                            >
-                                <SearchOutlined />
-                            </CustomButton>
+                                <CustomButton
+                                    text="Tìm kiếm"
+                                    onClick={handleSearch}
+                                    backgroundColor="#D4421E"
+                                    hoverColor="#ff5733"
+                                    textColor="white"
+                                    style={{
+                                        height: '39px',
+                                        borderColor: "#D4421E",
+                                        transition: "background 0.3s, border-color 0.3s",
+                                        alignItems: 'center',       // 👈 canh giữa theo chiều dọc
+                                        justifyContent: 'center',
+                                        display: 'flex',
+                                        gap: '8px',
+                                        padding: '0 20px',
+                                        borderRadius: "8px"
+                                    }}
+                                >
+                                    <SearchOutlined />
+                                </CustomButton>
                             </Col>
                         </Row>
                     </div>
@@ -417,7 +417,7 @@ const Home = () => {
                                     hoverColor="#E0E0E0"
                                     textColor="#333"
                                     style={{
-                                        height:'40px',
+                                        height: '40px',
                                         alignItems: 'center',       // 👈 canh giữa theo chiều dọc
                                         justifyContent: 'center',
                                         display: 'flex',
@@ -440,7 +440,7 @@ const Home = () => {
                     {displayedJobs.map(job => (
                         <Col xs={24} sm={12} md={8} lg={8} key={job.id}>
                             <Card
-                                bordered={false}
+                                variant="outlined"
                                 style={{
                                     width: "100%",
                                     height: "150px",
@@ -461,7 +461,7 @@ const Home = () => {
                                     {/* Hình ảnh bên trái */}
                                     <Col span={8}>
                                         <Image
-                                            src={job.company_logo||'fallback_image_url.jpg'}
+                                            src={job.company_logo || 'fallback_image_url.jpg'}
                                             alt={job.company_name}
                                             style={{ width: "100%", height: "100px", borderRadius: "8px", objectFit: "cover" }}
                                             preview={false}
@@ -476,39 +476,39 @@ const Home = () => {
                                         <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.work_location}</p>
                                     </Col>
                                 </Row>
-                                    {savedJobs.some(savedJob => savedJob === job.id) ? (
-                                        <HeartFilled 
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Ngăn chặn sự kiện click vào card
-                                                handleUnsaveJob(job.id);
-                                            }}
-                                            style={{
-                                                position: "absolute",
-                                                bottom: "10px",
-                                                right: "10px",
-                                                fontSize: "20px",
-                                                cursor: "pointer",
-                                                color: "#D4421E",
-                                                transition: "color 0.2s ease"
-                                            }}
-                                        />
-                                    ) : (
-                                        <HeartOutlined 
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleSaveJob(job.id);
-                                            }}
-                                            style={{
-                                                position: "absolute",
-                                                bottom: "10px",
-                                                right: "10px",
-                                                fontSize: "20px",
-                                                cursor: "pointer",
-                                                color: "#D4421E",
-                                                transition: "color 0.2s ease"
-                                            }}
-                                        />
-                                    )}
+                                {savedJobs.some(savedJob => savedJob === job.id) ? (
+                                    <HeartFilled
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Ngăn chặn sự kiện click vào card
+                                            handleUnsaveJob(job.id);
+                                        }}
+                                        style={{
+                                            position: "absolute",
+                                            bottom: "10px",
+                                            right: "10px",
+                                            fontSize: "20px",
+                                            cursor: "pointer",
+                                            color: "#D4421E",
+                                            transition: "color 0.2s ease"
+                                        }}
+                                    />
+                                ) : (
+                                    <HeartOutlined
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleSaveJob(job.id);
+                                        }}
+                                        style={{
+                                            position: "absolute",
+                                            bottom: "10px",
+                                            right: "10px",
+                                            fontSize: "20px",
+                                            cursor: "pointer",
+                                            color: "#D4421E",
+                                            transition: "color 0.2s ease"
+                                        }}
+                                    />
+                                )}
                             </Card>
                         </Col>
                     ))}
@@ -524,7 +524,7 @@ const Home = () => {
                     />
                 </div>
             </div>
-        </div> 
+        </div>
     );
 };
 

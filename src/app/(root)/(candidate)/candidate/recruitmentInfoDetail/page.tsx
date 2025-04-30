@@ -1,11 +1,14 @@
 'use client';
-import { Card, Button ,Typography, Tag , Image} from "antd";
-import { EnvironmentOutlined, MoneyCollectOutlined, ClockCircleOutlined , LaptopOutlined,
-    SolutionOutlined , CalendarOutlined , HourglassOutlined, SendOutlined , HeartOutlined, HeartFilled, 
-    ExportOutlined, RiseOutlined, TeamOutlined} from "@ant-design/icons";
+import { Card, Button, Typography, Tag, Image } from "antd";
+import {
+    EnvironmentOutlined, MoneyCollectOutlined, ClockCircleOutlined, LaptopOutlined,
+    SolutionOutlined, CalendarOutlined, HourglassOutlined, SendOutlined, HeartOutlined, HeartFilled,
+    ExportOutlined, RiseOutlined, TeamOutlined
+} from "@ant-design/icons";
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import CustomButton from "@/components/CustomButton";
+import ApplyJobModal from "@/components/ui/ApplyJobModal";
 
 const { Title, Text } = Typography;
 
@@ -50,23 +53,23 @@ const iconStyle = {
     borderRadius: "50%", // Tạo hình tròn
     padding: "8px", // Khoảng cách bên trong vòng tròn
     display: "flex", // Đảm bảo icon nằm giữa vòng tròn
-    alignItems: "center", 
+    alignItems: "center",
     justifyContent: "center",
     fontSize: "19px",
     marginRight: "8px"
 };
 
 const info1Style = {
-    color:"gray",
-    fontSize:"13px"
+    color: "gray",
+    fontSize: "13px"
 };
 
 const info2Style = {
-    fontWeight:"bold",
-    fontSize:"13px"
+    fontWeight: "bold",
+    fontSize: "13px"
 };
 
-const RecruitmentInfoDetail = () =>{
+const RecruitmentInfoDetail = () => {
     const searchParams = useSearchParams(); // Use this to get search params
     const id = searchParams.get('id');
     const [jobDetails, setJobDetails] = useState<Job | null>(null);
@@ -74,6 +77,15 @@ const RecruitmentInfoDetail = () =>{
     const [savedJobs, setSavedJobs] = useState<number[]>([]);
     const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
     const router = useRouter();
+
+    // Ứng tuyển
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleApplySubmit = (values: unknown) => {
+        console.log('Dữ liệu ứng tuyển:', values);
+        setIsModalOpen(false);
+        // Gửi API nộp đơn tại đây
+    };
 
     useEffect(() => {
         const fetchJobDetails = async () => {
@@ -104,23 +116,23 @@ const RecruitmentInfoDetail = () =>{
     const calculateDaysRemaining = (endDate: string) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-      
+
         const end = new Date(endDate);
         end.setHours(0, 0, 0, 0);
-      
+
         const timeDifference = end.getTime() - today.getTime();
         const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
-      
+
         if (daysRemaining < 0) {
-          return "Đã hết hạn nộp hồ sơ";
+            return "Đã hết hạn nộp hồ sơ";
         }
-      
+
         return `Còn ${daysRemaining} ngày đến hạn nộp hồ sơ`;
     };
     // Effect để lấy công việc đã lưu
     useEffect(() => {
         const fetchSavedJobs = async () => {
-            const token = localStorage.getItem("token");  
+            const token = localStorage.getItem("token");
             try {
                 const res = await fetch("http://localhost:8080/user/favorites", {
                     headers: {
@@ -139,24 +151,24 @@ const RecruitmentInfoDetail = () =>{
         };
         fetchSavedJobs();
     }, []); // Chạy lần đầu khi component mount
-    
+
     // Phần còn lại của bạn vẫn giữ nguyên, chẳng hạn khi không có công việc chi tiết:
     if (error) {
         return <div>{error}</div>;
     }
-    
+
     if (!jobDetails) {
         return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
     }
-    
+
     const handleSaveJob = async (jobId: number) => {
         try {
             const token = localStorage.getItem("token");
-    
+
             if (!token) {
                 throw new Error("Bạn chưa đăng nhập hoặc thiếu token");
             }
-    
+
             // Gửi yêu cầu POST đến /user/savejob để lưu công việc
             const response = await fetch(`http://localhost:8080/user/savejob/${jobId}`, {
                 method: "POST",
@@ -166,12 +178,12 @@ const RecruitmentInfoDetail = () =>{
                 },
                 body: JSON.stringify({ jobId }),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || "Lưu công việc thất bại");
             }
-    
+
             // Nếu lưu thành công, cập nhật lại trạng thái savedJobs
             setSavedJobs((prev) =>
                 prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
@@ -192,7 +204,7 @@ const RecruitmentInfoDetail = () =>{
             setError("Bạn chưa đăng nhập hoặc thiếu token");
             return;
         }
-    
+
         try {
             const res = await fetch(`http://localhost:8080/user/unsavejob/${jobId}`, {
                 method: "DELETE",
@@ -201,11 +213,11 @@ const RecruitmentInfoDetail = () =>{
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             if (!res.ok) {
                 throw new Error("Không thể hủy lưu công việc");
             }
-    
+
             // Cập nhật lại savedJobs sau khi hủy lưu công việc thành công
             setSavedJobs((prev) => prev.filter(id => id !== jobId));
         } catch (err) {
@@ -217,9 +229,17 @@ const RecruitmentInfoDetail = () =>{
         router.push(`/candidate/infoBusinessDetail?id=${jobDetails.company_id}`);
     };
 
-    const handleApplyJob = ()=>{};
+    const handleApplyJob = () => {
+        setIsModalOpen(true); // Mở modal ứng tuyển
+    };
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
+            <ApplyJobModal
+                open={isModalOpen}
+                onCancel={() => setIsModalOpen(false)}
+                onSubmit={handleApplySubmit}
+                jobTitle="Nhân viên Marketing"
+            />
             {/* Job Details Section */}
             <div className="w-full lg:w-3/4">
                 <Card className="shadow-md">
@@ -227,8 +247,8 @@ const RecruitmentInfoDetail = () =>{
                     <div className="flex gap-2 items-center mb-3">
                         <Tag icon={<MoneyCollectOutlined />} color="green">{jobDetails.salary_range}</Tag>
                         <Tag icon={<EnvironmentOutlined />} color="blue">{jobDetails.work_location}</Tag>
-                        <Tag icon={<HourglassOutlined/>} color="orange">{jobDetails.experience_required}</Tag>
-                        <Tag icon={<ClockCircleOutlined/>} color="default">{calculateDaysRemaining(jobDetails.deadline)}</Tag>
+                        <Tag icon={<HourglassOutlined />} color="orange">{jobDetails.experience_required}</Tag>
+                        <Tag icon={<ClockCircleOutlined />} color="default">{calculateDaysRemaining(jobDetails.deadline)}</Tag>
                     </div>
                     <CustomButton
                         text={appliedJobs.includes(jobDetails.title) ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
@@ -249,12 +269,12 @@ const RecruitmentInfoDetail = () =>{
                             justifyContent: 'center',
                             gap: '8px',
                             padding: '0 20px',
-                            borderRadius:'8px'
+                            borderRadius: '8px'
                         }}
                     >
                         <SendOutlined />
                     </CustomButton>
-                    
+
                     <CustomButton
                         text={savedJobs.includes(jobDetails.id) ? "Đã lưu" : "Lưu tin"}
                         onClick={() =>
@@ -274,7 +294,7 @@ const RecruitmentInfoDetail = () =>{
                             justifyContent: 'center',
                             gap: "8px",
                             padding: '0 20px',
-                            borderRadius:'8px',
+                            borderRadius: '8px',
                         }}
                     >
                         {savedJobs.includes(jobDetails.id) ? (
@@ -285,7 +305,7 @@ const RecruitmentInfoDetail = () =>{
                     </CustomButton>
 
                     <Title level={4}>Mô tả công việc</Title>
-                    <div style={{marginTop:"-7px", marginBottom:"7px"}}>
+                    <div style={{ marginTop: "-7px", marginBottom: "7px" }}>
                         <ul className="list-disc pl-5">
                             {descriptionSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
@@ -294,7 +314,7 @@ const RecruitmentInfoDetail = () =>{
                     </div>
 
                     <Title level={4}>Yêu cầu ứng viên</Title>
-                    <div style={{marginTop:"-7px", marginBottom:"7px"}}>
+                    <div style={{ marginTop: "-7px", marginBottom: "7px" }}>
                         <ul className="list-disc pl-5">
                             {required_SkillsSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
@@ -306,7 +326,7 @@ const RecruitmentInfoDetail = () =>{
                     </div>
 
                     <Title level={4}>Thời gian làm việc</Title>
-                    <div style={{marginTop:"-7px", marginBottom:"7px"}}>
+                    <div style={{ marginTop: "-7px", marginBottom: "7px" }}>
                         <ul className="list-disc pl-5">
                             {work_ScheduleSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
@@ -315,7 +335,7 @@ const RecruitmentInfoDetail = () =>{
                     </div>
 
                     <Title level={4}>Quyền lợi</Title>
-                    <div style={{marginTop:"-7px", marginBottom:"7px"}}>
+                    <div style={{ marginTop: "-7px", marginBottom: "7px" }}>
                         <ul className="list-disc pl-5">
                             {benefitsSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
@@ -324,7 +344,7 @@ const RecruitmentInfoDetail = () =>{
                     </div>
 
                     <Title level={4}>Cách thức ứng tuyển</Title>
-                    <div style={{marginTop:"-7px", marginBottom:"7px"}}>
+                    <div style={{ marginTop: "-7px", marginBottom: "7px" }}>
                         <ul className="list-disc pl-5">
                             <li>Gửi CV qua trang đăng tuyển</li>
                             <li>Hoặc gửi email cho công ty</li>
@@ -332,7 +352,7 @@ const RecruitmentInfoDetail = () =>{
                     </div>
                 </Card>
             </div>
-            
+
             {/* Company Section */}
             <div className="w-full lg:w-1/4">
                 <div>
@@ -340,29 +360,29 @@ const RecruitmentInfoDetail = () =>{
                         <Title level={4}>Công ty</Title>
                         {/* Chia cột chứa hình ảnh và thông tin */}
                         <div className="flex items-center gap-4">
-                        {/* Ảnh công ty */}
-                        <div className="w-16 h-16">
-                            <Image 
-                                src={jobDetails.company_logo}
-                                alt={jobDetails.company_name}
-                                width={64}
-                                height={64}
-                                className="rounded-md object-cover"
-                            />
-                        </div>
+                            {/* Ảnh công ty */}
+                            <div className="w-16 h-16">
+                                <Image
+                                    src={jobDetails.company_logo}
+                                    alt={jobDetails.company_name}
+                                    width={64}
+                                    height={64}
+                                    className="rounded-md object-cover"
+                                />
+                            </div>
 
-                        {/* Thông tin công ty */}
-                        <div>
-                            <Text strong>{jobDetails.company_name}</Text>
-                            <br />
-                            <Text>Lĩnh vực: {jobDetails.specialize}</Text>
-                            <br/>
-                            <Text>Địa điểm: {jobDetails.work_location}</Text>
+                            {/* Thông tin công ty */}
+                            <div>
+                                <Text strong>{jobDetails.company_name}</Text>
+                                <br />
+                                <Text>Lĩnh vực: {jobDetails.specialize}</Text>
+                                <br />
+                                <Text>Địa điểm: {jobDetails.work_location}</Text>
+                            </div>
                         </div>
-                        </div>
-                        <Button 
-                            type="link" 
-                            className="mt-3" 
+                        <Button
+                            type="link"
+                            className="mt-3"
                             style={{ color: "#D4421E", fontWeight: "500" }}
                             onClick={handleViewCompanyDetail}
                         >
@@ -370,7 +390,7 @@ const RecruitmentInfoDetail = () =>{
                         </Button>
                     </Card>
                 </div>
-                <div style={{marginTop:"10px"}}>
+                <div style={{ marginTop: "10px" }}>
                     <Card className="shadow-md p-4">
                         <Title level={4}>Thông tin chung</Title>
                         {/* Chia cột chứa hình ảnh và thông tin */}
