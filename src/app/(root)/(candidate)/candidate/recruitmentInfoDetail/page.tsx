@@ -238,7 +238,7 @@ const RecruitmentInfoDetail = () => {
                 open={isModalOpen}
                 onCancel={() => setIsModalOpen(false)}
                 onSubmit={handleApplySubmit}
-                jobTitle="Nhân viên Marketing"
+                jobTitle={jobDetails.title.toString()}
             />
             {/* Job Details Section */}
             <div className="w-full lg:w-3/4">
