@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Avatar, Dropdown, Space, List, Badge, Input, Button } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetChatTrigger } from '@/redux/slice/chatSlice';
@@ -27,6 +27,12 @@ const MessageDropdown = () => {
     const [openConversations, setOpenConversations] = useState<Conversation[]>([]);
     const [loading, setLoading] = useState(true);
     const [inputValues, setInputValues] = useState<{ [key: number]: string }>({});
+
+    useEffect(() => {
+        console.log("messagesByConversation: ", messagesByConversation);
+        console.log("conversations: ", conversations);
+        console.log("openConversations: ", openConversations);
+    }, [conversations, messagesByConversation, openConversations]);
 
     useEffect(() => {
         // Socket.IO event listeners
@@ -68,7 +74,6 @@ const MessageDropdown = () => {
                 const res = await axios.get(`http://localhost:8080/conversations/?userId=${user.id}&role=${user.role}`);
                 const fetchedConversations: Conversation[] = res.data;
                 setConversations(fetchedConversations);
-                console.log("fetchedConversations: ", fetchedConversations);
 
                 // Fetch all messages cho mỗi conversation
                 const messagesMap: { [key: number]: Message[] } = {};
@@ -93,7 +98,7 @@ const MessageDropdown = () => {
         fetchConversations();
     }, [user?.id, user?.role]);
 
-    const handleOpenChat = async (conversation: Conversation) => {
+    const handleOpenChat = useCallback(async (conversation: Conversation) => {
         if (!openConversations.find(c => c.id === conversation.id)) {
             setOpenConversations(prev => [...prev, conversation]);
 
@@ -112,7 +117,7 @@ const MessageDropdown = () => {
                 console.error('Lỗi khi tải tin nhắn:', error);
             }
         }
-    };
+    }, [setOpenConversations, messagesByConversation, openConversations]);
 
     const handleSendMessage = (conversationId: number) => {
         const content = inputValues[conversationId]?.trim();
@@ -215,55 +220,63 @@ const MessageDropdown = () => {
         </div>
     );
 
-    // const handleStartChatWithUser = async (otherUserId: number, role: 'candidate' | 'recruiter') => {
-    //     if (!user?.id) return;
+    // Thêm function để bắt đầu chat với một user
+    const handleStartChatWithUser = useCallback(async (otherUserId: number, role: 'candidate' | 'recruiter') => {
+        if (!user?.id) return;
 
-    //     // Kiểm tra nếu đã tồn tại conversation giữa 2 người
-    //     const existingConversation = conversations.find(c =>
-    //         (c.candidate_id === user.id && c.recruiter_id === otherUserId) ||
-    //         (c.recruiter_id === user.id && c.candidate_id === otherUserId)
-    //     );
+        // Kiểm tra nếu đã tồn tại conversation giữa 2 người
+        const existingConversation = conversations.find(c => {
+            if (user.role === 'recruiter') {
+                return c.recruiter_id === user.id && c.candidate_id === otherUserId;
+            } else {
+                return c.candidate_id === user.id && c.recruiter_id === otherUserId;
+            }
+        });
 
-    //     if (existingConversation) {
-    //         handleOpenChat(existingConversation);
-    //         return;
-    //     }
+        if (existingConversation) {
+            // Nếu đã có conversation, mở nó lên
+            handleOpenChat(existingConversation);
+            return;
+        }
 
-    //     try {
-    //         // Tạo conversation mới
-    //         const res = await axios.post('http://localhost:8080/conversations', {
-    //             candidate_id: role === 'candidate' ? otherUserId : user.id,
-    //             recruiter_id: role === 'recruiter' ? otherUserId : user.id,
-    //         });
+        try {
+            // Tạo conversation mới
+            const res = await axios.post('http://localhost:8080/conversations', {
+                candidate_id: user.role === 'candidate' ? user.id : otherUserId,
+                recruiter_id: user.role === 'recruiter' ? user.id : otherUserId,
+            });
 
-    //         const newConversation: Conversation = res.data;
+            const newConversation: Conversation = res.data;
 
-    //         // Cập nhật vào state
-    //         setConversations(prev => [...prev, newConversation]);
-    //         setOpenConversations(prev => [...prev, newConversation]);
+            // Cập nhật vào state
+            setConversations(prev => [...prev, newConversation]);
 
-    //         // Tham gia room qua socket
-    //         socket.emit('joinConversation', newConversation.id);
+            // Mở khung chat mới
+            setOpenConversations(prev => [...prev, newConversation]);
 
-    //         // Tải tin nhắn lần đầu (sẽ là rỗng)
-    //         setMessagesByConversation(prev => ({
-    //             ...prev,
-    //             [newConversation.id]: [],
-    //         }));
-    //     } catch (error) {
-    //         console.error("Lỗi khi tạo cuộc hội thoại mới:", error);
-    //     }
-    // };
+            // Tham gia room qua socket
+            socket.emit('joinConversation', newConversation.id);
 
-    // useEffect(() => {
-    //     if (!chat.trigger || !chat.targetUserId || !chat.targetUserRole) return;
+            // Tải tin nhắn lần đầu (sẽ là rỗng)
+            setMessagesByConversation(prev => ({
+                ...prev,
+                [newConversation.id]: [],
+            }));
+        } catch (error) {
+            console.error("Lỗi khi tạo cuộc hội thoại mới:", error);
+        }
+    }, [conversations, user, setConversations, setOpenConversations, setMessagesByConversation, handleOpenChat]);
 
-    //     // Gọi hàm mở chat với user được yêu cầu từ nơi khác
-    //     handleStartChatWithUser(chat.targetUserId, chat.targetUserRole);
+    // Lắng nghe sự kiện trigger chat từ Redux
+    useEffect(() => {
+        if (!chat.trigger || !chat.targetUserId || !chat.targetUserRole) return;
 
-    //     // Reset trigger sau khi xử lý
-    //     dispatch(resetChatTrigger());
-    // }, [chat.trigger]);
+        // Gọi hàm mở chat với user được yêu cầu từ nơi khác
+        handleStartChatWithUser(chat.targetUserId, chat.targetUserRole);
+
+        // Reset trigger sau khi xử lý
+        dispatch(resetChatTrigger());
+    }, [chat.trigger, chat.targetUserId, chat.targetUserRole, dispatch, handleStartChatWithUser]);
 
 
     return (
