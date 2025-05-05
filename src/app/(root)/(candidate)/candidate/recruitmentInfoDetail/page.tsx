@@ -84,7 +84,6 @@ const RecruitmentInfoDetail = () => {
     const handleApplySubmit = (values: unknown) => {
         console.log('Dữ liệu ứng tuyển:', values);
         setIsModalOpen(false);
-        // Gửi API nộp đơn tại đây
     };
 
     useEffect(() => {

@@ -6,7 +6,6 @@ import { User } from '@/types/user'; // Đường dẫn đến file user.ts
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { openChatWithUser } from '@/redux/slice/chatSlice';
 import StandaloneChatbox from '@/components/ui/StandaloneChatbox';
 import Image from 'next/image';
 

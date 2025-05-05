@@ -12,6 +12,7 @@ const ManageJobPage = () => {
 
     const user = useSelector((state: RootState) => state.user);
     const [posts, setPosts] = useState<Job[]>([]);
+    const [applicationsCount, setApplicationsCount] = useState<{ [key: number]: number }>({});
     const [loading, setLoading] = useState(true); // State để hiển thị loading
     const [isMounted, setIsMounted] = useState(false); // State kiểm tra nếu đang ở môi trường client
     const router = useRouter();
@@ -35,6 +36,7 @@ const ManageJobPage = () => {
                 } else {
                     setPosts(data); // Gán dữ liệu bài đăng nếu có
                 }
+                console.log("Posts:", data);
             } catch (error) {
                 console.error("Lỗi tải bài đăng1:", error);
                 setPosts([]); // Set lại danh sách bài đăng rỗng khi có lỗi
@@ -42,9 +44,30 @@ const ManageJobPage = () => {
                 setLoading(false);
             }
         };
+        if (user?.id) {
+            fetchPosts();
+        }
 
-        fetchPosts();
-    }, [user.id]);
+    }, [user?.id]);
+
+    useEffect(() => {
+        const fetchApplicationCounts = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/applications/count-by-job');
+                const data = await response.json();
+                const map: { [key: number]: number } = {};
+                data.forEach((item: { job_id: number; total: number }) => {
+                    map[item.job_id] = item.total;
+                });
+                setApplicationsCount(map);
+            } catch (error) {
+                console.error("Lỗi khi load số lượng ứng viên:", error);
+            }
+        };
+
+        fetchApplicationCounts();
+    }, []);
+
 
     const handleButtonViewPost = (post_id: number) => {
         if (isMounted) {
@@ -54,6 +77,11 @@ const ManageJobPage = () => {
     const handleButtonEditPost = (post_id: number) => {
         if (isMounted) {
             router.push(`/recruiter/edit-job/${post_id}`);
+        }
+    };
+    const handleButtonViewCandidateAppications = (post_id: number) => {
+        if (isMounted) {
+            router.push(`/recruiter/manage-jobs/manage-candidate-applications/${post_id}`);
         }
     };
 
@@ -115,7 +143,7 @@ const ManageJobPage = () => {
                                 ))}
                             </div>
                             <p style={{ fontSize: '14px', color: '#555' }}>
-                                <strong>Số lượng ứng tuyển: </strong> {post.vacancies} ứng viên
+                                <strong>Số lượng ứng tuyển: </strong> {applicationsCount[post.id] ?? 0} ứng viên
                             </p>
                         </div>
 
@@ -124,7 +152,15 @@ const ManageJobPage = () => {
                             <p style={{ fontSize: '14px', fontWeight: 'bold' }}>
                                 {dayjs(post.created_at).format('DD-MM-YYYY')}
                             </p>
+
+                            <p style={{ fontSize: '13px', color: dayjs().isAfter(post.deadline) ? 'red' : 'green', fontWeight: 'bold' }}>
+                                {dayjs().isAfter(post.deadline)
+                                    ? 'Hết hạn'
+                                    : `Còn ${dayjs(post.deadline).diff(dayjs(), 'day')} ngày để ứng tuyển`}
+                            </p>
+
                         </div>
+
 
                         <div style={{ flex: 1, display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                             <CustomButton
@@ -142,11 +178,11 @@ const ManageJobPage = () => {
                                 onClick={() => handleButtonEditPost(post.id)}
                             />
                             <CustomButton
-                                text="Ẩn bài đăng"
+                                text="Xem ứng viên đã ứng tuyển"
                                 backgroundColor="gray"
                                 hoverColor="darkgray"
                                 textColor="white"
-                                onClick={() => alert(`Ẩn bài đăng ID: ${post.id}`)}
+                                onClick={() => handleButtonViewCandidateAppications(post.id)}
                             />
                         </div>
                     </div>

@@ -17,16 +17,18 @@ const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        openChatWithUser(state, action: PayloadAction<{ targetUserId: number, targetUserRole: 'candidate' | 'recruiter' }>) {
-            state.targetUserId = action.payload.targetUserId;
-            state.targetUserRole = action.payload.targetUserRole;
+        // Action để kích hoạt việc mở chat với một user khác
+        triggerChat: (state, action: PayloadAction<{ userId: number; userRole: 'candidate' | 'recruiter' }>) => {
             state.trigger = true;
+            state.targetUserId = action.payload.userId;
+            state.targetUserRole = action.payload.userRole;
         },
-        resetChatTrigger(state) {
+        // Action để reset trigger sau khi đã xử lý
+        resetChatTrigger: (state) => {
             state.trigger = false;
         }
     },
 });
 
-export const { openChatWithUser, resetChatTrigger } = chatSlice.actions;
+export const { triggerChat, resetChatTrigger } = chatSlice.actions;
 export default chatSlice.reducer;
