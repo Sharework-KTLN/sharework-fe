@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { login, logout } from '@/redux/userSlice';
+import { login, logout } from '@/redux/slice/userSlice';
 
 const Header = () => {
     const user = useSelector((state: RootState) => state.user);

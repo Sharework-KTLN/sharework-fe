@@ -7,7 +7,7 @@ import { message, Spin } from 'antd';
 import { useRouter } from 'next/navigation';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
-import { login } from '@/redux/userSlice';
+import { login } from '@/redux/slice/userSlice';
 import { AppDispatch } from '@/redux/store';
 
 export default function Login() {

@@ -11,7 +11,7 @@ import NotificationDropdown from './NotificationDropdown';
 import MessageDropdown from './MessageDropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { login, logout } from '@/redux/userSlice';
+import { login, logout } from '@/redux/slice/userSlice';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -34,14 +34,14 @@ const NavigationBar: React.FC = () => {
     };
     // Xác định mục nào đang được chọn
     const selectedKey =
-    Object.keys(routeMap).find((route) => pathname.startsWith(route)) || 'trangchu';
+        Object.keys(routeMap).find((route) => pathname.startsWith(route)) || 'trangchu';
 
     const items: MenuItem[] = [
         { label: 'Trang chủ', key: 'trangchu', onClick: () => router.push('/') },
         {
             label: 'Việc làm',
             key: 'vieclam',
-            
+
             children: [
                 { label: 'Việc đã ứng tuyển', key: 'vieclamdaungtuyen', onClick: () => router.push('/candidate/work/applied') },
                 { label: 'Việc yêu thích', key: 'vieclamyeuthich', onClick: () => router.push('/candidate/work/favorites') },
@@ -223,10 +223,10 @@ const NavigationBar: React.FC = () => {
                                     textColor="orange"
                                     style={{
                                         fontWeight: 'bold',
-                                        fontSize:14,
-                                        height:40,
-                                        width:120,
-                                        border:"1px solid orange",
+                                        fontSize: 14,
+                                        height: 40,
+                                        width: 120,
+                                        border: "1px solid orange",
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center'
@@ -240,9 +240,9 @@ const NavigationBar: React.FC = () => {
                                     textColor="white"
                                     style={{
                                         fontWeight: 'bold',
-                                        height:40,
-                                        width:120,
-                                        fontSize:14,
+                                        height: 40,
+                                        width: 120,
+                                        fontSize: 14,
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center'
@@ -256,9 +256,9 @@ const NavigationBar: React.FC = () => {
                                     textColor="white"
                                     style={{
                                         fontWeight: 'bold',
-                                        height:40,
-                                        width:180,
-                                        fontSize:14,
+                                        height: 40,
+                                        width: 180,
+                                        fontSize: 14,
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center'
