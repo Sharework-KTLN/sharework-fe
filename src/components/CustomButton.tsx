@@ -1,13 +1,14 @@
 import React from 'react';
 
 interface CustomButtonProps {
-    text: string; // Nội dung hiển thị trên nút
-    onClick: () => void; // Hàm callback khi nhấn nút
-    backgroundColor?: string; // Màu nền
-    hoverColor?: string; // Màu nền khi hover
-    textColor?: string; // Màu chữ
-    style?: React.CSSProperties; // Bổ sung style nếu cần
-    children?: React.ReactNode; // <-- thêm dòng này để nhận children
+    text: string;
+    onClick: () => void;
+    backgroundColor?: string;
+    hoverColor?: string;
+    textColor?: string;
+    style?: React.CSSProperties;
+    disabled?: boolean; // ✅ Thêm prop này
+    children?: React.ReactNode;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -17,10 +18,11 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     hoverColor = 'darkblue',
     textColor = 'white',
     style = {},
-    children, // <-- nhận children
+    disabled = false, // ✅ Default false
+    children,
 }) => {
     const baseStyle: React.CSSProperties = {
-        backgroundColor,
+        backgroundColor: disabled ? '#ccc' : backgroundColor,
         color: textColor,
         border: '1px solid transparent',
         borderRadius: '12px',
@@ -31,11 +33,10 @@ const CustomButton: React.FC<CustomButtonProps> = ({
         fontFamily: `sans-serif`,
         textAlign: 'center',
         userSelect: 'none',
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         transition: 'all 0.2s ease-in-out',
     };
 
-    // Kết hợp style mặc định + style truyền vào
     const combinedStyle: React.CSSProperties = {
         ...baseStyle,
         ...style,
@@ -43,16 +44,21 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
     return (
         <button
-            onClick={onClick}
+            onClick={!disabled ? onClick : undefined}
+            disabled={disabled}
             style={combinedStyle}
-            onMouseOver={(e) =>
-                (e.currentTarget.style.backgroundColor = hoverColor)
-            }
-            onMouseOut={(e) =>
-                (e.currentTarget.style.backgroundColor = backgroundColor)
-            }
-            onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
-            onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+            onMouseOver={(e) => {
+                if (!disabled) e.currentTarget.style.backgroundColor = hoverColor;
+            }}
+            onMouseOut={(e) => {
+                if (!disabled) e.currentTarget.style.backgroundColor = backgroundColor;
+            }}
+            onMouseDown={(e) => {
+                if (!disabled) e.currentTarget.style.transform = 'scale(0.95)';
+            }}
+            onMouseUp={(e) => {
+                if (!disabled) e.currentTarget.style.transform = 'scale(1)';
+            }}
         >
             {children}
             <span>{text}</span>

@@ -14,6 +14,7 @@ interface Job {
     title: string;
     description: string;
     status: string;
+    approval_status: string;
     experience_required: string;
     salary_range: string;
     work_location: string; // Địa chỉ làm việc (thay vì location)
@@ -117,31 +118,32 @@ const RecruitmentInfoDetail = () =>{
 
     const handleApproveJob = async (id: number) => {
         try {
-            // Giả sử bạn gửi yêu cầu duyệt bài qua API
-            const response = await fetch(`http://localhost:8080/jobs/approve/${id}`, {
-                method: 'POST', // Hoặc PUT tùy theo API của bạn
+            const response = await fetch(`http://localhost:8080/jobs/admin/approve/${id}`, {
+                method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
                 },
             });
-    
+        
             if (response.ok) {
                 console.log(`Bài đăng ${id} đã được duyệt.`);
-                // Xử lý khi duyệt thành công
+                // Gọi lại API để cập nhật trạng thái bài đăng
+                const updated = await fetch(`http://localhost:8080/jobs/admin/${id}`);
+                const data = await updated.json();
+                setJobDetails(data); // Cập nhật state
             } else {
                 console.error(`Duyệt bài thất bại: ${response.status}`);
-                // Xử lý khi duyệt thất bại
             }
         } catch (error) {
             console.error('Lỗi duyệt bài:', error);
         }
     };
-
+    
     const handleRejectJob = async (id: number) => {
         try {
-            // Giả sử bạn gửi yêu cầu từ chối bài qua API
-            const response = await fetch(`http://localhost:8080/jobs/reject/${id}`, {
-                method: 'POST', // Hoặc PUT tùy theo API của bạn
+            // Gửi yêu cầu PATCH để cập nhật trạng thái approval_status thành "Rejected"
+            const response = await fetch(`http://localhost:8080/jobs/admin/reject/${id}`, {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -149,15 +151,17 @@ const RecruitmentInfoDetail = () =>{
     
             if (response.ok) {
                 console.log(`Bài đăng ${id} đã bị từ chối.`);
-                // Xử lý khi từ chối thành công
+                // Sau khi từ chối thành công, gọi lại API để cập nhật trạng thái bài đăng
+                const updated = await fetch(`http://localhost:8080/jobs/admin/${id}`);
+                const data = await updated.json();
+                setJobDetails(data); // Cập nhật state với thông tin bài đăng đã cập nhật
             } else {
                 console.error(`Từ chối bài thất bại: ${response.status}`);
-                // Xử lý khi từ chối thất bại
             }
         } catch (error) {
             console.error('Lỗi từ chối bài:', error);
         }
-    };
+    };    
 
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
@@ -171,41 +175,44 @@ const RecruitmentInfoDetail = () =>{
                         <Tag icon={<HourglassOutlined/>} color="orange">{jobDetails.experience_required}</Tag>
                         <Tag icon={<ClockCircleOutlined/>} color="default">{calculateDaysRemaining(jobDetails.deadline)}</Tag>
                     </div>
-                    <CustomButton
-                        text="Duyệt"
-                        onClick={() => handleApproveJob(Number(id))}
-                        backgroundColor="#4CAF50" // ✅ Xanh lá thường
-                        hoverColor="#388E3C"
-                        textColor="white"
-                        style={{
-                            width: '80px',
-                            height: '40px',
-                            fontSize: '15px', 
-                            fontWeight: '700',
-                            borderRadius: '6px',
-                            border: 'none',
-                            transition: 'background-color 0.3s ease',
-                            marginRight: '10px'
-                        }}
-                    />
 
-                    <CustomButton
-                        text="Từ chối"
-                        onClick={() => handleRejectJob(Number(id))}
-                        backgroundColor="orange"
-                        hoverColor="darkorange"
-                        style={{
-                            width: '120px',
-                            height: '40px',
-                            fontSize: '15px', 
-                            fontWeight: '700',
-                            borderRadius: '6px',
-                            border: 'none',
-                            transition: 'background-color 0.3s ease',
-                            
-                        }}
-                    />
-                    
+                    {jobDetails.approval_status !== "Approved" && jobDetails.approval_status !== "Rejected" &&(
+                        <div className="flex gap-2 mb-3">
+                            <CustomButton
+                                text="Duyệt"
+                                onClick={() => handleApproveJob(Number(id))}
+                                backgroundColor="#4CAF50"
+                                hoverColor="#388E3C"
+                                textColor="white"
+                                style={{
+                                    width: '80px',
+                                    height: '40px',
+                                    fontSize: '15px',
+                                    fontWeight: '700',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    transition: 'background-color 0.3s ease',
+                                }}
+                            />
+
+                            <CustomButton
+                                text="Từ chối"
+                                onClick={() => handleRejectJob(Number(id))}
+                                backgroundColor="orange"
+                                hoverColor="darkorange"
+                                textColor="white"
+                                style={{
+                                    width: '120px',
+                                    height: '40px',
+                                    fontSize: '15px',
+                                    fontWeight: '700',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    transition: 'background-color 0.3s ease',
+                                }}
+                            />
+                        </div>
+                    )}
                     <Title level={4}>Mô tả công việc</Title>
                     <div style={{marginTop:"-7px", marginBottom:"7px"}}>
                         <ul className="list-disc pl-5">

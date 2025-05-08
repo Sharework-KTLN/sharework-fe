@@ -20,11 +20,13 @@ const Sidebar = () => {
             >
                 Trang chủ
             </span>, // Chỉnh style chữ ở đây
+            onClick: () => router.push('/admin')
         },
         {
             key: '2',
             icon: <Image src="/assets/images/user.png" alt="Quản lý người dùng" width={25} height={25} />,
             label: <span className="text-sm font-semibold text-gray-800 font-sans">Quản lý người dùng</span>,
+            onClick: () => router.push('/admin/users')
         },
         {
             key: '3',
@@ -41,6 +43,7 @@ const Sidebar = () => {
             key: '4',
             icon: <Image src="/assets/images/company.png" alt="Quản lý công ty" width={25} height={25} />,
             label: <span className="text-sm font-semibold text-gray-800 font-sans">Quản lý công ty</span>,
+            onClick: () => router.push('/admin/companies')
         },
         {
             key: '5',

@@ -164,7 +164,9 @@ const WorkFavorites = () => {
                                     <Col span={16} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%", width: "480px" }}>
                                         <div>
                                             <h3 style={{ marginBottom: 5, fontSize: "16px", fontWeight: "bold" }}>{job.title}</h3>
-                                            <p style={{ fontSize: "14px" }}><strong>Công ty:</strong> {job.company.name}</p>
+                                            <p style={{ fontSize: "14px" }}>
+                                                <strong>Công ty:</strong> {job.company.name}
+                                            </p>
                                             <p style={{ fontSize: "14px" }}><strong>Lương:</strong> {job.salary_range}</p>
                                             <p style={{ fontSize: "14px" }}><strong>Đã lưu:</strong> {new Date(job.saved_at).toLocaleDateString()} - {new Date(job.saved_at).toLocaleTimeString()}</p>
                                             <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.work_location}</p>
