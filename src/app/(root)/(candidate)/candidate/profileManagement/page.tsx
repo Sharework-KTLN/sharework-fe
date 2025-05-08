@@ -154,7 +154,8 @@ const CVManager = () => {
       const token = localStorage.getItem('token');
 
       if (!token) {
-        console.error('Token không tồn tại!');
+        // console.error('Token không tồn tại!');
+        router.push("/auth/candidate/login");
         return;
       }
 
@@ -163,7 +164,8 @@ const CVManager = () => {
       const userId = decodedToken.id;
 
       if (!userId) {
-        console.error('User ID không có trong token!');
+        // console.error('User ID không có trong token!');
+        router.push("/auth/candidate/login");
         return;
       }
 
@@ -213,7 +215,7 @@ const CVManager = () => {
     };
 
     fetchUserMajors();
-  }, []);  // Chạy khi component mount
+  }, [router]);  // Chạy khi component mount
 
   useEffect(() => {
     const fetchSkills = async () => {
@@ -234,7 +236,8 @@ const CVManager = () => {
       const token = localStorage.getItem('token');
 
       if (!token) {
-        console.error('Token không tồn tại!');
+        // console.error('Token không tồn tại!');
+        router.push("/auth/candidate/login");
         return;
       }
 
@@ -243,7 +246,8 @@ const CVManager = () => {
       const userId = decodedToken.id;
 
       if (!userId) {
-        console.error('User ID không có trong token!');
+        // console.error('User ID không có trong token!');
+        router.push("/auth/candidate/login");
         return;
       }
 
@@ -293,7 +297,7 @@ const CVManager = () => {
     };
 
     fetchUserSkills();
-  }, []);  // Chạy khi component mount
+  }, [router]);  // Chạy khi component mount
 
   useEffect(() => {
     setEditableUser(user);

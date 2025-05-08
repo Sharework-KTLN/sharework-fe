@@ -41,29 +41,27 @@ const InfoBusinessDetail = () => {
 
     useEffect(() => {
         const fetchCompanyDetails = async () => {
-          if (!id) return; // Chờ cho đến khi id có sẵn
-    
-          try {
-            const response = await fetch(`http://localhost:8080/companies/${id}`);
-            if (!response.ok) {
-              throw new Error("Failed to fetch company details");
+            if (!id) return; // Chờ cho đến khi id có sẵn
+        
+            try {
+                const response = await fetch(`http://localhost:8080/companies/${id}`);
+                if (!response.ok) {
+                throw new Error("Failed to fetch company details");
+                }
+                const data = await response.json();
+                setCompanyDetails(data); // Lưu thông tin chi tiết công ty vào state
+            } catch (error) {
+                console.error("Error fetching company details:", error);
+                setError("Unable to load company details.");
             }
-            const data = await response.json();
-            setCompanyDetails(data); // Lưu thông tin chi tiết công ty vào state
-          } catch (error) {
-            console.error("Error fetching company details:", error);
-            setError("Unable to load company details.");
-          }
         };
     
         fetchCompanyDetails();
-      }, [id]); // Gọi lại khi id thay đổi
-    
-      if (error) {
+    }, [id]); // Gọi lại khi id thay đổi
+    if (error) {
         return <div>{error}</div>;
-      }
-    
-      if (!companyDetails) {
+    }
+    if (!companyDetails) {
         return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
     }
     const fullContent = companyDetails?.description || "Chưa có mô tả";

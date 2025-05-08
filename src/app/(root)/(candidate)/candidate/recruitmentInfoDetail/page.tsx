@@ -48,6 +48,14 @@ interface SavedJob {
     job: Job; // Thông tin công việc đã lưu, liên kết với bảng Job
 }
 
+interface AppliedJob {
+    id: number;
+    job_id: number; // Tham chiếu đến job đã lưu
+    candidate_id: number; // Tham chiếu đến người dùng (ứng viên) đã ứng tuyển
+    applied_at: string; // Thời gian ứng tuyển công việc
+    job: Job; // Thông tin công việc ứng tuyển, liên kết với bảng Job
+}
+
 const iconStyle = {
     backgroundColor: "#52c41a", // Màu nền cho icon
     borderRadius: "50%", // Tạo hình tròn
@@ -75,7 +83,7 @@ const RecruitmentInfoDetail = () => {
     const [jobDetails, setJobDetails] = useState<Job | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [savedJobs, setSavedJobs] = useState<number[]>([]);
-    const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
+    const [appliedJobs, setAppliedJobs] = useState<number[]>([]);
     const router = useRouter();
 
     // Ứng tuyển
@@ -84,6 +92,7 @@ const RecruitmentInfoDetail = () => {
     const handleApplySubmit = (values: unknown) => {
         console.log('Dữ liệu ứng tuyển:', values);
         setIsModalOpen(false);
+        // setAppliedJobs(prev => [...prev, jobDetails.id]);
     };
 
     useEffect(() => {
@@ -151,6 +160,31 @@ const RecruitmentInfoDetail = () => {
         fetchSavedJobs();
     }, []); // Chạy lần đầu khi component mount
 
+    useEffect(() => {
+        const fetchAppliedJobs = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+    
+            try {
+                const res = await fetch("http://localhost:8080/user/applies", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+    
+                if (!res.ok) return; // Không làm gì nếu lỗi
+    
+                const data = await res.json();
+                // Cập nhật danh sách công việc đã ứng tuyển (Lưu id công việc đã ứng tuyển)
+                setAppliedJobs(data.appliedJobs.map((item: AppliedJob) => item.job_id)); 
+            } catch (err) {
+                // Không log lỗi, giữ im lặng như yêu cầu
+            }
+        };
+    
+        fetchAppliedJobs();
+    }, []);    
+    
     // Phần còn lại của bạn vẫn giữ nguyên, chẳng hạn khi không có công việc chi tiết:
     if (error) {
         return <div>{error}</div>;
@@ -250,14 +284,14 @@ const RecruitmentInfoDetail = () => {
                         <Tag icon={<ClockCircleOutlined />} color="default">{calculateDaysRemaining(jobDetails.deadline)}</Tag>
                     </div>
                     <CustomButton
-                        text={appliedJobs.includes(jobDetails.title) ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
+                        text={appliedJobs.includes(jobDetails.id) ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
                         onClick={() => {
-                            if (!appliedJobs.includes(jobDetails.title)) {
+                            if (!appliedJobs.includes(jobDetails.id)) {
                                 handleApplyJob(); // chỉ gọi nếu chưa ứng tuyển
                             }
                         }}
-                        backgroundColor={appliedJobs.includes(jobDetails.title) ? "#4CAF50" : "#D4421E"}
-                        hoverColor={appliedJobs.includes(jobDetails.title) ? "#45A049" : "#E44A26"}
+                        backgroundColor={appliedJobs.includes(jobDetails.id) ? "#4CAF50" : "#D4421E"}
+                        hoverColor={appliedJobs.includes(jobDetails.id) ? "#45A049" : "#E44A26"}
                         textColor="#FFF"
                         style={{
                             fontWeight: "600",
