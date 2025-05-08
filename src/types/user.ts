@@ -1,3 +1,4 @@
+import { Company } from './company';
 export interface User {
     id: number | null ;
     email: string;
@@ -14,4 +15,5 @@ export interface User {
     specialize?: string;
     file_url?: string;
     introduce_yourself?: string;
+    companies?: Company[]; // Danh sách công ty mà người dùng đã tham gia
 }

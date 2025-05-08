@@ -319,20 +319,35 @@ const MessageDropdown = () => {
                             display: 'flex',
                             flexDirection: 'column',
                         }}>
-                            {/* Header */}
-                            <div style={{
-                                padding: '8px',
-                                background: '#1677ff',
-                                color: '#fff',
-                                fontWeight: 'bold',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                borderTopLeftRadius: '8px',
-                                borderTopRightRadius: '8px',
-                            }}>
-                                <span>{conversation.candidate ? conversation.candidate?.full_name : conversation.recruiter?.full_name}</span>
-                                <Button type="text" size="small" icon={<CloseOutlined />} onClick={() => handleCloseChat(conversation.id)} style={{ color: '#fff' }} />
+                            <div
+                                style={{
+                                    padding: '8px',
+                                    background: '#1677ff',
+                                    color: '#fff',
+                                    fontWeight: 'bold',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    borderTopLeftRadius: '8px',
+                                    borderTopRightRadius: '8px',
+                                }}
+                            >
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <span>{conversation.candidate ? conversation.candidate?.full_name : conversation.recruiter?.full_name}</span>
+                                    {conversation.recruiter?.companies && (
+                                        <span style={{ fontSize: '12px', color: '#b3c1dc', fontWeight: 'bold' }}>
+                                            {conversation.recruiter.companies[0].name}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <Button
+                                    type="text"
+                                    size="small"
+                                    icon={<CloseOutlined />}
+                                    onClick={() => handleCloseChat(conversation.id)}
+                                    style={{ color: '#fff' }}
+                                />
                             </div>
 
                             {/* Tin nhắn */}
