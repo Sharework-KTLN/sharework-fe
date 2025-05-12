@@ -49,7 +49,7 @@ const WorkFavorites = () => {
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("userToken");
 
             if (!token) {
                 console.warn("Không tìm thấy token!");
@@ -82,7 +82,7 @@ const WorkFavorites = () => {
     }, []);
 
     const handleUnsaveJob = async (jobId: number) => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("userToken");
         if (!token) {
             console.warn("Không tìm thấy token!");
             return;

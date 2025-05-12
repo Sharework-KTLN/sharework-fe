@@ -8,7 +8,7 @@ import { jwtDecode, JwtPayload } from 'jwt-decode';
 import AuthFormRecruiter from '@/components/AuthFormRecruiter';
 import { message, Spin } from 'antd';
 import { useDispatch } from 'react-redux';
-import { login } from '@/redux/slice/userSlice';
+import { loginRecruiter } from '@/redux/slice/recruiterSlice';
 import { AppDispatch } from '@/redux/store';
 
 const RecuiterLogin = () => {
@@ -22,7 +22,7 @@ const RecuiterLogin = () => {
     const [user, setUser] = useState<JwtPayload | null>(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("recruiterToken");
         if (token) {
             const decodedUser = jwtDecode(token);
             setUser(decodedUser);
@@ -58,7 +58,7 @@ const RecuiterLogin = () => {
             }
 
             // 🟢 Lưu token vào localStorage
-            localStorage.setItem("token", data.token);
+            localStorage.setItem("recruiterToken", data.token);
 
             // 🟢 Gọi API lấy thông tin user từ CSDL
             const userResponse = await fetch("http://localhost:8080/auth/me", {
@@ -77,7 +77,7 @@ const RecuiterLogin = () => {
             }
 
             // 🟢 Cập nhật Redux với thông tin user
-            dispatch(login({
+            dispatch(loginRecruiter({
                 id: userData.id,
                 full_name: userData.full_name,
                 email: userData.email,

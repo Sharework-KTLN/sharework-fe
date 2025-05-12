@@ -20,7 +20,7 @@ const CompanyInformationPage = () => {
     const image_company = Form.useWatch('image_company', form);
 
     const [messageApi, contextHolder] = message.useMessage();
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.recruiter);
 
     const [company, setCompany] = useState<Company | null>(null);
     const [loading, setLoading] = useState(false);

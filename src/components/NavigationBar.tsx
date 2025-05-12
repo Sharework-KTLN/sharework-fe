@@ -57,14 +57,14 @@ const NavigationBar: React.FC = () => {
         console.log("token:", token);
 
         if (token) {
-            localStorage.setItem('token', token); // Lưu token vào localStorage
+            localStorage.setItem('userToken', token); // Lưu token vào localStorage
             router.replace('/'); // Xóa token khỏi URL
         }
     }, [searchParams, router]);
 
     useEffect(() => {
         const fetchUser = async () => {
-            const savedToken = localStorage.getItem("token");
+            const savedToken = localStorage.getItem("userToken");
             if (!savedToken) {
                 dispatch(logout()); // Xóa Redux nếu không có token
                 return;
@@ -78,12 +78,12 @@ const NavigationBar: React.FC = () => {
                 if (res.ok) {
                     dispatch(login({ ...data, token: savedToken })); // Cập nhật Redux
                 } else {
-                    localStorage.removeItem("token");
+                    localStorage.removeItem("userToken");
                     dispatch(logout());
                 }
             } catch (error) {
                 console.error("Lỗi khi lấy user:", error);
-                localStorage.removeItem("token");
+                localStorage.removeItem("userToken");
                 dispatch(logout());
             }
         };
@@ -103,7 +103,7 @@ const NavigationBar: React.FC = () => {
         router.push('/recruiter');
     };
     const handleButtonLogout = async () => {
-        localStorage.removeItem("token"); // Xóa token khỏi localStorage
+        localStorage.removeItem("userToken"); // Xóa token khỏi localStorage
         // setUser(null); // Reset state user
         dispatch(logout());
         router.push("/auth/candidate/login"); // Chuyển hướng về trang đăng nhập

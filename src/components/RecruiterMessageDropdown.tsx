@@ -13,12 +13,12 @@ import axios from 'axios';
 
 const socket = io('http://localhost:8080');
 
-const MessageDropdown = () => {
+const RecruiterMessageDropdown = () => {
 
     // Redux
     const dispatch = useDispatch();
 
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.recruiter);
     const chat = useSelector((state: RootState) => state.chat);
 
 
@@ -334,11 +334,11 @@ const MessageDropdown = () => {
                             >
                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                                     <span>{conversation.candidate ? conversation.candidate?.full_name : conversation.recruiter?.full_name}</span>
-                                    {(conversation.recruiter?.companies && conversation.recruiter) && (
+                                    {/* {(conversation.recruiter?.companies && conversation.recruiter) && (
                                         <span style={{ fontSize: '12px', color: '#b3c1dc', fontWeight: 'bold' }}>
                                             {conversation.recruiter.companies[0].name}
                                         </span>
-                                    )}
+                                    )} */}
                                 </div>
 
                                 <Button
@@ -396,4 +396,4 @@ const MessageDropdown = () => {
     );
 };
 
-export default MessageDropdown;
+export default RecruiterMessageDropdown;

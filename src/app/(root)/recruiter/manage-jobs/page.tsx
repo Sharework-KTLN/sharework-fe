@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 
 const ManageJobPage = () => {
 
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.recruiter);
     const [posts, setPosts] = useState<Job[]>([]);
     const [applicationsCount, setApplicationsCount] = useState<{ [key: number]: number }>({});
     const [loading, setLoading] = useState(true); // State để hiển thị loading

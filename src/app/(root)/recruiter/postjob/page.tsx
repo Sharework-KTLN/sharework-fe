@@ -16,7 +16,7 @@ const { Option } = Select;
 const PostJobPage = () => {
 
     const [form] = Form.useForm();
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.recruiter);
     const [company, setCompany] = useState<Company | null>(null);
 
     // Gọi API để lấy thông tin công ty ngay khi component được render

@@ -27,7 +27,7 @@ type MonthlyStat = {
 };
 
 const AdminDashboard = () => {
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.admin);
 
     // State để lưu trữ thống kê tổng quan
     const [stats, setStats] = useState({
@@ -43,7 +43,7 @@ const AdminDashboard = () => {
     // State để lưu trữ danh sách người dùng và công ty
     const [userList, setUserList] = useState<User[]>([]);
     const [companyList, setCompanyList] = useState<Company[]>([]);
-    
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -53,7 +53,7 @@ const AdminDashboard = () => {
                 // Fetch thống kê tổng quan
                 const statsResponse = await axios.get('http://localhost:8080/user/admin/dashboard');
                 setStats(statsResponse.data);  // Lưu trữ thống kê
-                
+
                 // Fetch thống kê theo tháng
                 const monthlyStatsResponse = await axios.get('http://localhost:8080/user/admin/monthlystats');
                 setMonthlyStats(monthlyStatsResponse.data);  // Lưu trữ thống kê theo tháng
@@ -65,7 +65,7 @@ const AdminDashboard = () => {
                 // Fetch danh sách công ty
                 const companiesResponse = await axios.get('http://localhost:8080/companies/admin/companies');
                 setCompanyList(companiesResponse.data);  // Lưu trữ danh sách công ty
-                
+
                 setLoading(false);  // Đặt loading thành false khi dữ liệu đã được lấy
             } catch (err) {
                 setError('Đã xảy ra lỗi khi lấy dữ liệu.');

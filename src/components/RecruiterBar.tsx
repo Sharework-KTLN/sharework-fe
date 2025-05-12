@@ -9,10 +9,10 @@ import { Menu, Col, Row } from 'antd';
 import type { MenuProps } from 'antd';
 import useWindowWidth from '@/hooks/useWindowWidth';
 import CustomButton from './CustomButton';
-import UserDropdown from './UserDropdown';
-import MessageDropdown from './MessageDropdown';
+import RecruiterDropdown from './RecruiterDropdown';
+import RecruiterMessageDropdown from './RecruiterMessageDropdown';
 import NotificationDropdown from './NotificationDropdown';
-import { login, logout } from '@/redux/slice/userSlice';
+import { loginRecruiter, logoutRecruiter } from '@/redux/slice/recruiterSlice';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -24,11 +24,11 @@ const RecruiterBar: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
 
     // 🟢 Lấy thông tin user từ Redux store
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.recruiter);
 
     useEffect(() => {
         // Kiểm tra token trong localStorage khi trang được load
-        const savedToken = localStorage.getItem("token");
+        const savedToken = localStorage.getItem("recruiterToken");
         if (savedToken && !user.id) {
             // Gọi API để lấy thông tin người dùng và cập nhật Redux
             const fetchUser = async () => {
@@ -38,15 +38,15 @@ const RecruiterBar: React.FC = () => {
                     });
                     const data = await res.json();
                     if (res.ok) {
-                        dispatch(login({ ...data, token: savedToken })); // Cập nhật Redux
+                        dispatch(loginRecruiter({ ...data, token: savedToken })); // Cập nhật Redux
                     } else {
-                        localStorage.removeItem("token");
-                        dispatch(logout());
+                        localStorage.removeItem("recruiterToken");
+                        dispatch(logoutRecruiter());
                     }
                 } catch (error) {
                     console.error("Lỗi khi lấy user:", error);
-                    localStorage.removeItem("token");
-                    dispatch(logout());
+                    localStorage.removeItem("recruiterToken");
+                    dispatch(logoutRecruiter());
                 }
             };
             fetchUser();
@@ -161,9 +161,9 @@ const RecruiterBar: React.FC = () => {
         router.push('/auth/recruiter/register');
     };
     const handleButtonLogout = () => {
-        localStorage.removeItem("token"); // Xóa token khỏi localStorage
+        localStorage.removeItem("recruiterToken"); // Xóa token khỏi localStorage
         // setUser(null); // Reset state user
-        dispatch(logout());
+        dispatch(logoutRecruiter());
         router.push("/auth/recruiter/login"); // Chuyển hướng về trang đăng nhập
     };
     return (
@@ -256,8 +256,8 @@ const RecruiterBar: React.FC = () => {
                             >
 
                                 <NotificationDropdown />
-                                <MessageDropdown />
-                                <UserDropdown
+                                <RecruiterMessageDropdown />
+                                <RecruiterDropdown
                                     user={
                                         user
                                     }
