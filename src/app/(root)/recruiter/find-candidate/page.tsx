@@ -6,10 +6,9 @@ import { User } from '@/types/user'; // Đường dẫn đến file user.ts
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import StandaloneChatbox from '@/components/ui/StandaloneChatbox';
 import Image from 'next/image';
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 const { Option } = Select;
 
 const FindCandidatePage = () => {
@@ -17,7 +16,7 @@ const FindCandidatePage = () => {
     // Redux
     const dispatch = useDispatch();
 
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.recruiter);
 
     const router = useRouter();
     const [candidates, setCandidates] = useState<Array<User>>([]);
@@ -39,7 +38,7 @@ const FindCandidatePage = () => {
 
     const fetchCandidates = useCallback(async () => {
         try {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("recruiterToken");
 
             if (!token) {
                 setModalMessage("Bạn cần đăng nhập để truy cập vào danh sách ứng viên.");
@@ -214,10 +213,6 @@ const FindCandidatePage = () => {
                 <div className="text-center text-gray-500 mt-12 text-lg italic">
                     Hiện tại chưa có ứng viên nào phù hợp với tiêu chí tìm kiếm.
                 </div>
-            )}
-            {/* Hiển thị StandaloneChatbox nếu có ứng viên được chọn */}
-            {selectedCandidateId && (
-                <StandaloneChatbox conversationId={selectedCandidateId} />
             )}
             {/* Modal cảnh báo đăng nhập */}
             <Modal

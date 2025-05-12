@@ -3,15 +3,15 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { login, logout } from '@/redux/slice/userSlice';
+import { loginAdmin, logoutAdmin } from '@/redux/slice/adminSlice';
 
 const Header = () => {
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.admin);
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
         // Kiểm tra token trong localStorage khi trang được load
-        const savedToken = localStorage.getItem("token");
+        const savedToken = localStorage.getItem("adminToken");
         if (savedToken && !user.id) {
             // Gọi API để lấy thông tin người dùng và cập nhật Redux
             const fetchUser = async () => {
@@ -21,15 +21,15 @@ const Header = () => {
                     });
                     const data = await res.json();
                     if (res.ok) {
-                        dispatch(login({ ...data, token: savedToken })); // Cập nhật Redux
+                        dispatch(loginAdmin({ ...data, token: savedToken })); // Cập nhật Redux
                     } else {
-                        localStorage.removeItem("token");
-                        dispatch(logout());
+                        localStorage.removeItem("adminToken");
+                        dispatch(logoutAdmin());
                     }
                 } catch (error) {
                     console.error("Lỗi khi lấy user:", error);
-                    localStorage.removeItem("token");
-                    dispatch(logout());
+                    localStorage.removeItem("adminToken");
+                    dispatch(logoutAdmin());
                 }
             };
             fetchUser();

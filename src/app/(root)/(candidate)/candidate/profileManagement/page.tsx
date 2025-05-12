@@ -84,14 +84,14 @@ const CVManager = () => {
     console.log("token:", token);
 
     if (token) {
-      localStorage.setItem('token', token); // Lưu token vào localStorage
+      localStorage.setItem('userToken', token); // Lưu token vào localStorage
       router.replace('/'); // Xóa token khỏi URL
     }
   }, [searchParams, router]);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const savedToken = localStorage.getItem("token");
+      const savedToken = localStorage.getItem("userToken");
       if (!savedToken) {
         dispatch(logout()); // Xóa Redux nếu không có token
         return;
@@ -105,12 +105,12 @@ const CVManager = () => {
         if (res.ok) {
           dispatch(login({ ...data, token: savedToken })); // Cập nhật Redux
         } else {
-          localStorage.removeItem("token");
+          localStorage.removeItem("userToken");
           dispatch(logout());
         }
       } catch (error) {
         console.error("Lỗi khi lấy user:", error);
-        localStorage.removeItem("token");
+        localStorage.removeItem("userToken");
         dispatch(logout());
       }
     };
@@ -151,7 +151,7 @@ const CVManager = () => {
 
   useEffect(() => {
     const fetchUserMajors = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('userToken');
 
       if (!token) {
         // console.error('Token không tồn tại!');
@@ -233,7 +233,7 @@ const CVManager = () => {
 
   useEffect(() => {
     const fetchUserSkills = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('userToken');
 
       if (!token) {
         // console.error('Token không tồn tại!');

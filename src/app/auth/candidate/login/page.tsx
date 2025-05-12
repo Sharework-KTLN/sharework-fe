@@ -21,7 +21,7 @@ export default function Login() {
     const [user, setUser] = useState<JwtPayload | null>(null);
     // Kiểm tra nếu có token thì decode lấy user
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("userToken");
         if (token) {
             const decodedUser = jwtDecode(token);
             setUser(decodedUser);
@@ -92,7 +92,7 @@ export default function Login() {
             }
 
             // 🟢 Lưu token vào localStorage
-            localStorage.setItem("token", data.token);
+            localStorage.setItem("userToken", data.token);
 
             // 🟢 Gọi API lấy thông tin user từ CSDL
             const userResponse = await fetch("http://localhost:8080/auth/me", {

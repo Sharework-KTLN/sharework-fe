@@ -208,7 +208,7 @@ const Home = () => {
     const handleCardClick = async (jobId: number) => {
         try {
             // Lấy token từ localStorage nếu có
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("userToken");
             if (!token) {
                 router.push("/auth/candidate/login");
                 return;
@@ -253,7 +253,7 @@ const Home = () => {
 
     const handleSaveJob = async (jobId: number) => {
         try {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("userToken");
 
             if (!token) {
                 router.push("/auth/candidate/login");
@@ -291,7 +291,7 @@ const Home = () => {
 
     const handleUnsaveJob = async (jobId: number) => {
         try {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("userToken");
 
             if (!token) {
                 router.push("/auth/candidate/login");

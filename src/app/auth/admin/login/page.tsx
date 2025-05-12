@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import CustomButton from '@/components/CustomButton';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
-import { login } from '@/redux/slice/userSlice';
+import { loginAdmin } from '@/redux/slice/adminSlice';
 import { AppDispatch } from '@/redux/store';
 
 const AdminLoginPage = () => {
@@ -20,7 +20,7 @@ const AdminLoginPage = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("adminToken");
         if (token) {
             const decodedUser = jwtDecode(token);
             setUser(decodedUser);
@@ -49,7 +49,7 @@ const AdminLoginPage = () => {
                 return;
             }
 
-            localStorage.setItem("token", data.token);
+            localStorage.setItem("adminToken", data.token);
 
             // 🟢 Gọi API lấy thông tin user từ CSDL
             const userResponse = await fetch("http://localhost:8080/auth/me", {
@@ -68,7 +68,7 @@ const AdminLoginPage = () => {
             }
 
             // 🟢 Cập nhật Redux với thông tin user
-            dispatch(login({
+            dispatch(loginAdmin({
                 id: userData.id,
                 full_name: userData.full_name,
                 email: userData.email,

@@ -15,7 +15,7 @@ const { Option } = Select;
 
 const EditJobPage = () => {
 
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.recruiter);
 
     const [messageApi, contextHolder] = message.useMessage();
 
