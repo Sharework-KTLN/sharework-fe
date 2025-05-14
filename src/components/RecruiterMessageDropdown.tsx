@@ -28,11 +28,11 @@ const RecruiterMessageDropdown = () => {
     const [loading, setLoading] = useState(true);
     const [inputValues, setInputValues] = useState<{ [key: number]: string }>({});
 
-    useEffect(() => {
-        console.log("messagesByConversation: ", messagesByConversation);
-        console.log("conversations: ", conversations);
-        console.log("openConversations: ", openConversations);
-    }, [conversations, messagesByConversation, openConversations]);
+    // useEffect(() => {
+    //     console.log("messagesByConversation: ", messagesByConversation);
+    //     console.log("conversations: ", conversations);
+    //     console.log("openConversations: ", openConversations);
+    // }, [conversations, messagesByConversation, openConversations]);
 
     useEffect(() => {
         // Socket.IO event listeners

@@ -101,7 +101,7 @@ const EditJobPage = () => {
     const onFinish = async (values: Record<string, unknown>) => {
         try {
             setLoading(true);
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("recruiterToken");
 
             if (!token) {
                 messageApi.error("Bạn cần đăng nhập để cập nhật bài đăng.");

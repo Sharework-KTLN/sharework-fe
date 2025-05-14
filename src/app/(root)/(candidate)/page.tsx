@@ -355,6 +355,7 @@ const Home = () => {
                         <Row gutter={[12, 12]} justify="center" align="middle" style={{ width: "100%" }} >
                             <Col flex="auto">
                                 <Input
+                                    name='search'
                                     placeholder="Tìm kiếm theo các Kỹ năng, Vị trí, Công ty,..."
                                     size="large"
                                     value={searchTerm}

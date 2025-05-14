@@ -52,8 +52,9 @@ const RecuiterLogin = () => {
             });
             const data = await response.json();
             if (!response.ok) {
-                alert("Đăng nhập thất bại: " + data.message);
-                setLoading(false);
+                // alert("Tài khoản hoặc mật khẩu không đúng!");
+                messageApi.error("Tài khoản hoặc mật khẩu không đúng!");
+                // setLoading(false);
                 return;
             }
 

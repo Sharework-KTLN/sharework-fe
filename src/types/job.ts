@@ -13,11 +13,12 @@ export interface Job {
     description?: string;                  // Mô tả công việc
     vacancies?: number;                    // Số lượng tuyển dụng
     status?: 'open' | 'closed' | 'expired' | 'draft'; // Trạng thái công việc
+    approval_status?: 'Approved' | 'Pending' | 'Rejected'; // Trạng thái phê duyệt
     benefits?: string;                     // Phúc lợi công việc
     experience_required?: string;          // Kinh nghiệm yêu cầu
     candidate_required?: string;           // Yêu cầu ứng viên
     company_id?: number;                   // Công ty đăng tuyển
     recruiter_id: number;                  // Nhà tuyển dụng đăng bài
-    created_at?: string;                   // Ngày tạo bài (nếu backend có)
+    createdAt?: string;                   // Ngày tạo bài (nếu backend có)
   }
   
