@@ -84,6 +84,11 @@ const ManageJobPage = () => {
             router.push(`/recruiter/manage-jobs/manage-candidate-applications/${post_id}`);
         }
     };
+    const handleButtonViewSuitableCandidates = (post_id: number) => {
+        if (isMounted) {
+            router.push(`/recruiter/manage-jobs/manage-suitable-candidate/${post_id}`);
+        }
+    };
 
     return (
         <div
@@ -150,7 +155,7 @@ const ManageJobPage = () => {
                         <div style={{ flex: 1, textAlign: 'center' }}>
                             <p style={{ fontSize: '14px', color: '#555' }}>📅 Ngày đăng:</p>
                             <p style={{ fontSize: '14px', fontWeight: 'bold' }}>
-                                {dayjs(post.created_at).format('DD-MM-YYYY')}
+                                {dayjs(post.createdAt).format('DD-MM-YYYY')}
                             </p>
 
                             <p style={{ fontSize: '13px', color: dayjs().isAfter(post.deadline) ? 'red' : 'green', fontWeight: 'bold' }}>
@@ -158,7 +163,15 @@ const ManageJobPage = () => {
                                     ? 'Hết hạn'
                                     : `Còn ${dayjs(post.deadline).diff(dayjs(), 'day')} ngày để ứng tuyển`}
                             </p>
-
+                            <p
+                                style={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    color: post.approval_status === 'Approved' ? '#1890ff' : '#faad14', // xanh cho đã duyệt, vàng cho chờ duyệt
+                                }}
+                            >
+                                {post.approval_status === 'Approved' ? 'Đã được duyệt' : 'Đang chờ duyệt'}
+                            </p>
                         </div>
 
 
@@ -183,6 +196,13 @@ const ManageJobPage = () => {
                                 hoverColor="darkgray"
                                 textColor="white"
                                 onClick={() => handleButtonViewCandidateAppications(post.id)}
+                            />
+                            <CustomButton
+                                text="Xem ứng viên phù hợp"
+                                backgroundColor="gray"
+                                hoverColor="darkgray"
+                                textColor="white"
+                                onClick={() => handleButtonViewSuitableCandidates(post.id)}
                             />
                         </div>
                     </div>
