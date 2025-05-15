@@ -29,6 +29,13 @@ interface Job {
     salary_range: string;
     work_location: string;
 }
+interface AppliedJob {
+    id: number;
+    job_id: number; // Tham chiếu đến job đã lưu
+    candidate_id: number; // Tham chiếu đến người dùng (ứng viên) đã ứng tuyển
+    applied_at: string; // Thời gian ứng tuyển công việc
+    job: Job; // Thông tin công việc ứng tuyển, liên kết với bảng Job
+}
   
 const InfoBusinessDetail = () => {
     const [hoveredCard, setHoveredCard] = useState<number | null>(null);
@@ -38,32 +45,52 @@ const InfoBusinessDetail = () => {
     const [error, setError] = useState<string | null>(null);
     const [expanded, setExpanded] = useState<boolean>(false);
     const router = useRouter();
+    const [appliedJobs, setAppliedJobs] = useState<number[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchCompanyDetails = async () => {
-            if (!id) return; // Chờ cho đến khi id có sẵn
-        
+            if (!id) return;
             try {
                 const response = await fetch(`http://localhost:8080/companies/${id}`);
-                if (!response.ok) {
-                throw new Error("Failed to fetch company details");
-                }
+                if (!response.ok) throw new Error("Failed to fetch company details");
                 const data = await response.json();
-                setCompanyDetails(data); // Lưu thông tin chi tiết công ty vào state
+                setCompanyDetails(data);
             } catch (error) {
                 console.error("Error fetching company details:", error);
                 setError("Unable to load company details.");
             }
         };
-    
         fetchCompanyDetails();
-    }, [id]); // Gọi lại khi id thay đổi
+    }, [id]);
+
+    useEffect(() => {
+        const fetchAppliedJobs = async () => {
+            const token = localStorage.getItem("userToken");
+            if (!token) return;
+            try {
+                const res = await fetch("http://localhost:8080/user/applies", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                setAppliedJobs(data.applications.map((item: any) => item.job_id));
+            } catch (err) {
+                console.error("Lỗi khi fetch applied jobs:", err);
+            }
+        };
+        fetchAppliedJobs();
+    }, []);
+
+    // ✅ Sau tất cả hook mới được return JSX
     if (error) {
         return <div>{error}</div>;
     }
+
     if (!companyDetails) {
-        return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
+        return <div>Loading...</div>;
     }
+
     const fullContent = companyDetails?.description || "Chưa có mô tả";
     // Rút gọn nội dung
     const shortContent = fullContent.length > 500 ? fullContent.substring(0, 500) + "..." : fullContent;
@@ -114,6 +141,7 @@ const InfoBusinessDetail = () => {
         }
     };
 
+    const hasAppliedJob = (jobId: number) => appliedJobs.includes(jobId);
     return (
         <div className="container mx-auto p-6">
             <div 
@@ -339,10 +367,15 @@ const InfoBusinessDetail = () => {
                                         </div>
                                         
                                         <CustomButton
-                                            text="Ứng tuyển"
-                                            onClick={() => {}}
-                                            backgroundColor="#D4421E"
-                                            hoverColor="#E9552D"
+                                            text={hasAppliedJob(job.id) ? "Đã ứng tuyển" : "Ứng tuyển"}
+                                            onClick={() => {
+                                                if (!hasAppliedJob(job.id)) {
+                                                    setIsModalOpen(true); // hoặc xử lý gì đó
+                                                    // nếu cần chọn job cụ thể
+                                                }
+                                            }}
+                                            backgroundColor={hasAppliedJob(job.id) ? "#ccc" : "#D4421E"}
+                                            hoverColor={hasAppliedJob(job.id) ? "#ccc" : "#E9552D"}
                                             textColor="white"
                                             style={{
                                                 alignSelf: "flex-start",
@@ -353,10 +386,11 @@ const InfoBusinessDetail = () => {
                                                 alignItems: "center",
                                                 gap: "8px",
                                                 borderRadius:"8px",
-                                                fontSize:"14px"
+                                                fontSize:"14px",
+                                                cursor: hasAppliedJob(job.id) ? "not-allowed" : "pointer"
                                             }}
-                                        >
-                                        </CustomButton>
+                                            disabled={hasAppliedJob(job.id)}
+                                        />
                                     </div>  
                                 </Card>
                             ))}
