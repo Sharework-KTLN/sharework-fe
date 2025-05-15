@@ -74,7 +74,7 @@ const InfoBusinessDetail = () => {
                 });
                 if (!res.ok) return;
                 const data = await res.json();
-                setAppliedJobs(data.applications.map((item: any) => item.job_id));
+                setAppliedJobs(data.applications.map((item: AppliedJob) => item.job_id));
             } catch (err) {
                 console.error("Lỗi khi fetch applied jobs:", err);
             }
