@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Card, Input, Select, Row, Col, Upload } from 'antd';
+import { Card, Input, Select, Row, Col, Upload} from 'antd';
 import { RcFile } from "antd/lib/upload";
 import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../../../../../redux/slice/userSlice';
 import { RootState, AppDispatch } from '@/redux/store';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { login, logout } from '@/redux/slice/userSlice';
@@ -37,8 +38,9 @@ interface User {
   school?: string;
   course?: string;
   specialize?: string;
-  file_url?: string;
   introduce_yourself?: string;
+  interested_majors?: number[];
+  skills?: number[];
 }
 
 interface UserWithRelations extends User {
@@ -61,7 +63,6 @@ const CVManager = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [editableUser, setEditableUser] = useState(user);
-  const [file, setFile] = useState<RcFile | null>(null);
   const [fileName, setFileName] = useState<string>("");
 
   useEffect(() => {
@@ -331,55 +332,51 @@ const CVManager = () => {
     setEditableUser(user); // Reset giá trị mỗi lần mở/chỉnh sửa
   };
 
-  const saveMajors = async (selectedMajors: number[]) => {
+  const handleUpdateProfile = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/user/${user.id}/majors`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user.id, majors: selectedMajors }),
-      });
+      const formData = new FormData();
 
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Majors updated successfully:", data);
-      } else {
-        console.log("Error updating majors:", data);
+      // Thêm các field text vào formData
+      formData.append("full_name", editableUser.full_name || "");
+      formData.append("date_of_birth", editableUser.date_of_birth || "");
+      formData.append("gender", editableUser.gender || "");
+      formData.append("phone", editableUser.phone || "");
+      formData.append("address", editableUser.address || "");
+      formData.append("school", editableUser.school || "");
+      formData.append("course", editableUser.course || "");
+      formData.append("specialize", editableUser.specialize || "");
+      formData.append("introduce_yourself", editableUser.introduce_yourself || "");
+
+      // Thêm file ảnh nếu có
+      if (fileInputRef.current?.files?.[0]) {
+        formData.append("profile_image", fileInputRef.current.files[0]);
       }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
 
-  const handleFileUpload = async (file: RcFile) => {
-    const formData = new FormData();
-    formData.append("file", file);
+      // Gửi mảng: phải stringify để backend parse được
+      formData.append("interested_majors", JSON.stringify(selectedMajors));
+      formData.append("skills", JSON.stringify(selectedSkills));
 
-    try {
-      // Gửi file lên server
-      const response = await fetch("https://your-api/upload", {
-        method: "POST",
+      const res = await fetch("http://localhost:8080/user/profile", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
         body: formData,
       });
 
-      const result = await response.json();
+      const data = await res.json();
 
-      if (response.ok) {
-        const uploadedUrl = result.url; // URL file đã upload
-        setFileName(file.name); // Lưu tên file để hiển thị trên input
-        // Cập nhật file_url vào state user nếu cần
-        // dispatch(updateUserFileUrl(uploadedUrl));  // Dispatch action nếu cần
-        console.log("Uploaded file URL:", uploadedUrl);
+      if (res.ok) {
+        console.log("✅ Cập nhật hồ sơ thành công!");
+        setEditableUser(data.user);
+        dispatch(setUser(data.user));
+        setIsEditable(false);
       } else {
-        alert("Upload thất bại.");
+        console.error(data.message || "❌ Cập nhật thất bại.");
       }
     } catch (error) {
-      alert("Lỗi khi upload file.");
-      console.error("Upload error:", error);
+      console.error("❌ Lỗi khi cập nhật hồ sơ:", error);
     }
-
-    return false; // Ngừng upload tự động, vì đã handle thủ công
   };
 
   return (
@@ -468,7 +465,7 @@ const CVManager = () => {
                 <Col span={12}>
                   <label style={{ fontWeight: 500 }}>Họ và tên</label>
                   <Input
-                    value={editableUser.full_name}
+                    value={editableUser.full_name || ""}
                     disabled={!isEditable}
                     onChange={(e) => handleFieldChange('full_name', e.target.value)}
                   />
@@ -477,7 +474,7 @@ const CVManager = () => {
                   <label style={{ fontWeight: 500 }}>Giới tính</label>
                   <Select
                     style={{ width: "100%" }}
-                    value={user.gender}
+                    value={editableUser.gender || undefined}
                     disabled={!isEditable}
                     onChange={(value) => handleFieldChange('gender', value)}
                   >
@@ -492,7 +489,7 @@ const CVManager = () => {
                   <label style={{ fontWeight: 500 }}>Ngày sinh</label>
                   <Input
                     type="date"
-                    value={user.date_of_birth}
+                     value={editableUser.date_of_birth || ""}
                     disabled={!isEditable}
                     onChange={(e) => handleFieldChange('date_of_birth', e.target.value)}
                   />
@@ -500,7 +497,7 @@ const CVManager = () => {
                 <Col span={12}>
                   <label style={{ fontWeight: 500 }}>Điện thoại</label>
                   <Input
-                    value={user.phone}
+                    value={editableUser.phone || ""}
                     disabled={!isEditable}
                     onChange={(e) => handleFieldChange('phone', e.target.value)}
                   />
@@ -511,7 +508,7 @@ const CVManager = () => {
                 <Col span={24}>
                   <label style={{ fontWeight: 500 }}>Email</label>
                   <Input
-                    value={user.email}
+                    value={editableUser.email || ""}
                     disabled={!isEditable}
                     onChange={(e) => handleFieldChange('email', e.target.value)}
                   />
@@ -522,7 +519,7 @@ const CVManager = () => {
                 <Col span={24}>
                   <label style={{ fontWeight: 500 }}>Địa chỉ liên lạc</label>
                   <Input
-                    value={user.address}
+                    value={editableUser.address || ""}
                     disabled={!isEditable}
                     onChange={(e) => handleFieldChange('address', e.target.value)}
                   />
@@ -555,18 +552,30 @@ const CVManager = () => {
         <Row gutter={16} style={{ marginBottom: 12 }}>
           <Col span={12}>
             <label style={{ fontWeight: 500 }}>Trường học</label>
-            <Input value={user.school} disabled={!isEditable} />
+            <Input 
+              value={editableUser.school || ""} 
+              disabled={!isEditable} 
+              onChange={(e) => handleFieldChange('school', e.target.value)}
+            />
           </Col>
           <Col span={12}>
             <label style={{ fontWeight: 500 }}>Khoá học</label>
-            <Input value={user.course} disabled={!isEditable} />
+            <Input 
+              value={editableUser.course || ""} 
+              disabled={!isEditable} 
+              onChange={(e) => handleFieldChange('course', e.target.value)}
+            />
           </Col>
         </Row>
 
         <Row gutter={16} style={{ marginBottom: 12 }}>
           <Col span={12}>
             <label style={{ fontWeight: 500 }}>Chuyên ngành</label>
-            <Input value={user.specialize} disabled={!isEditable} />
+            <Input 
+              value={editableUser.specialize || ""}
+              disabled={!isEditable}
+              onChange={(e) => handleFieldChange('specialize', e.target.value)}
+            />
           </Col>
           <Col span={12}>
             <label style={{ fontWeight: 500 }}>Ngành việc làm bạn quan tâm</label>
@@ -637,56 +646,13 @@ const CVManager = () => {
       }}>
         <Row gutter={16} style={{ marginBottom: 12 }}>
           <Col span={24}>
-            <label style={{ fontWeight: 500 }}>Thêm CV/Profile</label>
-            <Input
-              value={user.file_url ? user.file_url.split("/").pop() : ""}
-              disabled
-              style={{ width: "100%" }}
-              suffix={
-                <Upload
-                  showUploadList={false}
-                  beforeUpload={(file) => {
-                    setFile(file); // Lưu tệp vào state
-                    return false; // Ngừng upload tự động
-                  }}
-                >
-                  <CustomButton
-                    text="Chọn tệp"
-                    onClick={() => {
-                      // Xử lý chọn file tại đây
-                    }}
-                    backgroundColor="#FFFFFF"
-                    hoverColor="#F0F0F0"
-                    textColor="black"
-                    style={{
-                      border: "none",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      height: "35px",
-                      fontWeight: "600",
-                      fontSize: "14",
-                      borderRadius: "8px"
-                    }}
-                  >
-                    <UploadOutlined />
-                  </CustomButton>
-                </Upload>
-              }
-            />
-
-          </Col>
-        </Row>
-
-        <Row gutter={16} style={{ marginBottom: 12 }}>
-          <Col span={24}>
             <label style={{ fontWeight: 500 }}>Giới thiệu về bản thân</label>
             <Input.TextArea
               rows={4}
               placeholder="Hãy giới thiệu về bản thân bạn"
-              value={user.introduce_yourself}
+              value={editableUser.introduce_yourself || ""}
               disabled={!isEditable}
-            // onChange={(e) => handleFieldChange('introduce_yourself', e.target.value)}
+              onChange={(e) => handleFieldChange('introduce_yourself', e.target.value)}
             />
           </Col>
         </Row>
@@ -696,7 +662,7 @@ const CVManager = () => {
         <Col>
           <CustomButton
             text="Cập nhật"
-            onClick={() => { }} // Thêm logic cập nhật nếu có
+            onClick={() => handleUpdateProfile()} // Thêm logic cập nhật nếu có
             backgroundColor="#D4421E"
             hoverColor="#e9552d"
             textColor="white"

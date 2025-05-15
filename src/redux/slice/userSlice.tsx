@@ -33,9 +33,12 @@ const userSlice = createSlice({
         },
         logout: (state) => {
             return initialState;
-        }
+        },
+        setUser: (state, action: PayloadAction<Partial<UserState>>) => {
+      return { ...state, ...action.payload };
+    }
     }
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout, setUser } = userSlice.actions;
 export default userSlice.reducer;

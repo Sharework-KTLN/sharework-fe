@@ -90,9 +90,14 @@ const RecruitmentInfoDetail = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleApplySubmit = (values: unknown) => {
-        console.log('Dữ liệu ứng tuyển:', values);
-        setIsModalOpen(false);
-        // setAppliedJobs(prev => [...prev, jobDetails.id]);
+    console.log('Dữ liệu ứng tuyển:', values);
+    setIsModalOpen(false);
+
+    if (jobDetails && jobDetails.id) {
+            setAppliedJobs(prev => [...prev, jobDetails.id]);
+        } else {
+            console.warn('Không có jobDetails hoặc jobDetails.id hợp lệ để cập nhật');
+        }
     };
 
     useEffect(() => {
@@ -140,7 +145,7 @@ const RecruitmentInfoDetail = () => {
     // Effect để lấy công việc đã lưu
     useEffect(() => {
         const fetchSavedJobs = async () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("userToken");
             try {
                 const res = await fetch("http://localhost:8080/user/favorites", {
                     headers: {
@@ -162,7 +167,7 @@ const RecruitmentInfoDetail = () => {
 
     useEffect(() => {
         const fetchAppliedJobs = async () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("userToken");
             if (!token) return;
     
             try {
@@ -176,7 +181,7 @@ const RecruitmentInfoDetail = () => {
     
                 const data = await res.json();
                 // Cập nhật danh sách công việc đã ứng tuyển (Lưu id công việc đã ứng tuyển)
-                setAppliedJobs(data.appliedJobs.map((item: AppliedJob) => item.job_id)); 
+                setAppliedJobs(data.applications.map((item: AppliedJob) => item.job_id)); 
             } catch (err) {
                 // Không log lỗi, giữ im lặng như yêu cầu
             }
@@ -196,7 +201,7 @@ const RecruitmentInfoDetail = () => {
 
     const handleSaveJob = async (jobId: number) => {
         try {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("userToken");
 
             if (!token) {
                 throw new Error("Bạn chưa đăng nhập hoặc thiếu token");
@@ -232,7 +237,7 @@ const RecruitmentInfoDetail = () => {
     };
 
     const handleUnsaveJob = async (jobId: number) => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("userToken");
         if (!token) {
             setError("Bạn chưa đăng nhập hoặc thiếu token");
             return;
@@ -265,6 +270,8 @@ const RecruitmentInfoDetail = () => {
     const handleApplyJob = () => {
         setIsModalOpen(true); // Mở modal ứng tuyển
     };
+    console.log("jobDetails.id =", jobDetails.id, typeof jobDetails.id);
+    console.log("appliedJobs =", appliedJobs);
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
             <ApplyJobModal
