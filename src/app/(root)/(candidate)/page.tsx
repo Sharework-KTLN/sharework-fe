@@ -88,7 +88,7 @@ const Home = () => {
     useEffect(() => {
         const fetchJobs = async () => {
             try {
-                const token = localStorage.getItem("token");
+                const token = localStorage.getItem("userToken");
 
                 const response = await fetch("http://localhost:8080/jobs", {
                     headers: {
@@ -115,7 +115,7 @@ const Home = () => {
 
     useEffect(() => {
         const fetchSavedJobs = async () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("userToken");
             if (!token) {
                 setError("Bạn chưa đăng nhập hoặc thiếu token");
                 return;
