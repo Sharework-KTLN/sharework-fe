@@ -334,65 +334,49 @@ const CVManager = () => {
 
   const handleUpdateProfile = async () => {
     try {
-      // Thêm trường interested_majors vào payload
-      const payload = {
-        ...editableUser,
-        interested_majors: selectedMajors,  // selectedMajors là mảng major_id bạn đã chọn ở frontend
-        skills: selectedSkills,
-      };
+      const formData = new FormData();
+
+      // Thêm các field text vào formData
+      formData.append("full_name", editableUser.full_name || "");
+      formData.append("date_of_birth", editableUser.date_of_birth || "");
+      formData.append("gender", editableUser.gender || "");
+      formData.append("phone", editableUser.phone || "");
+      formData.append("address", editableUser.address || "");
+      formData.append("school", editableUser.school || "");
+      formData.append("course", editableUser.course || "");
+      formData.append("specialize", editableUser.specialize || "");
+      formData.append("introduce_yourself", editableUser.introduce_yourself || "");
+
+      // Thêm file ảnh nếu có
+      if (fileInputRef.current?.files?.[0]) {
+        formData.append("profile_image", fileInputRef.current.files[0]);
+      }
+
+      // Gửi mảng: phải stringify để backend parse được
+      formData.append("interested_majors", JSON.stringify(selectedMajors));
+      formData.append("skills", JSON.stringify(selectedSkills));
 
       const res = await fetch("http://localhost:8080/user/profile", {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("userToken")}`,
         },
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        console.log("Cập nhật hồ sơ thành công!");
-        setEditableUser(data.user);  // set lại user mới
+        console.log("✅ Cập nhật hồ sơ thành công!");
+        setEditableUser(data.user);
         dispatch(setUser(data.user));
         setIsEditable(false);
       } else {
-        console.error(data.message || "Cập nhật thất bại.");
+        console.error(data.message || "❌ Cập nhật thất bại.");
       }
     } catch (error) {
-      console.error("Có lỗi xảy ra khi cập nhật hồ sơ.", error);
+      console.error("❌ Lỗi khi cập nhật hồ sơ:", error);
     }
-  };  
-
-  const handleFileUpload = async (file: RcFile) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      // Gửi file lên server
-      const response = await fetch("https://your-api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        const uploadedUrl = result.url; // URL file đã upload
-        setFileName(file.name); // Lưu tên file để hiển thị trên input
-        // Cập nhật file_url vào state user nếu cần
-        // dispatch(updateUserFileUrl(uploadedUrl));  // Dispatch action nếu cần
-        console.log("Uploaded file URL:", uploadedUrl);
-      } else {
-        alert("Upload thất bại.");
-      }
-    } catch (error) {
-      alert("Lỗi khi upload file.");
-      console.error("Upload error:", error);
-    }
-
-    return false; // Ngừng upload tự động, vì đã handle thủ công
   };
 
   return (
