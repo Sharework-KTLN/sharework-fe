@@ -9,20 +9,20 @@ const { Title } = Typography;
 interface UserSkill {
     id: number;
     skill: {
-      id: number;
-      name: string;
-      description: string;
+        id: number;
+        name: string;
+        description: string;
     };
 }
 interface UserInterestedMajor {
     id: number;
     major: {
-      id: number;
-      name: string;
-      description: string;
+        id: number;
+        name: string;
+        description: string;
     };
 }
-  
+
 
 interface SavedJob {
     id: number;
@@ -30,13 +30,13 @@ interface SavedJob {
     company_name: string;
     job_location: string;
     saved_at: string;
-    job:{
+    job: {
         title: string;
         work_location: string;
         company: { name: string };
     };
 }
-  
+
 
 interface UserDetail {
     id: number;
@@ -58,7 +58,7 @@ interface UserDetail {
 const UserDescription = ({ label, value }: { label: string; value: string | undefined }) => (
     <Descriptions bordered>
         <Descriptions.Item label={label} labelStyle={{ width: '120px' }}>
-        {value || 'Không có dữ liệu'}
+            {value || 'Không có dữ liệu'}
         </Descriptions.Item>
     </Descriptions>
 );
@@ -67,7 +67,7 @@ interface Column {
     title: string;
     dataIndex: string;
     width?: number;
-  }
+}
 
 interface TableRecord {
     id?: string | number;
@@ -99,24 +99,24 @@ const UserDetailPage = () => {
 
     useEffect(() => {
         const fetchUserDetail = async (id: string) => {
-        setLoading(true);
-        try {
-            const res = await fetch(`http://localhost:8080/user/detail/${id}`);
-            const data = await res.json();
-            if (res.ok) {
-            setUserDetail(data.data);
-            } else {
-            setError(data.message || "Lỗi khi tải thông tin người dùng");
+            setLoading(true);
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/detail/${id}`);
+                const data = await res.json();
+                if (res.ok) {
+                    setUserDetail(data.data);
+                } else {
+                    setError(data.message || "Lỗi khi tải thông tin người dùng");
+                }
+            } catch (err) {
+                setError("Đã xảy ra lỗi khi tải thông tin người dùng");
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            setError("Đã xảy ra lỗi khi tải thông tin người dùng");
-        } finally {
-            setLoading(false);
-        }
         };
 
         if (id) {
-        fetchUserDetail(id);
+            fetchUserDetail(id);
         }
     }, [id]);
 
@@ -167,12 +167,12 @@ const UserDetailPage = () => {
                     <Card className="shadow-md p-4">
                         <Title level={4}>Avatar</Title>
                         <Image
-                        src={userDetail?.profile_image}
-                        alt={userDetail?.full_name}
-                        width={100}
-                        height={100}
-                        className="rounded-full object-cover"
-                        preview={false}
+                            src={userDetail?.profile_image}
+                            alt={userDetail?.full_name}
+                            width={100}
+                            height={100}
+                            className="rounded-full object-cover"
+                            preview={false}
                         />
                     </Card>
                 </div>

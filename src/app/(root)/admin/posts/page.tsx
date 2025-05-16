@@ -10,14 +10,14 @@ const { Search } = Input;
 const { Option } = Select;
 
 interface JobPost {
-  id: number;
-  title: string;
-  company_name: string;
-  recruiter_name: string;
-  work_location: string;
-  created_at: string;
-  status: string;
-  approval_status: string; // Thêm approval_status vào đây
+    id: number;
+    title: string;
+    company_name: string;
+    recruiter_name: string;
+    work_location: string;
+    created_at: string;
+    status: string;
+    approval_status: string; // Thêm approval_status vào đây
 }
 
 const ManagePostPage = () => {
@@ -33,11 +33,11 @@ const ManagePostPage = () => {
     const fetchJobs = async (approvalStatus?: string) => {
         try {
             setLoading(true);
-            let url = 'http://localhost:8080/jobs/admin';
+            let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/admin`;
             if (approvalStatus) {
                 url += `?approval_status=${approvalStatus}`;
             }
-                const res = await fetch(url);
+            const res = await fetch(url);
             if (!res.ok) {
                 throw new Error('Failed to fetch jobs');
             }
@@ -48,7 +48,7 @@ const ManagePostPage = () => {
             if (err instanceof Error) {
                 setError(err.message);
             } else {
-            setError('An unknown error occurred');
+                setError('An unknown error occurred');
             }
         } finally {
             setLoading(false);
@@ -105,7 +105,7 @@ const ManagePostPage = () => {
             render: (approvalStatus: string) => {
                 let color = 'orange';
                 let label = 'Chờ duyệt';
-            
+
                 if (approvalStatus === 'Approved') {
                     color = 'green';
                     label = 'Đã duyệt';
@@ -113,10 +113,10 @@ const ManagePostPage = () => {
                     color = 'red';
                     label = 'Từ chối';
                 }
-            
+
                 return <Tag color={color}>{label}</Tag>;
-            },            
-        },      
+            },
+        },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
@@ -192,34 +192,34 @@ const ManagePostPage = () => {
     const handleApprove = async (id: number) => {
         try {
             // Gửi yêu cầu PUT hoặc PATCH để cập nhật trạng thái approval_status
-            const res = await fetch(`http://localhost:8080/jobs/admin/approve/${id}`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-        });
-      
-        if (!res.ok) {
-            throw new Error('Failed to approve job');
-        }
-        // Sau khi duyệt thành công, gọi lại API để lấy lại danh sách công việc
-        fetchJobs(selectedApprovalStatus);
-        } catch (error) {
-            console.error('Error approving job:', error);
-            alert('Có lỗi xảy ra khi duyệt công việc!');
-        }
-    };
-      
-
-    const handleReject = async (id: number) => {
-        try {
-            const res = await fetch(`http://localhost:8080/jobs/admin/reject/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/admin/approve/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
-    
+
+            if (!res.ok) {
+                throw new Error('Failed to approve job');
+            }
+            // Sau khi duyệt thành công, gọi lại API để lấy lại danh sách công việc
+            fetchJobs(selectedApprovalStatus);
+        } catch (error) {
+            console.error('Error approving job:', error);
+            alert('Có lỗi xảy ra khi duyệt công việc!');
+        }
+    };
+
+
+    const handleReject = async (id: number) => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/admin/reject/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
             if (!res.ok) {
                 throw new Error('Failed to reject job');
             }
@@ -230,7 +230,7 @@ const ManagePostPage = () => {
             alert('Có lỗi xảy ra khi từ chối công việc!');
         }
     };
-    
+
 
     const handleViewDetail = (id: number) => {
         router.push(`/admin/postDetail?id=${id}`);

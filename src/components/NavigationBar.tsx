@@ -70,7 +70,7 @@ const NavigationBar: React.FC = () => {
                 return;
             }
             try {
-                const res = await fetch("http://localhost:8080/auth/me", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
                     headers: { "Authorization": `Bearer ${savedToken}` },
                 });
 

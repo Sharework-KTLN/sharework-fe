@@ -28,7 +28,7 @@ const ManageSuitableCandidates = () => {
                     return;
                 }
 
-                const res = await fetch(`http://localhost:8080/user/getAllCandidatesMatchWithJob/${id}`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/getAllCandidatesMatchWithJob/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',

@@ -90,10 +90,10 @@ const RecruitmentInfoDetail = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleApplySubmit = (values: unknown) => {
-    console.log('Dữ liệu ứng tuyển:', values);
-    setIsModalOpen(false);
+        console.log('Dữ liệu ứng tuyển:', values);
+        setIsModalOpen(false);
 
-    if (jobDetails && jobDetails.id) {
+        if (jobDetails && jobDetails.id) {
             setAppliedJobs(prev => [...prev, jobDetails.id]);
         } else {
             console.warn('Không có jobDetails hoặc jobDetails.id hợp lệ để cập nhật');
@@ -105,7 +105,7 @@ const RecruitmentInfoDetail = () => {
             if (!id) return; // Chờ cho đến khi id có sẵn
 
             try {
-                const response = await fetch(`http://localhost:8080/jobs/detail/${id}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/detail/${id}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch job details");
                 }
@@ -147,7 +147,7 @@ const RecruitmentInfoDetail = () => {
         const fetchSavedJobs = async () => {
             const token = localStorage.getItem("userToken");
             try {
-                const res = await fetch("http://localhost:8080/user/favorites", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/favorites`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -169,27 +169,27 @@ const RecruitmentInfoDetail = () => {
         const fetchAppliedJobs = async () => {
             const token = localStorage.getItem("userToken");
             if (!token) return;
-    
+
             try {
-                const res = await fetch("http://localhost:8080/user/applies", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/applies'`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-    
+
                 if (!res.ok) return; // Không làm gì nếu lỗi
-    
+
                 const data = await res.json();
                 // Cập nhật danh sách công việc đã ứng tuyển (Lưu id công việc đã ứng tuyển)
-                setAppliedJobs(data.applications.map((item: AppliedJob) => item.job_id)); 
+                setAppliedJobs(data.applications.map((item: AppliedJob) => item.job_id));
             } catch (err) {
                 // Không log lỗi, giữ im lặng như yêu cầu
             }
         };
-    
+
         fetchAppliedJobs();
-    }, []);    
-    
+    }, []);
+
     // Phần còn lại của bạn vẫn giữ nguyên, chẳng hạn khi không có công việc chi tiết:
     if (error) {
         return <div>{error}</div>;
@@ -208,7 +208,7 @@ const RecruitmentInfoDetail = () => {
             }
 
             // Gửi yêu cầu POST đến /user/savejob để lưu công việc
-            const response = await fetch(`http://localhost:8080/user/savejob/${jobId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/savejob/${jobId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -244,7 +244,7 @@ const RecruitmentInfoDetail = () => {
         }
 
         try {
-            const res = await fetch(`http://localhost:8080/user/unsavejob/${jobId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/unsavejob/${jobId}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

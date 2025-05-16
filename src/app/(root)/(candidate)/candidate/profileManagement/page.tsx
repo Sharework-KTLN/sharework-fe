@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Card, Input, Select, Row, Col, Upload} from 'antd';
+import { Card, Input, Select, Row, Col, Upload } from 'antd';
 import { RcFile } from "antd/lib/upload";
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../../../../../redux/slice/userSlice';
@@ -98,7 +98,7 @@ const CVManager = () => {
         return;
       }
       try {
-        const res = await fetch("http://localhost:8080/auth/me", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
           headers: { "Authorization": `Bearer ${savedToken}` },
         });
 
@@ -124,7 +124,7 @@ const CVManager = () => {
   useEffect(() => {
     const fetchMajors = async () => {
       try {
-        const response = await fetch("http://localhost:8080/majors");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/majors`);
         const data = await response.json();
         console.log("Majors fetched:", data);
         setMajors(data);
@@ -139,7 +139,7 @@ const CVManager = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const response = await fetch("http://localhost:8080/skills");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/skills`);
         const data = await response.json();
         setSkills(data);
       } catch (error) {
@@ -172,7 +172,7 @@ const CVManager = () => {
 
       try {
         // Fetch ngành nghề mà người dùng quan tâm
-        const majorsRes = await fetch(`http://localhost:8080/user/${userId}/majors`, {
+        const majorsRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/${userId}/majors`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -189,7 +189,7 @@ const CVManager = () => {
         setSelectedMajors(majorsData.map((item) => item.majorId));
 
         // Fetch tất cả ngành nghề có sẵn
-        const allMajorsRes = await fetch('http://localhost:8080/majors', {
+        const allMajorsRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/majors`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -221,7 +221,7 @@ const CVManager = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const response = await fetch("http://localhost:8080/skills");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/skills`);
         const data = await response.json();
         setSkills(data);
       } catch (error) {
@@ -254,7 +254,7 @@ const CVManager = () => {
 
       try {
         // Fetch kỹ năng mà người dùng có
-        const skillsRes = await fetch(`http://localhost:8080/user/${userId}/skills`, {
+        const skillsRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/${userId}/skills`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -271,7 +271,7 @@ const CVManager = () => {
         setSelectedSkills(skillsData.map((item) => item.skillId));
 
         // Fetch tất cả kỹ năng có sẵn
-        const allSkillsRes = await fetch('http://localhost:8080/skills', {
+        const allSkillsRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/skills`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -356,7 +356,7 @@ const CVManager = () => {
       formData.append("interested_majors", JSON.stringify(selectedMajors));
       formData.append("skills", JSON.stringify(selectedSkills));
 
-      const res = await fetch("http://localhost:8080/user/profile", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/profile`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("userToken")}`,
@@ -489,7 +489,7 @@ const CVManager = () => {
                   <label style={{ fontWeight: 500 }}>Ngày sinh</label>
                   <Input
                     type="date"
-                     value={editableUser.date_of_birth || ""}
+                    value={editableUser.date_of_birth || ""}
                     disabled={!isEditable}
                     onChange={(e) => handleFieldChange('date_of_birth', e.target.value)}
                   />
@@ -552,17 +552,17 @@ const CVManager = () => {
         <Row gutter={16} style={{ marginBottom: 12 }}>
           <Col span={12}>
             <label style={{ fontWeight: 500 }}>Trường học</label>
-            <Input 
-              value={editableUser.school || ""} 
-              disabled={!isEditable} 
+            <Input
+              value={editableUser.school || ""}
+              disabled={!isEditable}
               onChange={(e) => handleFieldChange('school', e.target.value)}
             />
           </Col>
           <Col span={12}>
             <label style={{ fontWeight: 500 }}>Khoá học</label>
-            <Input 
-              value={editableUser.course || ""} 
-              disabled={!isEditable} 
+            <Input
+              value={editableUser.course || ""}
+              disabled={!isEditable}
               onChange={(e) => handleFieldChange('course', e.target.value)}
             />
           </Col>
@@ -571,7 +571,7 @@ const CVManager = () => {
         <Row gutter={16} style={{ marginBottom: 12 }}>
           <Col span={12}>
             <label style={{ fontWeight: 500 }}>Chuyên ngành</label>
-            <Input 
+            <Input
               value={editableUser.specialize || ""}
               disabled={!isEditable}
               onChange={(e) => handleFieldChange('specialize', e.target.value)}

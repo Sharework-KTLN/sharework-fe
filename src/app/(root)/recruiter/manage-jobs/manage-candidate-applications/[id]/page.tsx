@@ -35,7 +35,7 @@ const ApplicantsPage = () => {
     useEffect(() => {
         const fetchApplications = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/applications/${id}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/applications/${id}`);
                 const data = await res.json();
                 console.log("Data fetched:", data); // Kiểm tra dữ liệu API
 

@@ -28,7 +28,7 @@ const EditJobPage = () => {
     useEffect(() => {
         const fetchJobData = async () => {
             try {
-                const res = await axios.get(`http://localhost:8080/jobs/detail/${id}`);
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/detail/${id}`);
                 if (res.status !== 200) {
                     console.log('Không thể tải dữ liệu công việc!');
                     return;
@@ -116,7 +116,7 @@ const EditJobPage = () => {
             }
 
             // Gửi request PUT để cập nhật
-            const res = await fetch(`http://localhost:8080/jobs/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
