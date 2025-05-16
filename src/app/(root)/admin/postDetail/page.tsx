@@ -1,8 +1,10 @@
 'use client';
-import { Card, Button ,Typography, Tag , Image} from "antd";
-import { EnvironmentOutlined, MoneyCollectOutlined, ClockCircleOutlined , LaptopOutlined,
-    SolutionOutlined , CalendarOutlined , HourglassOutlined, SendOutlined , HeartOutlined, HeartFilled, 
-    ExportOutlined, RiseOutlined, TeamOutlined} from "@ant-design/icons";
+import { Card, Button, Typography, Tag, Image } from "antd";
+import {
+    EnvironmentOutlined, MoneyCollectOutlined, ClockCircleOutlined, LaptopOutlined,
+    SolutionOutlined, CalendarOutlined, HourglassOutlined, SendOutlined, HeartOutlined, HeartFilled,
+    ExportOutlined, RiseOutlined, TeamOutlined
+} from "@ant-design/icons";
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CustomButton from "@/components/CustomButton";
@@ -43,55 +45,55 @@ const iconStyle = {
     borderRadius: "50%", // Tạo hình tròn
     padding: "8px", // Khoảng cách bên trong vòng tròn
     display: "flex", // Đảm bảo icon nằm giữa vòng tròn
-    alignItems: "center", 
+    alignItems: "center",
     justifyContent: "center",
     fontSize: "19px",
     marginRight: "8px"
 };
 
 const info1Style = {
-    color:"gray",
-    fontSize:"13px"
+    color: "gray",
+    fontSize: "13px"
 };
 
 const info2Style = {
-    fontWeight:"bold",
-    fontSize:"13px"
+    fontWeight: "bold",
+    fontSize: "13px"
 };
 
-const RecruitmentInfoDetail = () =>{
+const RecruitmentInfoDetail = () => {
     const searchParams = useSearchParams(); // Use this to get search params
     const id = searchParams.get('id');
     const [jobDetails, setJobDetails] = useState<Job | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-            const fetchJobDetails = async () => {
-              if (!id) return; // Chờ cho đến khi id có sẵn
-        
-              try {
-                const response = await fetch(`http://localhost:8080/jobs/admin/${id}`);
+        const fetchJobDetails = async () => {
+            if (!id) return; // Chờ cho đến khi id có sẵn
+
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/admin/${id}`);
                 if (!response.ok) {
-                  throw new Error("Failed to fetch job details");
+                    throw new Error("Failed to fetch job details");
                 }
                 const data = await response.json();
                 setJobDetails(data); // Lưu thông tin chi tiết công ty vào state
-              } catch (error) {
+            } catch (error) {
                 console.error("Error fetching company details:", error);
                 setError("Unable to load company details.");
-              }
-            };
-        
-            fetchJobDetails();
-          }, [id]); // Gọi lại khi id thay đổi
-        
-          if (error) {
-            return <div>{error}</div>;
-          }
-        
-          if (!jobDetails) {
-            return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
-        }
+            }
+        };
+
+        fetchJobDetails();
+    }, [id]); // Gọi lại khi id thay đổi
+
+    if (error) {
+        return <div>{error}</div>;
+    }
+
+    if (!jobDetails) {
+        return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
+    }
 
     const descriptionSentences = jobDetails.description.split('.').filter(Boolean);
     const work_ScheduleSentences = jobDetails.work_schedule.split('.').filter(Boolean);
@@ -102,33 +104,33 @@ const RecruitmentInfoDetail = () =>{
     const calculateDaysRemaining = (endDate: string) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-      
+
         const end = new Date(endDate);
         end.setHours(0, 0, 0, 0);
-      
+
         const timeDifference = end.getTime() - today.getTime();
         const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
-      
+
         if (daysRemaining < 0) {
-          return "Đã hết hạn nộp hồ sơ";
+            return "Đã hết hạn nộp hồ sơ";
         }
-      
+
         return `Còn ${daysRemaining} ngày đến hạn nộp hồ sơ`;
     };
 
     const handleApproveJob = async (id: number) => {
         try {
-            const response = await fetch(`http://localhost:8080/jobs/admin/approve/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/admin/approve/${id}`, {
                 method: 'PATCH',
                 headers: {
-                'Content-Type': 'application/json',
+                    'Content-Type': 'application/json',
                 },
             });
-        
+
             if (response.ok) {
                 console.log(`Bài đăng ${id} đã được duyệt.`);
                 // Gọi lại API để cập nhật trạng thái bài đăng
-                const updated = await fetch(`http://localhost:8080/jobs/admin/${id}`);
+                const updated = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/admin/${id}`);
                 const data = await updated.json();
                 setJobDetails(data); // Cập nhật state
             } else {
@@ -138,21 +140,21 @@ const RecruitmentInfoDetail = () =>{
             console.error('Lỗi duyệt bài:', error);
         }
     };
-    
+
     const handleRejectJob = async (id: number) => {
         try {
             // Gửi yêu cầu PATCH để cập nhật trạng thái approval_status thành "Rejected"
-            const response = await fetch(`http://localhost:8080/jobs/admin/reject/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/admin/reject/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
-    
+
             if (response.ok) {
                 console.log(`Bài đăng ${id} đã bị từ chối.`);
                 // Sau khi từ chối thành công, gọi lại API để cập nhật trạng thái bài đăng
-                const updated = await fetch(`http://localhost:8080/jobs/admin/${id}`);
+                const updated = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/admin/${id}`);
                 const data = await updated.json();
                 setJobDetails(data); // Cập nhật state với thông tin bài đăng đã cập nhật
             } else {
@@ -161,7 +163,7 @@ const RecruitmentInfoDetail = () =>{
         } catch (error) {
             console.error('Lỗi từ chối bài:', error);
         }
-    };    
+    };
 
     return (
         <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-4">
@@ -172,11 +174,11 @@ const RecruitmentInfoDetail = () =>{
                     <div className="flex gap-2 items-center mb-3">
                         <Tag icon={<MoneyCollectOutlined />} color="green">{jobDetails.salary_range}</Tag>
                         <Tag icon={<EnvironmentOutlined />} color="blue">{jobDetails.work_location}</Tag>
-                        <Tag icon={<HourglassOutlined/>} color="orange">{jobDetails.experience_required}</Tag>
-                        <Tag icon={<ClockCircleOutlined/>} color="default">{calculateDaysRemaining(jobDetails.deadline)}</Tag>
+                        <Tag icon={<HourglassOutlined />} color="orange">{jobDetails.experience_required}</Tag>
+                        <Tag icon={<ClockCircleOutlined />} color="default">{calculateDaysRemaining(jobDetails.deadline)}</Tag>
                     </div>
 
-                    {jobDetails.approval_status !== "Approved" && jobDetails.approval_status !== "Rejected" &&(
+                    {jobDetails.approval_status !== "Approved" && jobDetails.approval_status !== "Rejected" && (
                         <div className="flex gap-2 mb-3">
                             <CustomButton
                                 text="Duyệt"
@@ -214,7 +216,7 @@ const RecruitmentInfoDetail = () =>{
                         </div>
                     )}
                     <Title level={4}>Mô tả công việc</Title>
-                    <div style={{marginTop:"-7px", marginBottom:"7px"}}>
+                    <div style={{ marginTop: "-7px", marginBottom: "7px" }}>
                         <ul className="list-disc pl-5">
                             {descriptionSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
@@ -223,7 +225,7 @@ const RecruitmentInfoDetail = () =>{
                     </div>
 
                     <Title level={4}>Yêu cầu ứng viên</Title>
-                    <div style={{marginTop:"-7px", marginBottom:"7px"}}>
+                    <div style={{ marginTop: "-7px", marginBottom: "7px" }}>
                         <ul className="list-disc pl-5">
                             {required_SkillsSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
@@ -235,7 +237,7 @@ const RecruitmentInfoDetail = () =>{
                     </div>
 
                     <Title level={4}>Thời gian làm việc</Title>
-                    <div style={{marginTop:"-7px", marginBottom:"7px"}}>
+                    <div style={{ marginTop: "-7px", marginBottom: "7px" }}>
                         <ul className="list-disc pl-5">
                             {work_ScheduleSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
@@ -244,7 +246,7 @@ const RecruitmentInfoDetail = () =>{
                     </div>
 
                     <Title level={4}>Quyền lợi</Title>
-                    <div style={{marginTop:"-7px", marginBottom:"7px"}}>
+                    <div style={{ marginTop: "-7px", marginBottom: "7px" }}>
                         <ul className="list-disc pl-5">
                             {benifitsSentences.map((sentence, index) => (
                                 <li key={index}>{sentence.trim()}.</li>
@@ -253,7 +255,7 @@ const RecruitmentInfoDetail = () =>{
                     </div>
 
                     <Title level={4}>Cách thức ứng tuyển</Title>
-                    <div style={{marginTop:"-7px", marginBottom:"7px"}}>
+                    <div style={{ marginTop: "-7px", marginBottom: "7px" }}>
                         <ul className="list-disc pl-5">
                             <li>Gửi CV qua trang đăng tuyển</li>
                             <li>Hoặc gửi email cho công ty</li>
@@ -261,7 +263,7 @@ const RecruitmentInfoDetail = () =>{
                     </div>
                 </Card>
             </div>
-            
+
             {/* Company Section */}
             <div className="w-full lg:w-1/4">
                 <div>
@@ -269,37 +271,37 @@ const RecruitmentInfoDetail = () =>{
                         <Title level={4}>Công ty</Title>
                         {/* Chia cột chứa hình ảnh và thông tin */}
                         <div className="flex items-center gap-4">
-                        {/* Ảnh công ty */}
-                        <div className="w-16 h-16">
-                            <Image 
-                                src={jobDetails.company_logo}
-                                alt={jobDetails.company_name}
-                                width={64}
-                                height={64}
-                                className="rounded-md object-cover"
-                                preview={false}
-                            />
-                        </div>
+                            {/* Ảnh công ty */}
+                            <div className="w-16 h-16">
+                                <Image
+                                    src={jobDetails.company_logo}
+                                    alt={jobDetails.company_name}
+                                    width={64}
+                                    height={64}
+                                    className="rounded-md object-cover"
+                                    preview={false}
+                                />
+                            </div>
 
-                        {/* Thông tin công ty */}
-                        <div>
-                            <Text strong>{jobDetails.company_name}</Text>
-                            <br />
-                            <Text>Lĩnh vực: {jobDetails.specialize}</Text>
-                            <br/>
-                            <Text>Địa điểm: {jobDetails.work_location}</Text>
+                            {/* Thông tin công ty */}
+                            <div>
+                                <Text strong>{jobDetails.company_name}</Text>
+                                <br />
+                                <Text>Lĩnh vực: {jobDetails.specialize}</Text>
+                                <br />
+                                <Text>Địa điểm: {jobDetails.work_location}</Text>
+                            </div>
                         </div>
-                        </div>
-                        <Button 
-                            type="link" 
-                            className="mt-3" 
+                        <Button
+                            type="link"
+                            className="mt-3"
                             style={{ color: "#D4421E", fontWeight: "500" }}
                         >
                             Xem trang chi tiết <ExportOutlined />
                         </Button>
                     </Card>
                 </div>
-                <div style={{marginTop:"10px"}}>
+                <div style={{ marginTop: "10px" }}>
                     <Card className="shadow-md p-4">
                         <Title level={4}>Thông tin chung</Title>
                         {/* Chia cột chứa hình ảnh và thông tin */}

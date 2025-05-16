@@ -54,7 +54,7 @@ const FindCandidatePage = () => {
             };
             const queryString = new URLSearchParams(searchParams).toString();
 
-            const res = await fetch(`http://localhost:8080/user/getAllCandidates/${user.id}?${queryString}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/getAllCandidates/${user.id}?${queryString}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

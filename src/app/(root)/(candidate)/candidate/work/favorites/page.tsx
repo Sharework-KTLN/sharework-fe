@@ -58,7 +58,7 @@ const WorkFavorites = () => {
 
             const fetchSavedJobs = async () => {
                 try {
-                    const res = await fetch("http://localhost:8080/user/favorites", {
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/favorites`, {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
@@ -88,7 +88,7 @@ const WorkFavorites = () => {
             return;
         }
         try {
-            const res = await fetch(`http://localhost:8080/user/unsavejob/${jobId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/unsavejob/${jobId}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

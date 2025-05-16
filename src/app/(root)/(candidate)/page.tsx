@@ -90,7 +90,7 @@ const Home = () => {
             try {
                 const token = localStorage.getItem("userToken");
 
-                const response = await fetch("http://localhost:8080/jobs", {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs`, {
                     headers: {
                         "Content-Type": "application/json",
                         ...(token ? { Authorization: `Bearer ${token}` } : {}) // Có cũng được, không có cũng không sao
@@ -122,7 +122,7 @@ const Home = () => {
             }
 
             try {
-                const res = await fetch("http://localhost:8080/user/favorites", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/favorites`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -225,7 +225,7 @@ const Home = () => {
             }
 
             // Gửi yêu cầu API để lấy chi tiết công việc
-            const response = await fetch(`http://localhost:8080/jobs/detail/${jobId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/detail/${jobId}`, {
                 method: "GET",
                 headers,
             });
@@ -261,7 +261,7 @@ const Home = () => {
             }
 
             // Gửi yêu cầu POST đến /user/savejob để lưu công việc
-            const response = await fetch(`http://localhost:8080/user/savejob/${jobId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/savejob/${jobId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -299,7 +299,7 @@ const Home = () => {
             }
 
             // Gửi yêu cầu DELETE đến /user/unsavejob để xóa công việc đã lưu
-            const response = await fetch(`http://localhost:8080/user/unsavejob/${jobId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/unsavejob/${jobId}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

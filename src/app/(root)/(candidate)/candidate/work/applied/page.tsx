@@ -58,7 +58,7 @@ const WorkApplied = () => {
 
             const fetchAppliedJobs = async () => {
                 try {
-                    const res = await fetch("http://localhost:8080/user/applies", {
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/applies`, {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",

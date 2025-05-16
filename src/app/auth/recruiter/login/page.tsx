@@ -45,7 +45,7 @@ const RecuiterLogin = () => {
         console.log("Đăng nhập với dữ liệu:", formData);
         setLoading(true);
         try {
-            const response = await fetch("http://localhost:8080/auth/login", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -62,7 +62,7 @@ const RecuiterLogin = () => {
             localStorage.setItem("recruiterToken", data.token);
 
             // 🟢 Gọi API lấy thông tin user từ CSDL
-            const userResponse = await fetch("http://localhost:8080/auth/me", {
+            const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

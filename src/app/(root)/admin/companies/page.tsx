@@ -12,7 +12,7 @@ interface Company {
     total_jobs: number;
     recruiter?: {
         full_name: string;
-  };
+    };
 }
 
 const { Search } = Input;
@@ -27,22 +27,22 @@ const ManageCompanyPage = () => {
 
     const fetchCompanies = async () => {
         try {
-        setLoading(true);
-        const res = await fetch('http://localhost:8080/companies/admin/companies');
-        if (!res.ok) {
-            throw new Error('Failed to fetch companies');
-        }
-        const data = await res.json();
-        setCompanies(data);
-        setFilteredCompanies(data);
+            setLoading(true);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/companies/admin/companies`);
+            if (!res.ok) {
+                throw new Error('Failed to fetch companies');
+            }
+            const data = await res.json();
+            setCompanies(data);
+            setFilteredCompanies(data);
         } catch (err) {
-        if (err instanceof Error) {
-            setError(err.message);
-        } else {
-            setError('An unknown error occurred');
-        }
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An unknown error occurred');
+            }
         } finally {
-        setLoading(false);
+            setLoading(false);
         }
     };
 
@@ -53,8 +53,8 @@ const ManageCompanyPage = () => {
     const handleSearch = (value: string) => {
         setSearchText(value);
         const filtered = companies.filter((company) =>
-        company.name.toLowerCase().includes(value.toLowerCase()) ||
-        company.location.toLowerCase().includes(value.toLowerCase())
+            company.name.toLowerCase().includes(value.toLowerCase()) ||
+            company.location.toLowerCase().includes(value.toLowerCase())
         );
         setFilteredCompanies(filtered);
     };
@@ -99,16 +99,16 @@ const ManageCompanyPage = () => {
                         backgroundColor="blue"
                         hoverColor="darkblue"
                         style={{
-                        width: '120px',
-                        height: '35px',
-                        fontSize: '14px',
-                        fontWeight: '700',
-                        borderRadius: '6px',
-                        border: 'none',
-                        transition: 'background-color 0.3s ease',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        display: 'flex',
+                            width: '120px',
+                            height: '35px',
+                            fontSize: '14px',
+                            fontWeight: '700',
+                            borderRadius: '6px',
+                            border: 'none',
+                            transition: 'background-color 0.3s ease',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            display: 'flex',
                         }}
                     />
                 </div>
@@ -127,25 +127,25 @@ const ManageCompanyPage = () => {
             <h2 className="text-2xl font-bold mb-4">Quản lý công ty</h2>
             <div className="flex justify-between mb-4">
                 <Search
-                placeholder="Tìm kiếm công ty theo tên hoặc địa chỉ"
-                onSearch={handleSearch}
-                onChange={(e) => handleSearch(e.target.value)}
-                value={searchText}
-                style={{ width: 300 }}
-                allowClear
+                    placeholder="Tìm kiếm công ty theo tên hoặc địa chỉ"
+                    onSearch={handleSearch}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    value={searchText}
+                    style={{ width: 300 }}
+                    allowClear
                 />
             </div>
 
             <div style={{ maxHeight: 500, overflowY: 'auto' }}>
                 <Table
-                columns={columns}
-                dataSource={filteredCompanies.map((company, index) => ({
-                    ...company,
-                    key: index,
-                }))}
-                loading={loading}
-                pagination={{ pageSize: 5 }}
-                scroll={{ x: 1000 }}
+                    columns={columns}
+                    dataSource={filteredCompanies.map((company, index) => ({
+                        ...company,
+                        key: index,
+                    }))}
+                    loading={loading}
+                    pagination={{ pageSize: 5 }}
+                    scroll={{ x: 1000 }}
                 />
             </div>
         </div>

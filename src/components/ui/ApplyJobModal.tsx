@@ -51,7 +51,7 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ open, onCancel, onSubmit,
 
       console.log("📤 FormData appended with CV and metadata");
       // Gửi API upload lên Cloudinary
-      const uploadResponse = await fetch('http://localhost:8080/applications/upload', {
+      const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/applications/upload`, {
         method: 'POST',
         body: formData,
       });
