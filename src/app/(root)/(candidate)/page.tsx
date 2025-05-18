@@ -55,7 +55,7 @@ const filters = [
     {
         key: "jobType",
         placeholder: "Chọn loại công việc",
-        options: ["Thực tập", "Full-time", "Part-time"]
+        options: ["Remote", "Full-time", "Part-time"]
     },
     {
         key: "salary",
@@ -164,17 +164,75 @@ const Home = () => {
         setFilteredJobs(jobs); // Hiển thị lại toàn bộ danh sách công việc
     };
 
-    // Hàm lọc dữ liệu dựa trên bộ lọc và tìm kiếm
-    useEffect(() => {
-        const updatedJobs = jobs.filter(job => {
-            // Chuyển đổi salary của job thành số để so sánh
-            const jobSalary = parseInt(job.salary_range.replace(/\D/g, ""), 10) * 1000000; // Lấy số từ chuỗi "4 triệu" -> 4
+    // Hàm map giá trị filter sang dữ liệu thực tế
+    const mapJobTypeFilterToData = (filterValue: string) => {
+    switch (filterValue) {
+        case "Remote":
+        return "remote";  // Nếu có, hoặc bạn tùy chỉnh theo data bạn
+        case "Full-time":
+        return "full_time";
+        case "Part-time":
+        return "part_time";
+        default:
+        return filterValue.toLowerCase(); // fallback
+    }
+    };
+    // Hàm parse chuỗi salary_range thành { min, max } (đơn vị đồng)
+    const parseSalaryRange = (salaryRangeStr: string): { min: number; max: number } | null => {
+        if (!salaryRangeStr) return null;
+        // Tìm tất cả số trong chuỗi (vd: "8-10 triệu" => ["8", "10"])
+        const numbers = salaryRangeStr.match(/\d+/g);
+        if (!numbers || numbers.length === 0) return null;
 
+        const nums = numbers.map(numStr => parseInt(numStr, 10));
+        if (nums.length === 1) {
+            return { min: nums[0] * 1000000, max: nums[0] * 1000000 };
+        } else {
+            return { min: Math.min(...nums) * 1000000, max: Math.max(...nums) * 1000000 };
+        }
+    };
+
+    // Hàm kiểm tra khoảng lương job có hợp với filter không
+    const checkSalaryFilter = (jobSalaryRange: { min: number; max: number } | null, filter: string) => {
+        if (!jobSalaryRange) return true; // Nếu ko có dữ liệu thì mặc định đúng
+
+        const { min, max } = jobSalaryRange;
+
+        switch (filter) {
+            case "Dưới 5 triệu":
+                return max < 5000000;
+            case "5-10 triệu":
+                // Khoảng lương giao nhau với 5-10 triệu
+                return min <= 10000000 && max >= 5000000;
+            case "Trên 10 triệu":
+                return min > 10000000;
+            default:
+                return true;
+        }
+    };
+
+    useEffect(() => {
+        const normalizeLocation = (location: string) => {
+            return location
+                .toLowerCase()
+                .replace(/tp\.?\s*hcm|hcm/g, "hồ chí minh")
+                .replace(/tp\.?\s*hà nội/g, "hà nội")
+                .replace(/\s+/g, " ")
+                .trim();
+        };
+
+        const updatedJobs = jobs.filter(job => {
+            const jobSalaryRange = parseSalaryRange(job.salary_range);
+
+            const locationFilterPassed = !selectedFilters.location ||
+                normalizeLocation(job.work_location).includes(normalizeLocation(selectedFilters.location));
+
+            const jobTypeDataValue = selectedFilters.jobType ? mapJobTypeFilterToData(selectedFilters.jobType) : null;
             return (
-                (!selectedFilters.location || job.work_location === selectedFilters.location) &&
+                locationFilterPassed &&
                 (!selectedFilters.specialization || job.industry === selectedFilters.specialization) &&
-                (!selectedFilters.jobType || job.work_type === selectedFilters.jobType) &&
-                (!selectedFilters.salary || checkSalaryFilter(jobSalary, selectedFilters.salary)) &&
+                (!jobTypeDataValue || job.work_type === jobTypeDataValue) &&
+                (!selectedFilters.salary || checkSalaryFilter(jobSalaryRange, selectedFilters.salary)) &&
                 (searchTerm === "" ||
                     job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     job.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -186,19 +244,6 @@ const Home = () => {
         setCurrentPage(1);
     }, [jobs, selectedFilters, searchTerm]);
 
-    // Kiểm tra mức lương theo filter
-    const checkSalaryFilter = (jobSalary: number, filter: string) => {
-        switch (filter) {
-            case "Dưới 5 triệu":
-                return jobSalary < 5000000;
-            case "5-10 triệu":
-                return jobSalary >= 5000000 && jobSalary <= 10000000;
-            case "Trên 10 triệu":
-                return jobSalary > 10000000;
-            default:
-                return true;
-        }
-    };
 
     // // Tính toán danh sách job hiển thị dựa trên trang hiện tại
     const startIndex = (currentPage - 1) * pageSize; // Vị trí bắt đầu
@@ -435,7 +480,7 @@ const Home = () => {
                 </div>
             </div>
 
-            <div>
+            <div style={{}}>
                 {/* Danh sách việc làm */}
                 <Row gutter={[16, 16]}>
                     {displayedJobs.map(job => (

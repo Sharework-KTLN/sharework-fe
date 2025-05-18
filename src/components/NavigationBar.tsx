@@ -33,8 +33,8 @@ const NavigationBar: React.FC = () => {
         '/candidate/CVManagement': 'quanlycv',
     };
     // Xác định mục nào đang được chọn
-    const selectedKey =
-        Object.keys(routeMap).find((route) => pathname.startsWith(route)) || 'trangchu';
+const matchedRoute = Object.keys(routeMap).find((route) => pathname.startsWith(route));
+const selectedKey = matchedRoute ? routeMap[matchedRoute] : 'trangchu';
 
     const items: MenuItem[] = [
         { label: 'Trang chủ', key: 'trangchu', onClick: () => router.push('/') },
@@ -271,46 +271,46 @@ const NavigationBar: React.FC = () => {
                 </Col>
             </Row>
             <style jsx global>{`
-                /* Đổi màu các mục khi hover, chọn hoặc active */
-                .custom-menu .ant-menu-item:hover, 
-                .custom-menu .ant-menu-item-active,
-                .custom-menu .ant-menu-item-selected {
-                    color: #D4421E !important;
-                }
+            /* Đổi màu các mục khi hover, chọn hoặc active */
+            .custom-menu .ant-menu-item:hover, 
+            .custom-menu .ant-menu-item-active,
+            .custom-menu .ant-menu-item-selected,
+            .custom-menu .ant-menu-submenu-title:hover,
+            .custom-menu .ant-menu-submenu-title.ant-menu-submenu-title-selected {
+                color: #1677FF !important;
+                font-weight: bold;
+            }
 
-                .ant-menu-item {
-                    font-size: 14px; /* Điều chỉnh kích thước font nếu cần */
-                    font-weight: bold; /* Làm đậm font */
-                }
+            /* Đảm bảo background trong suốt khi mục được chọn hoặc active */
+            .custom-menu .ant-menu-item-selected,
+            .custom-menu .ant-menu-item-active {
+                background-color: transparent !important;
+            }
 
-                /* Kiểu cho mục cha "Việc làm" */
-                .custom-menu .ant-menu-submenu-title {
-                    font-size: 14px;
-                    font-weight: bold;
-                }
+            /* Đặt font size và font weight cho tất cả các mục */
+            .custom-menu .ant-menu-item,
+            .custom-menu .ant-menu-submenu-title {
+                font-size: 14px;
+                font-weight: bold;
+            }
 
-                /* Đổi màu mục cha khi hover */
-                .custom-menu .ant-menu-submenu-title:hover {
-                    color: #D4421E; /* Màu khi hover */
-                    font-weight: bold; /* Làm đậm chữ */
-                }
+            /* Đổi màu border-bottom gạch chân khi hover hoặc chọn */
+            .custom-menu .ant-menu-item-selected::after,
+            .custom-menu .ant-menu-item:hover::after,
+            .custom-menu .ant-menu-submenu-title:hover::after,
+            .custom-menu .ant-menu-submenu-title.ant-menu-submenu-title-selected::after {
+                border-bottom: 2px solid #1677FF !important;
+            }
 
-                /* Đảm bảo border-bottom khi mục cha được chọn hoặc hover */
-                .custom-menu .ant-menu-item-selected::after,
-                .custom-menu .ant-menu-item:hover::after,
-                .custom-menu .ant-menu-submenu-title:hover::after,
-                .custom-menu .ant-menu-submenu-title.ant-menu-submenu-title-selected::after {
-                    border-bottom: 2px solid #D4421E !important; /* Đổi màu gạch chân */
-                }
-
-                .navbar {
-                    position: sticky;
-                    top: 0;
-                    width: 100%;
-                    z-index: 1000;
-                    background: white;
-                    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-                }   
+            /* Style cho navbar */
+            .navbar {
+                position: sticky;
+                top: 0;
+                width: 100%;
+                z-index: 1000;
+                background: white;
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            }
             `}</style>
         </div>
     );

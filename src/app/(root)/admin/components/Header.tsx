@@ -4,10 +4,14 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
 import { loginAdmin, logoutAdmin } from '@/redux/slice/adminSlice';
+import { LogoutOutlined } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
+import CustomButton from '../../../../components/CustomButton';
 
 const Header = () => {
     const user = useSelector((state: RootState) => state.admin);
     const dispatch = useDispatch<AppDispatch>();
+    const router = useRouter();
 
     useEffect(() => {
         // Kiểm tra token trong localStorage khi trang được load
@@ -36,10 +40,35 @@ const Header = () => {
         }
     }, [dispatch, user.id]);
 
+    const handleLogout = () => {
+        localStorage.removeItem("adminToken");
+        dispatch(logoutAdmin());
+        router.push("/auth/admin/login");
+    };
+
     return (
         <header className="bg-white shadow p-4 flex justify-between items-center">
             <h1 className="text-lg font-semibold">Admin Dashboard</h1>
-            <div>{user.full_name}</div>
+            <div className="flex items-center" onClick={handleLogout}>
+                <span>{user.full_name}</span>
+                <CustomButton
+                        onClick={handleLogout}
+                        backgroundColor="transparent"
+                        hoverColor="#f0f0f0"
+                        textColor="inherit"
+                        style={{
+                            padding: 4,
+                            borderRadius: 6,
+                            minWidth: 'auto',
+                            lineHeight: 0,
+                            border: 'none',
+                        }}
+                        text="" // Không hiện chữ nào, chỉ icon thôi
+                        >
+                        <LogoutOutlined style={{ fontSize: 18, color: 'inherit' }} />
+                </CustomButton>
+            </div>
+            
         </header>
     );
 };

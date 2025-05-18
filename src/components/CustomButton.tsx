@@ -2,7 +2,7 @@ import React from 'react';
 
 interface CustomButtonProps {
     text: string;
-    onClick: () => void;
+     onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
     backgroundColor?: string;
     hoverColor?: string;
     textColor?: string;
