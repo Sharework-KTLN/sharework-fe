@@ -107,7 +107,8 @@ const WorkFavorites = () => {
         };
 
         fetchRecommendedJobs();
-        }, []);
+    }, []);
+
     useEffect(() => {
         const fetchAppliedJobs = async () => {
             const token = localStorage.getItem("userToken");
@@ -157,42 +158,42 @@ const WorkFavorites = () => {
     };
 
     const handleCardClick = async (jobId: number) => {
-    try {
-      const token = localStorage.getItem("userToken");
-      if (!token) {
-        router.push("/auth/candidate/login");
-        return;
-      }
+        try {
+            const token = localStorage.getItem("userToken");
+            if (!token) {
+                router.push("/auth/candidate/login");
+                return;
+            }
 
-      const headers: HeadersInit = {
-        "Content-Type": "application/json",
-      };
+            const headers: HeadersInit = {
+                "Content-Type": "application/json",
+            };
 
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
 
-      const response = await fetch(`http://localhost:8080/jobs/detail/${jobId}`, {
-        method: "GET",
-        headers,
-      });
+            const response = await fetch(`http://localhost:8080/jobs/detail/${jobId}`, {
+                method: "GET",
+                headers,
+            });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Không thể lấy thông tin công việc");
-      }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Không thể lấy thông tin công việc");
+            }
 
-      const jobDetail = await response.json();
-      sessionStorage.setItem("selectedJob", JSON.stringify(jobDetail));
-      router.push(`/candidate/recruitmentInfoDetail?id=${jobId}`);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Lỗi khi lấy thông tin công việc:", error.message);
-      } else {
-        console.error("Lỗi không xác định:", error);
-      }
-    }
-  };
+            const jobDetail = await response.json();
+            sessionStorage.setItem("selectedJob", JSON.stringify(jobDetail));
+            router.push(`/candidate/recruitmentInfoDetail?id=${jobId}`);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error("Lỗi khi lấy thông tin công việc:", error.message);
+            } else {
+                console.error("Lỗi không xác định:", error);
+            }
+        }
+    };
     // Phân trang cho danh sách jobsSaved
     const [currentSavesPage, setCurrentSavesPage] = useState(1);
     const SavesPageSize = 6;
@@ -262,11 +263,12 @@ const WorkFavorites = () => {
                                             <p style={{ fontSize: "14px" }}><strong>Đã lưu:</strong> {new Date(job.saved_at).toLocaleDateString()} - {new Date(job.saved_at).toLocaleTimeString()}</p>
                                             <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.work_location}</p>
                                         </div>
-                                        {/* Nút hủy lưu */}
+                                        
                                         <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "8px" }}>
                                             <CustomButton
                                                 text={appliedJobs.includes(job.id) ? "Đã ứng tuyển" : "Ứng tuyển"}
-                                                onClick={() => {
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
                                                     if (!appliedJobs.includes(job.id)) {
                                                     //   handleApplyJob(job.id); // Gọi hàm ứng tuyển với job.id
                                                     }
@@ -292,7 +294,10 @@ const WorkFavorites = () => {
 
                                             <CustomButton
                                                 text="Hủy lưu"
-                                                onClick={() => handleUnsaveJob(job.id)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Ngăn không cho card bị click
+                                                    handleUnsaveJob(job.id);
+                                                }}
                                                 backgroundColor="#FFFFFF"
                                                 textColor="#333"
                                                 hoverColor="#E0E0E0"

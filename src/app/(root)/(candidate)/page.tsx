@@ -480,7 +480,7 @@ const Home = () => {
                 </div>
             </div>
 
-            <div>
+            <div style={{}}>
                 {/* Danh sách việc làm */}
                 <Row gutter={[16, 16]}>
                     {displayedJobs.map(job => (
