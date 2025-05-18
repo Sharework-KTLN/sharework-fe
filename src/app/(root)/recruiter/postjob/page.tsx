@@ -26,7 +26,7 @@ const PostJobPage = () => {
     useEffect(() => {
         const fetchCompany = async () => {
             try {
-                const companyRes = await fetch(`http://localhost:8080/companies/recruiter/${user.id}`);
+                const companyRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/companies/recruiter/${user.id}`);
 
                 if (!companyRes.ok) {
                     throw new Error("Không tìm thấy công ty của bạn!");
@@ -60,7 +60,7 @@ const PostJobPage = () => {
             // console.log("values", values);
             // alert("Đăng bài tuyển dụng thành công!");
             // 🔹 Gọi API để tạo bài đăng
-            const response = await fetch("http://localhost:8080/jobs", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

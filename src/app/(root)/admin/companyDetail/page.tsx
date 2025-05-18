@@ -8,7 +8,7 @@ import CustomButton from '@/components/CustomButton';
 const { Title } = Typography;
 
 interface Job {
-  id: number ;
+  id: number;
   title: string;
   salary_range: string;
   status: string;
@@ -49,31 +49,31 @@ const CompanyDetailPage = () => {
 
   useEffect(() => {
     const fetchCompanyDetail = async () => {
-        if (!id) return; // Kiểm tra id có tồn tại không
+      if (!id) return; // Kiểm tra id có tồn tại không
 
-        try {
-            const response = await fetch(`http://localhost:8080/companies/${id}`);
-            if (!response.ok) {
-                throw new Error("Failed to fetch company details");
-            }
-            const data = await response.json();
-            setCompanyDetail(data); // Lưu thông tin chi tiết công ty vào state
-        } catch (error) {
-            console.error("Error fetching company details:", error);
-            setError("Unable to load company details.");
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/companies/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch company details");
         }
+        const data = await response.json();
+        setCompanyDetail(data); // Lưu thông tin chi tiết công ty vào state
+      } catch (error) {
+        console.error("Error fetching company details:", error);
+        setError("Unable to load company details.");
+      }
     };
 
     fetchCompanyDetail();
-}, [id]); // Gọi lại khi id thay đổi
+  }, [id]); // Gọi lại khi id thay đổi
 
-if (error) {
+  if (error) {
     return <div>{error}</div>;
-}
+  }
 
-if (!companyDetail) {
+  if (!companyDetail) {
     return <div>Loading...</div>; // Hiển thị khi đang tải dữ liệu
-}
+  }
 
 
   return (

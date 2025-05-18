@@ -6,12 +6,12 @@ import { useRouter } from 'next/navigation';
 import CustomButton from '@/components/CustomButton';
 
 interface User {
-  id: number;
-  full_name: string;
-  email: string;
-  phone: string;
-  role: 'admin' | 'candidate' | 'recruiter';
-  created_at: string;
+    id: number;
+    full_name: string;
+    email: string;
+    phone: string;
+    role: 'admin' | 'candidate' | 'recruiter';
+    created_at: string;
 }
 
 const { Search } = Input;
@@ -29,23 +29,23 @@ const ManageUserPage = () => {
     const fetchUsers = async (role?: string) => {
         try {
             setLoading(true);
-            let url = 'http://localhost:8080/user/alluser';
-        if (role) {
-            url += `?role=${role}`;
-        }
-        const res = await fetch(url);
-        if (!res.ok) {
-            throw new Error('Failed to fetch users');
-        }
-        const data = await res.json();
-        setUsers(data.data);
-        setFilteredUsers(data.data);
+            let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/alluser`;
+            if (role) {
+                url += `?role=${role}`;
+            }
+            const res = await fetch(url);
+            if (!res.ok) {
+                throw new Error('Failed to fetch users');
+            }
+            const data = await res.json();
+            setUsers(data.data);
+            setFilteredUsers(data.data);
         } catch (err) {
-        if (err instanceof Error) {
-            setError(err.message);
-        } else {
-            setError('An unknown error occurred');
-        }
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An unknown error occurred');
+            }
         } finally {
             setLoading(false);
         }
@@ -158,38 +158,38 @@ const ManageUserPage = () => {
 
     return (
         <div className="p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">Quản lý người dùng</h2>
-        <div className="flex justify-between mb-4">
-            <Search
-            placeholder="Tìm kiếm theo tên hoặc email"
-            onSearch={handleSearch}
-            onChange={(e) => handleSearch(e.target.value)}
-            value={searchText}
-            style={{ width: 300 }}
-            allowClear
-            />
-            <Select
-            placeholder="Lọc theo vai trò"
-            onChange={handleRoleChange}
-            allowClear
-            style={{ width: 200 }}
-            value={selectedRole}
-            >
-            <Option value="candidate">Ứng viên</Option>
-            <Option value="recruiter">Nhà tuyển dụng</Option>
-            <Option value="admin">Quản trị viên</Option>
-            </Select>
-        </div>
+            <h2 className="text-2xl font-bold mb-4">Quản lý người dùng</h2>
+            <div className="flex justify-between mb-4">
+                <Search
+                    placeholder="Tìm kiếm theo tên hoặc email"
+                    onSearch={handleSearch}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    value={searchText}
+                    style={{ width: 300 }}
+                    allowClear
+                />
+                <Select
+                    placeholder="Lọc theo vai trò"
+                    onChange={handleRoleChange}
+                    allowClear
+                    style={{ width: 200 }}
+                    value={selectedRole}
+                >
+                    <Option value="candidate">Ứng viên</Option>
+                    <Option value="recruiter">Nhà tuyển dụng</Option>
+                    <Option value="admin">Quản trị viên</Option>
+                </Select>
+            </div>
 
-        <div style={{ maxHeight: 500, overflowY: 'auto' }}>
-            <Table
-            columns={columns}
-            dataSource={filteredUsers.map((user) => ({ ...user, key: user.id }))}
-            loading={loading}
-            pagination={{ pageSize: 5 }}
-            scroll={{ x: 1000 }}
-            />
-        </div>
+            <div style={{ maxHeight: 500, overflowY: 'auto' }}>
+                <Table
+                    columns={columns}
+                    dataSource={filteredUsers.map((user) => ({ ...user, key: user.id }))}
+                    loading={loading}
+                    pagination={{ pageSize: 5 }}
+                    scroll={{ x: 1000 }}
+                />
+            </div>
         </div>
     );
 };

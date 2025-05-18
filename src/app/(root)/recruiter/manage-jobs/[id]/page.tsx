@@ -19,13 +19,13 @@ export default function JobDetailPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const jobRes = await fetch(`http://localhost:8080/jobs/detail/${id}`);
+                const jobRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/detail/${id}`);
                 if (!jobRes.ok) throw new Error("Lỗi khi tải công việc");
                 const jobData = await jobRes.json();
                 setJob(jobData);
 
                 if (jobData.company_id) {
-                    const companyRes = await fetch(`http://localhost:8080/companies/${jobData.company_id}`);
+                    const companyRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/companies/${jobData.company_id}`);
                     if (!companyRes.ok) throw new Error("Lỗi khi tải công ty");
                     const companyData = await companyRes.json();
                     setCompany(companyData);

@@ -79,7 +79,7 @@ export default function Login() {
         setErrors({});
         try {
             // 🟢 Gửi yêu cầu đăng nhập
-            const response = await fetch("http://localhost:8080/auth/login", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -95,7 +95,7 @@ export default function Login() {
             localStorage.setItem("userToken", data.token);
 
             // 🟢 Gọi API lấy thông tin user từ CSDL
-            const userResponse = await fetch("http://localhost:8080/auth/me", {
+            const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

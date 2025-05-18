@@ -32,7 +32,7 @@ const CompanyInformationPage = () => {
     useEffect(() => {
         const fetchCompany = async () => {
             try {
-                const companyRes = await fetch(`http://localhost:8080/companies/recruiter/${user.id}`);
+                const companyRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/companies/recruiter/${user.id}`);
 
                 if (!companyRes.ok) {
                     throw new Error("Không tìm thấy công ty của bạn!");
@@ -120,7 +120,7 @@ const CompanyInformationPage = () => {
 
             // Gọi API gửi formData
             const companyId = company?.id; // ID công ty bạn cần cập nhật
-            const response = await axios.put(`http://localhost:8080/companies/${companyId}`, formData, {
+            const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/companies/${companyId}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

@@ -16,7 +16,7 @@ const Header = () => {
             // Gọi API để lấy thông tin người dùng và cập nhật Redux
             const fetchUser = async () => {
                 try {
-                    const res = await fetch("http://localhost:8080/auth/me", {
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
                         headers: { "Authorization": `Bearer ${savedToken}` },
                     });
                     const data = await res.json();

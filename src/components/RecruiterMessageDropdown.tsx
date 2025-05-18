@@ -11,7 +11,7 @@ import { Message } from '@/types/message';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 
-const socket = io('http://localhost:8080');
+const socket = io(`${process.env.NEXT_PUBLIC_API_BASE_URL}`);
 
 const RecruiterMessageDropdown = () => {
 
@@ -71,7 +71,7 @@ const RecruiterMessageDropdown = () => {
 
         const fetchConversations = async () => {
             try {
-                const res = await axios.get(`http://localhost:8080/conversations/?userId=${user.id}&role=${user.role}`);
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/conversations/?userId=${user.id}&role=${user.role}`);
                 const fetchedConversations: Conversation[] = res.data;
                 setConversations(fetchedConversations);
 
@@ -80,7 +80,7 @@ const RecruiterMessageDropdown = () => {
                 await Promise.all(
                     fetchedConversations.map(async (c) => {
                         try {
-                            const resMsg = await axios.get(`http://localhost:8080/messages/${c.id}`);
+                            const resMsg = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/messages/${c.id}`);
                             messagesMap[c.id] = resMsg.data;
                         } catch (err) {
                             console.error(`Lỗi khi tải tin nhắn cho conversation ${c.id}:`, err);
@@ -108,7 +108,7 @@ const RecruiterMessageDropdown = () => {
 
         if (!messagesByConversation[conversation.id]) {
             try {
-                const res = await axios.get(`http://localhost:8080/messages/${conversation.id}`);
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/messages/${conversation.id}`);
                 setMessagesByConversation(prev => ({
                     ...prev,
                     [conversation.id]: res.data,
@@ -241,7 +241,7 @@ const RecruiterMessageDropdown = () => {
 
         try {
             // Tạo conversation mới
-            const res = await axios.post('http://localhost:8080/conversations', {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/conversations`, {
                 candidate_id: user.role === 'candidate' ? user.id : otherUserId,
                 recruiter_id: user.role === 'recruiter' ? user.id : otherUserId,
             });

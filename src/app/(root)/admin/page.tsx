@@ -51,19 +51,19 @@ const AdminDashboard = () => {
         const fetchDashboardData = async () => {
             try {
                 // Fetch thống kê tổng quan
-                const statsResponse = await axios.get('http://localhost:8080/user/admin/dashboard');
+                const statsResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/admin/dashboard`);
                 setStats(statsResponse.data);  // Lưu trữ thống kê
 
                 // Fetch thống kê theo tháng
-                const monthlyStatsResponse = await axios.get('http://localhost:8080/user/admin/monthlystats');
+                const monthlyStatsResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/admin/monthlystats`);
                 setMonthlyStats(monthlyStatsResponse.data);  // Lưu trữ thống kê theo tháng
 
                 // Fetch danh sách người dùng
-                const usersResponse = await axios.get('http://localhost:8080/user/alluser');
+                const usersResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/alluser`);
                 setUserList(usersResponse.data.data);  // Lưu trữ danh sách người dùng
 
                 // Fetch danh sách công ty
-                const companiesResponse = await axios.get('http://localhost:8080/companies/admin/companies');
+                const companiesResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/companies/admin/companies`);
                 setCompanyList(companiesResponse.data);  // Lưu trữ danh sách công ty
 
                 setLoading(false);  // Đặt loading thành false khi dữ liệu đã được lấy

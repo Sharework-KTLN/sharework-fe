@@ -69,7 +69,7 @@ const RecruiterRegister: React.FC = () => {
     const handleFormSubmit = async (values: Record<string, unknown>) => {
         console.log("Gửi form:", values);
         try {
-            const response = await fetch("http://localhost:8080/auth/recruiter/register", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/recruiter/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),

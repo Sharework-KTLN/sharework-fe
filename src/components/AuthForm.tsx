@@ -34,7 +34,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ title, subtitle, fields, buttonText
     const [formData, setFormData] = useState<Record<string, string>>({});
 
     const handleLogin = () => {
-        window.location.href = "http://localhost:8080/auth/google";
+        window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google`;
     };
 
     // Phân biệt giữa input field và input password field

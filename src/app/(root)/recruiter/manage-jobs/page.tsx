@@ -25,7 +25,7 @@ const ManageJobPage = () => {
         // Gọi API lấy danh sách bài đăng của recruiter_id = 1
         const fetchPosts = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/jobs/recruiter/${user.id}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/recruiter/${user.id}`);
                 if (!response.ok) {
                     setPosts([]);
                     return;
@@ -53,7 +53,7 @@ const ManageJobPage = () => {
     useEffect(() => {
         const fetchApplicationCounts = async () => {
             try {
-                const response = await fetch('http://localhost:8080/applications/count-by-job');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/applications/count-by-job`);
                 const data = await response.json();
                 const map: { [key: number]: number } = {};
                 data.forEach((item: { job_id: number; total: number }) => {
