@@ -4,6 +4,7 @@ import { Card, Row, Col, Select, Pagination, Input, Image } from 'antd';
 import { EnvironmentOutlined, SearchOutlined, FilterOutlined, DownOutlined, UpOutlined, HeartOutlined, HeartFilled } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import CustomButton from '@/components/CustomButton';
+import { motion } from 'framer-motion';
 
 interface Job {
     id: number;
@@ -561,7 +562,7 @@ const Home = () => {
                 </Row>
 
                 {/* Phân trang */}
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <div style={{ textAlign: 'center', marginTop: '20px' ,marginBottom: '40px'}}>
                     <Pagination
                         current={currentPage}
                         total={jobs.length}
@@ -569,6 +570,104 @@ const Home = () => {
                         onChange={setCurrentPage}
                     />
                 </div>
+            </div>
+            <div className="w-full min-h-screen bg-gray-100 mt-1">
+            {/* Hero Section - Thay thế Carousel bằng hiệu ứng chữ động */}
+                <div className="relative w-full h-[450px] flex items-center justify-center bg-gray-900">
+                    <motion.h1
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1 }}
+                        className="text-5xl font-bold text-center bg-gradient-to-r from-pink-500 via-yellow-500 to-blue-500 bg-clip-text text-transparent animate-gradient"
+                    >
+                        Khám phá công việc mơ ước của bạn ngay hôm nay<br /> nhanh chóng và dễ dàng
+                    </motion.h1>
+                </div>
+
+
+                {/* Giới thiệu dịch vụ */}
+                <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="max-w-5xl mx-auto text-center py-16"
+                >
+                    <h2 className="text-3xl font-bold text-gray-800">Tìm việc dễ dàng, nhanh chóng</h2>
+                    <p className="mt-4 text-gray-600">
+                        Hàng ngàn công việc chất lượng đang chờ bạn ứng tuyển. Hãy để chúng tôi giúp bạn kết nối với nhà tuyển dụng phù hợp nhất.
+                    </p>
+                </motion.div>
+
+                {/* Các lợi ích */}
+                <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    {[
+                        { title: "Công việc đa dạng", desc: "Từ thực tập, part-time đến full-time tại các công ty uy tín." },
+                        { title: "Cá nhân hóa đề xuất", desc: "Gợi ý việc làm dựa trên kỹ năng và sở thích của bạn." },
+                        { title: "Ứng tuyển nhanh chóng", desc: "Chỉ với vài cú click, hồ sơ của bạn đến tay nhà tuyển dụng." }
+                    ].map((item, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, scale: 0.8 }} // Nhỏ & mờ lúc đầu
+                            whileInView={{ opacity: 1, scale: 1 }} // Phóng to khi vào màn hình
+                            exit={{ opacity: 0, scale: 0.8 }} // Thu nhỏ khi scroll ngược
+                            transition={{ duration: 0.025 }}
+                            whileHover={{ scale: 1.1, y: -10 }} // 🔥 Phóng to + nâng cao lên khi hover
+                            className="p-6 bg-white shadow-lg rounded-lg text-center transition"
+                        >
+                            <h3 className="text-xl font-bold bg-clip-text text-transparent 
+                    bg-gradient-to-r from-blue-500 to-indigo-600">
+                                {item.title}
+                            </h3>
+                            <p className="mt-2 text-gray-600">{item.desc}</p>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* CTA Section */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8 }}
+                    className="text-center py-16"
+                >
+                    <h2 className="text-2xl font-bold text-gray-800">Tham gia cộng đồng ứng viên</h2>
+                    <p className="mt-2 text-gray-600">Tạo tài khoản miễn phí và bắt đầu hành trình sự nghiệp của bạn!</p>
+                    <CustomButton
+                        text="Đăng ký tìm việc ngay"
+                        backgroundColor="#007BFF"
+                        hoverColor="#0056b3"
+                        textColor="white"
+                        style={{
+                            marginTop: '20px',
+                            padding: '10px 20px',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s ease'
+                        }}
+                        onClick={() => router.push('/auth/recruiter/register')}
+                    />
+                </motion.div>
+
+                {/* Footer */}
+                <footer className="bg-gray-900 text-white py-6 mt-10">
+                    <div className="max-w-5xl mx-auto flex justify-between">
+                        <div>
+                            <h3 className="text-lg font-bold">ShareWork</h3>
+                            <p className="text-sm text-gray-400">Nền tảng kết nối ứng viên với hàng ngàn công việc mơ ước.</p>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold">Hỗ trợ ứng viên</h3>
+                            <p className="text-sm text-gray-400">Email: hotro@jobplatform.com</p>
+                            <p className="text-sm text-gray-400">Hotline: 0909 123 456</p>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold">Mạng xã hội</h3>
+                            <p className="text-sm text-gray-400">Facebook | LinkedIn | Twitter</p>
+                        </div>
+                    </div>
+                </footer>
             </div>
         </div>
     );
