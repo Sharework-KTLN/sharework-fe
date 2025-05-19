@@ -170,26 +170,30 @@ const FindCandidatePage = () => {
                                     hoverable
                                     className="p-4"
                                     onClick={() => candidate.id !== null && handleCardClick(candidate.id)}
+                                    style={{ height: 200, overflow: 'hidden' }} // ✅ Chiều cao cố định
                                 >
-                                    <div className="flex flex-row">
+                                    <div className="flex flex-row h-full">
                                         <div className="w-1/3 pr-4 flex items-center">
                                             <Image
                                                 alt={candidate.full_name}
                                                 width={100}
                                                 height={100}
-                                                src={candidate.profile_image || 'https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg'}
+                                                src={
+                                                    candidate.profile_image ||
+                                                    'https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg'
+                                                }
                                                 className="w-full h-auto rounded object-cover"
                                             />
                                         </div>
-                                        <div className="w-2/3">
-                                            <h3 className="font-semibold text-lg mb-1">{candidate.full_name}</h3>
-                                            <p className="mb-1">
+                                        <div className="w-2/3 overflow-hidden">
+                                            <h3 className="font-semibold text-lg mb-1 line-clamp-1">{candidate.full_name}</h3>
+                                            <p className="mb-1 text-sm truncate">
                                                 <strong>Trường:</strong> {candidate.school}
                                             </p>
-                                            <p className="mb-1">
+                                            <p className="mb-1 text-sm truncate">
                                                 <strong>Chuyên ngành:</strong> {candidate.specialize}
                                             </p>
-                                            <p className="text-gray-600 line-clamp-2">
+                                            <p className="text-gray-600 text-sm line-clamp-2">
                                                 {candidate.introduce_yourself}
                                             </p>
                                         </div>
@@ -198,7 +202,6 @@ const FindCandidatePage = () => {
                             </Col>
                         ))}
                     </Row>
-
                     {/* Phân trang */}
                     <div className="mt-6 text-center">
                         <Pagination

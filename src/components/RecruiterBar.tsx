@@ -110,7 +110,7 @@ const RecruiterBar: React.FC = () => {
         {
             label: (
                 <div
-                    onClick={() => router.push('/recruiter/manage-jobs')}
+                    // onClick={() => router.push('/recruiter/manage-jobs')}
                     style={{ fontSize: '16px', transition: 'color 0.3s ease' }}  // Thêm transition để hiệu ứng mượt mà
                     onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#1677FF'}  // Màu khi hover
                     onMouseLeave={(e) => (e.target as HTMLElement).style.color = 'black'}  // Màu trở lại khi không hover
@@ -192,8 +192,6 @@ const RecruiterBar: React.FC = () => {
                             justifyContent: 'center',
                             alignItems: 'center',
                             height: '100%',
-                            borderBottom: '1px solid #f0f0f0',
-                            borderRight: '1px solid #f0f0f0',
                         }}
                     >
                         <span
@@ -234,13 +232,12 @@ const RecruiterBar: React.FC = () => {
                     xs={6} sm={6} md={4} lg={5}
                     style={{
                         minWidth: '50px',
-                        borderBottom: '1px solid #f0f0f0',
-                        borderLeft: '1px solid #f0f0f0',
+                        height: '50px',
                     }}
                 >
                     <div
                         style={{
-                            height: '100%',
+                            height: '%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -251,7 +248,8 @@ const RecruiterBar: React.FC = () => {
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: 16
+                                    gap: 16,
+                                    marginTop: '5px'
                                 }}
                             >
 
@@ -269,7 +267,8 @@ const RecruiterBar: React.FC = () => {
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: 16
+                                    gap: 16,
+                                    marginTop: '5px'
                                 }}
                             >
                                 <CustomButton
@@ -280,7 +279,14 @@ const RecruiterBar: React.FC = () => {
                                     textColor="orange"
                                     style={{
                                         fontWeight: 'bold',
-                                        border: '1px solid orange'
+                                        fontSize: 14,
+                                        height: 40,
+                                        width: 120,
+                                        border: '1px solid orange',
+                                        padding: '0 10px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 />
                                 <CustomButton
@@ -290,7 +296,15 @@ const RecruiterBar: React.FC = () => {
                                     hoverColor="darkblue"
                                     textColor="white"
                                     style={{
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        fontSize: 14,
+                                        height: 40,
+                                        width: 120,
+                                        border: '1px solid orange',
+                                        padding: '0 10px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 />
                             </div>
