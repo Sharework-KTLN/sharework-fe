@@ -3,9 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Pagination, Image, Button, Tag } from "antd";
 import { EnvironmentOutlined, DeleteOutlined, SendOutlined } from "@ant-design/icons";
+import { useRouter } from 'next/navigation';
+
 import CustomButton from "@/components/CustomButton";
 
 type jobApplied = {
+    application_id: number;  // mã hồ sơ ứng tuyển
+    job_id: number
     id: number;
     title: string;
     salary_range: string;
@@ -22,30 +26,25 @@ type jobApplied = {
     applied_at: string;
 };
 
-const jobSuggestions = [
-    {
-        id: 1,
-        title: "Thực Tập Sinh Kinh doanh",
-        company: "Công ty TNHH Thương mại Dịch vụ Tây Sơn",
-        salary: "6 triệu",
-        location: "Bắc Giang",
-        tags: ["Full-time", "Quản trị kinh doanh"],
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA"
-    },
-    {
-        id: 2,
-        title: "Lập Trình Viên Thực Tập",
-        company: "Công ty TNHH Thương mại Dịch vụ Thương Phúc",
-        salary: "5 triệu",
-        location: "Đà Nẵng",
-        tags: ["Part-time", "Công nghệ thông tin"],
-        logo: "https://i1-vnexpress.vnecdn.net/2021/02/27/New-Peugeot-Logo-4-7702-1614396937.jpg?w=0&h=0&q=100&dpr=1&fit=crop&s=Pgb1HJVgd6Z1XU1K8OUQXA"
-    },
-];
+type JobSuggestion = {
+  id: number;
+  title: string;
+  company: {
+    id: number;
+    name: string;
+    logo: string;
+  };
+  salary_range: string;
+  work_location: string;
+  specialize: string;
+  deadline: string;
+};
 
 const WorkApplied = () => {
     const [hoveredCard, setHoveredCard] = useState<{ id: number | null; type: string | null } | null>(null);
     const [appliedJobs, setAppliedJobs] = useState<jobApplied[]>([]);
+    const [recommendedJobs, setRecommendedJobs] = useState<JobSuggestion[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -72,6 +71,7 @@ const WorkApplied = () => {
                     }
 
                     const data = await res.json();
+                    console.log("Applications:", data.applications);
                     setAppliedJobs(data.applications); // Đổi tên state tương ứng
                 } catch (error) {
                     console.error("Lỗi khi lấy công việc đã ứng tuyển:", error);
@@ -82,6 +82,29 @@ const WorkApplied = () => {
         }
     }, []);
 
+    useEffect(() => {
+            const token = localStorage.getItem("userToken");
+            if (!token) return;
+    
+            const fetchRecommendedJobs = async () => {
+                try {
+                const res = await fetch("http://localhost:8080/jobs/recommended", {
+                    headers: {
+                    Authorization: `Bearer ${token}`,
+                    },
+                });
+    
+                const data = await res.json();
+                setRecommendedJobs(data || []); // đảm bảo luôn là mảng
+                } catch (error) {
+                console.error("Lỗi khi lấy danh sách gợi ý:", error);
+                setRecommendedJobs([]); // fallback khi lỗi
+                }
+            };
+    
+            fetchRecommendedJobs();
+        
+        }, []);
     const handleRemoveAppliedJob = (jobId: number) => {
         // // Lọc bỏ công việc đã ứng tuyển có id = jobId
         // const updatedJobs = jobsApplied.filter(job => job.id !== jobId);
@@ -92,7 +115,43 @@ const WorkApplied = () => {
         // // Cập nhật state
         // setJobsApplied(updatedJobs);
     };
+    const handleCardClick = async (jobId: number) => {
+        try {
+            const token = localStorage.getItem("userToken");
+            if (!token) {
+                router.push("/auth/candidate/login");
+                return;
+            }
 
+            const headers: HeadersInit = {
+                "Content-Type": "application/json",
+            };
+
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
+
+            const response = await fetch(`http://localhost:8080/jobs/detail/${jobId}`, {
+                method: "GET",
+                headers,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Không thể lấy thông tin công việc");
+            }
+
+            const jobDetail = await response.json();
+            sessionStorage.setItem("selectedJob", JSON.stringify(jobDetail));
+            router.push(`/candidate/recruitmentInfoDetail?id=${jobId}`);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error("Lỗi khi lấy thông tin công việc:", error.message);
+            } else {
+                console.error("Lỗi không xác định:", error);
+            }
+        }
+    };
     // Phân trang cho danh sách jobsApplied
     const [currentJobsPage, setCurrentJobsPage] = useState(1);
     const jobsPageSize = 6;
@@ -101,10 +160,16 @@ const WorkApplied = () => {
     // Phân trang cho danh sách jobSuggestions 
     const [currentSuggestionsPage, setCurrentSuggestionsPage] = useState(1);
     const SuggestionsPageSize = 4;
-    const paginatedJobsSuggestions = jobSuggestions.slice((currentSuggestionsPage - 1) * SuggestionsPageSize, currentSuggestionsPage * SuggestionsPageSize);
+    const paginatedJobsSuggestions =
+        Array.isArray(recommendedJobs)
+            ? recommendedJobs.slice(
+                (currentSuggestionsPage - 1) * SuggestionsPageSize,
+                currentSuggestionsPage * SuggestionsPageSize
+            )
+        : [];
 
     return (
-        <div style={{ padding: "20px" }}>
+        <div style={{ padding: "20px", overflowX: "hidden"}}>
             <div>
                 <h2 style={{ fontWeight: "bold", marginBottom: "12px" }}>Việc làm đã ứng tuyển</h2>
                 <Row gutter={[16, 16]}>
@@ -115,6 +180,7 @@ const WorkApplied = () => {
                                     variant="outlined"
                                     onMouseEnter={() => setHoveredCard({ id: job.id, type: null })}
                                     onMouseLeave={() => setHoveredCard(null)}
+                                    onClick={() => handleCardClick(job.job_id)}
                                     style={{
                                         width: "100%",
                                         height: "210px",
@@ -202,35 +268,61 @@ const WorkApplied = () => {
                 <h2 style={{ fontWeight: "bold", marginTop: "20px" }}>Gợi ý việc làm phù hợp</h2>
                 <Card>
                     <Row gutter={[16, 16]}>
-                        {paginatedJobsSuggestions.map((job) => (
-                            <Col xs={24} sm={12} md={8} lg={6} key={job.id}>
-                                <Card
-                                    hoverable
-                                    style={{
+                        {Array.isArray(paginatedJobsSuggestions) && paginatedJobsSuggestions.length > 0 ? (
+                            paginatedJobsSuggestions.map((job) => (
+                                <Col xs={24} sm={12} md={8} lg={6} key={job.id} style={{ display: "flex", flexDirection: "column" }} >
+                                    <Card
+                                        hoverable
+                                        style={{
                                         borderRadius: "10px",
                                         overflow: "hidden",
                                         height: "100%",
                                         display: 'flex',
                                         flexDirection: "column",
                                         boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
-                                    }}
-                                >
-                                    <Image src={job.logo} alt={job.company} width={50} />
-                                    <h3 style={{ fontSize: "16px", fontWeight: "bold" }}>{job.title}</h3>
-                                    <p style={{ fontSize: "14px" }}><strong>Công ty:</strong> {job.company}</p>
-                                    <p style={{ fontSize: "14px" }}><strong>Lương:</strong> {job.salary}</p>
-                                    <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.location}</p>
-                                    <div style={{ marginBottom: "5px" }}>
-                                        {job.tags.map(tag => (<Tag key={tag}>{tag}</Tag>))}
-                                    </div>
-                                    <Button type="primary">Xem chi tiết</Button>
-                                </Card>
-                            </Col>
-                        ))}
+                                        }}
+                                    >
+                                        <div style={{ flex: 1 }}>
+                                            <Image src={job.company.logo} alt={job.company.name} width={50} />
+                                            <h3 style={{ fontSize: "16px", fontWeight: "bold" }}>{job.title}</h3>
+                                            <p style={{ fontSize: "14px" }}><strong>Công ty:</strong> {job.company.name}</p>
+                                            <p style={{ fontSize: "14px" }}><strong>Lương:</strong> {job.salary_range}</p>
+                                            <p style={{ fontSize: "14px" }}><EnvironmentOutlined /> {job.work_location}</p>
+                                            <Tag>{job.specialize}</Tag>
+                                            <p style={{ fontSize: "13px", color: "gray" }}>
+                                            <strong>Hạn nộp:</strong> {new Date(job.deadline).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                        <CustomButton
+                                            text="Xem chi tiết"
+                                            onClick={() => handleCardClick(job.id)}
+                                            backgroundColor="#D4421E"     // màu primary của Ant Design Button, bạn có thể thay đổi
+                                            hoverColor="#E44A26"            // màu hover bạn muốn
+                                            textColor="white"
+                                            style={{
+                                                marginTop: "auto",
+                                                width: 150,
+                                                height: 40,
+                                                fontWeight: 600,
+                                                fontSize: 16,
+                                                borderColor: "#D4421E",
+                                                cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }}
+                                        />
+                                    </Card>
+                                </Col>
+                            ))
+                            ) : (
+                            <p>Không có công việc gợi ý nào.</p>
+                            )
+                        }   
                     </Row>
                     <Pagination
                         current={currentSuggestionsPage}
-                        total={jobSuggestions.length}
+                        total={recommendedJobs.length}
                         pageSize={SuggestionsPageSize}
                         onChange={setCurrentSuggestionsPage}
                         style={{ textAlign: "center", marginTop: "12px" }}

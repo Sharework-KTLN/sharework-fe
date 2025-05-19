@@ -97,7 +97,7 @@ const RecruiterHomePage = () => {
             <footer className="bg-gray-900 text-white py-6 mt-10">
                 <div className="max-w-5xl mx-auto flex justify-between">
                     <div>
-                        <h3 className="text-lg font-bold">Tên nền tảng</h3>
+                        <h3 className="text-lg font-bold">ShareWork</h3>
                         <p className="text-sm text-gray-400">Nền tảng tuyển dụng hàng đầu cho doanh nghiệp.</p>
                     </div>
                     <div>

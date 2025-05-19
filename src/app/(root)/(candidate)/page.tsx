@@ -4,6 +4,7 @@ import { Card, Row, Col, Select, Pagination, Input, Image } from 'antd';
 import { EnvironmentOutlined, SearchOutlined, FilterOutlined, DownOutlined, UpOutlined, HeartOutlined, HeartFilled } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import CustomButton from '@/components/CustomButton';
+import { motion } from 'framer-motion';
 
 interface Job {
     id: number;
@@ -55,7 +56,7 @@ const filters = [
     {
         key: "jobType",
         placeholder: "Chọn loại công việc",
-        options: ["Thực tập", "Full-time", "Part-time"]
+        options: ["Remote", "Full-time", "Part-time"]
     },
     {
         key: "salary",
@@ -164,17 +165,75 @@ const Home = () => {
         setFilteredJobs(jobs); // Hiển thị lại toàn bộ danh sách công việc
     };
 
-    // Hàm lọc dữ liệu dựa trên bộ lọc và tìm kiếm
-    useEffect(() => {
-        const updatedJobs = jobs.filter(job => {
-            // Chuyển đổi salary của job thành số để so sánh
-            const jobSalary = parseInt(job.salary_range.replace(/\D/g, ""), 10) * 1000000; // Lấy số từ chuỗi "4 triệu" -> 4
+    // Hàm map giá trị filter sang dữ liệu thực tế
+    const mapJobTypeFilterToData = (filterValue: string) => {
+    switch (filterValue) {
+        case "Remote":
+        return "remote";  // Nếu có, hoặc bạn tùy chỉnh theo data bạn
+        case "Full-time":
+        return "full_time";
+        case "Part-time":
+        return "part_time";
+        default:
+        return filterValue.toLowerCase(); // fallback
+    }
+    };
+    // Hàm parse chuỗi salary_range thành { min, max } (đơn vị đồng)
+    const parseSalaryRange = (salaryRangeStr: string): { min: number; max: number } | null => {
+        if (!salaryRangeStr) return null;
+        // Tìm tất cả số trong chuỗi (vd: "8-10 triệu" => ["8", "10"])
+        const numbers = salaryRangeStr.match(/\d+/g);
+        if (!numbers || numbers.length === 0) return null;
 
+        const nums = numbers.map(numStr => parseInt(numStr, 10));
+        if (nums.length === 1) {
+            return { min: nums[0] * 1000000, max: nums[0] * 1000000 };
+        } else {
+            return { min: Math.min(...nums) * 1000000, max: Math.max(...nums) * 1000000 };
+        }
+    };
+
+    // Hàm kiểm tra khoảng lương job có hợp với filter không
+    const checkSalaryFilter = (jobSalaryRange: { min: number; max: number } | null, filter: string) => {
+        if (!jobSalaryRange) return true; // Nếu ko có dữ liệu thì mặc định đúng
+
+        const { min, max } = jobSalaryRange;
+
+        switch (filter) {
+            case "Dưới 5 triệu":
+                return max < 5000000;
+            case "5-10 triệu":
+                // Khoảng lương giao nhau với 5-10 triệu
+                return min <= 10000000 && max >= 5000000;
+            case "Trên 10 triệu":
+                return min > 10000000;
+            default:
+                return true;
+        }
+    };
+
+    useEffect(() => {
+        const normalizeLocation = (location: string) => {
+            return location
+                .toLowerCase()
+                .replace(/tp\.?\s*hcm|hcm/g, "hồ chí minh")
+                .replace(/tp\.?\s*hà nội/g, "hà nội")
+                .replace(/\s+/g, " ")
+                .trim();
+        };
+
+        const updatedJobs = jobs.filter(job => {
+            const jobSalaryRange = parseSalaryRange(job.salary_range);
+
+            const locationFilterPassed = !selectedFilters.location ||
+                normalizeLocation(job.work_location).includes(normalizeLocation(selectedFilters.location));
+
+            const jobTypeDataValue = selectedFilters.jobType ? mapJobTypeFilterToData(selectedFilters.jobType) : null;
             return (
-                (!selectedFilters.location || job.work_location === selectedFilters.location) &&
+                locationFilterPassed &&
                 (!selectedFilters.specialization || job.industry === selectedFilters.specialization) &&
-                (!selectedFilters.jobType || job.work_type === selectedFilters.jobType) &&
-                (!selectedFilters.salary || checkSalaryFilter(jobSalary, selectedFilters.salary)) &&
+                (!jobTypeDataValue || job.work_type === jobTypeDataValue) &&
+                (!selectedFilters.salary || checkSalaryFilter(jobSalaryRange, selectedFilters.salary)) &&
                 (searchTerm === "" ||
                     job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     job.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -186,19 +245,6 @@ const Home = () => {
         setCurrentPage(1);
     }, [jobs, selectedFilters, searchTerm]);
 
-    // Kiểm tra mức lương theo filter
-    const checkSalaryFilter = (jobSalary: number, filter: string) => {
-        switch (filter) {
-            case "Dưới 5 triệu":
-                return jobSalary < 5000000;
-            case "5-10 triệu":
-                return jobSalary >= 5000000 && jobSalary <= 10000000;
-            case "Trên 10 triệu":
-                return jobSalary > 10000000;
-            default:
-                return true;
-        }
-    };
 
     // // Tính toán danh sách job hiển thị dựa trên trang hiện tại
     const startIndex = (currentPage - 1) * pageSize; // Vị trí bắt đầu
@@ -435,7 +481,7 @@ const Home = () => {
                 </div>
             </div>
 
-            <div>
+            <div style={{}}>
                 {/* Danh sách việc làm */}
                 <Row gutter={[16, 16]}>
                     {displayedJobs.map(job => (
@@ -516,7 +562,7 @@ const Home = () => {
                 </Row>
 
                 {/* Phân trang */}
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <div style={{ textAlign: 'center', marginTop: '20px' ,marginBottom: '40px'}}>
                     <Pagination
                         current={currentPage}
                         total={jobs.length}
@@ -524,6 +570,104 @@ const Home = () => {
                         onChange={setCurrentPage}
                     />
                 </div>
+            </div>
+            <div className="w-full min-h-screen bg-gray-100 mt-1">
+            {/* Hero Section - Thay thế Carousel bằng hiệu ứng chữ động */}
+                <div className="relative w-full h-[450px] flex items-center justify-center bg-gray-900">
+                    <motion.h1
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1 }}
+                        className="text-5xl font-bold text-center bg-gradient-to-r from-pink-500 via-yellow-500 to-blue-500 bg-clip-text text-transparent animate-gradient"
+                    >
+                        Khám phá công việc mơ ước của bạn ngay hôm nay<br /> nhanh chóng và dễ dàng
+                    </motion.h1>
+                </div>
+
+
+                {/* Giới thiệu dịch vụ */}
+                <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="max-w-5xl mx-auto text-center py-16"
+                >
+                    <h2 className="text-3xl font-bold text-gray-800">Tìm việc dễ dàng, nhanh chóng</h2>
+                    <p className="mt-4 text-gray-600">
+                        Hàng ngàn công việc chất lượng đang chờ bạn ứng tuyển. Hãy để chúng tôi giúp bạn kết nối với nhà tuyển dụng phù hợp nhất.
+                    </p>
+                </motion.div>
+
+                {/* Các lợi ích */}
+                <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    {[
+                        { title: "Công việc đa dạng", desc: "Từ thực tập, part-time đến full-time tại các công ty uy tín." },
+                        { title: "Cá nhân hóa đề xuất", desc: "Gợi ý việc làm dựa trên kỹ năng và sở thích của bạn." },
+                        { title: "Ứng tuyển nhanh chóng", desc: "Chỉ với vài cú click, hồ sơ của bạn đến tay nhà tuyển dụng." }
+                    ].map((item, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, scale: 0.8 }} // Nhỏ & mờ lúc đầu
+                            whileInView={{ opacity: 1, scale: 1 }} // Phóng to khi vào màn hình
+                            exit={{ opacity: 0, scale: 0.8 }} // Thu nhỏ khi scroll ngược
+                            transition={{ duration: 0.025 }}
+                            whileHover={{ scale: 1.1, y: -10 }} // 🔥 Phóng to + nâng cao lên khi hover
+                            className="p-6 bg-white shadow-lg rounded-lg text-center transition"
+                        >
+                            <h3 className="text-xl font-bold bg-clip-text text-transparent 
+                    bg-gradient-to-r from-blue-500 to-indigo-600">
+                                {item.title}
+                            </h3>
+                            <p className="mt-2 text-gray-600">{item.desc}</p>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* CTA Section */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8 }}
+                    className="text-center py-16"
+                >
+                    <h2 className="text-2xl font-bold text-gray-800">Tham gia cộng đồng ứng viên</h2>
+                    <p className="mt-2 text-gray-600">Tạo tài khoản miễn phí và bắt đầu hành trình sự nghiệp của bạn!</p>
+                    <CustomButton
+                        text="Đăng ký tìm việc ngay"
+                        backgroundColor="#007BFF"
+                        hoverColor="#0056b3"
+                        textColor="white"
+                        style={{
+                            marginTop: '20px',
+                            padding: '10px 20px',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s ease'
+                        }}
+                        onClick={() => router.push('/auth/recruiter/register')}
+                    />
+                </motion.div>
+
+                {/* Footer */}
+                <footer className="bg-gray-900 text-white py-6 mt-10">
+                    <div className="max-w-5xl mx-auto flex justify-between">
+                        <div>
+                            <h3 className="text-lg font-bold">ShareWork</h3>
+                            <p className="text-sm text-gray-400">Nền tảng kết nối ứng viên với hàng ngàn công việc mơ ước.</p>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold">Hỗ trợ ứng viên</h3>
+                            <p className="text-sm text-gray-400">Email: hotro@jobplatform.com</p>
+                            <p className="text-sm text-gray-400">Hotline: 0909 123 456</p>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold">Mạng xã hội</h3>
+                            <p className="text-sm text-gray-400">Facebook | LinkedIn | Twitter</p>
+                        </div>
+                    </div>
+                </footer>
             </div>
         </div>
     );
