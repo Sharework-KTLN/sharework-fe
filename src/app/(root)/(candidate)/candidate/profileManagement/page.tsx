@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Card, Input, Select, Row, Col, Upload } from 'antd';
-import { RcFile } from "antd/lib/upload";
+import { Card, Input, Select, Row, Col, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../../../../../redux/slice/userSlice';
 import { RootState, AppDispatch } from '@/redux/store';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { login, logout } from '@/redux/slice/userSlice';
-import { EditOutlined, UploadOutlined } from '@ant-design/icons';
+import { EditOutlined} from '@ant-design/icons';
 import Image from 'next/image';
 import CustomButton from '@/components/CustomButton';
 
@@ -55,6 +54,7 @@ const CVManager = () => {
   const [isEditable, setIsEditable] = useState<boolean>(false); // Trạng thái chỉnh sửa
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
+  const [messageApi, contextHolder] = message.useMessage();
   const searchParams = useSearchParams();
   const [majors, setMajors] = useState<Major[]>([]);
   const [selectedMajors, setSelectedMajors] = useState<number[]>([]);
@@ -331,30 +331,42 @@ const CVManager = () => {
     setIsEditable((prev) => !prev);
     setEditableUser(user); // Reset giá trị mỗi lần mở/chỉnh sửa
   };
-
+  
   const handleUpdateProfile = async () => {
+    if (!isEditable) return;
+
     try {
       const formData = new FormData();
 
-      // Thêm các field text vào formData
-      formData.append("full_name", editableUser.full_name || "");
-      formData.append("date_of_birth", editableUser.date_of_birth || "");
-      formData.append("gender", editableUser.gender || "");
-      formData.append("phone", editableUser.phone || "");
-      formData.append("address", editableUser.address || "");
-      formData.append("school", editableUser.school || "");
-      formData.append("course", editableUser.course || "");
-      formData.append("specialize", editableUser.specialize || "");
-      formData.append("introduce_yourself", editableUser.introduce_yourself || "");
+      // ✅ Thêm thông tin người dùng một cách an toàn
+      const fields: (keyof User)[] = [
+        "full_name",
+        "date_of_birth",
+        "gender",
+        "phone",
+        "address",
+        "school",
+        "course",
+        "specialize",
+        "introduce_yourself",
+      ];
 
-      // Thêm file ảnh nếu có
-      if (fileInputRef.current?.files?.[0]) {
-        formData.append("profile_image", fileInputRef.current.files[0]);
+      fields.forEach((field) => {
+        const value = editableUser[field];
+        if (value !== undefined && value !== null) {
+          formData.append(field, String(value));
+        }
+      });
+
+      // Thêm avatar nếu có
+      const file = fileInputRef.current?.files?.[0];
+      if (file) {
+        formData.append("profile_image", file);
       }
 
-      // Gửi mảng: phải stringify để backend parse được
-      formData.append("interested_majors", JSON.stringify(selectedMajors));
-      formData.append("skills", JSON.stringify(selectedSkills));
+      // Đảm bảo danh sách ngành & kỹ năng là mảng trước khi stringify
+      formData.append("interested_majors", JSON.stringify(Array.isArray(selectedMajors) ? selectedMajors : []));
+      formData.append("skills", JSON.stringify(Array.isArray(selectedSkills) ? selectedSkills : []));
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/profile`, {
         method: "PUT",
@@ -367,17 +379,21 @@ const CVManager = () => {
       const data = await res.json();
 
       if (res.ok) {
+        messageApi.success(data.message || "✅ Cập nhật hồ sơ thành công!");
         console.log("✅ Cập nhật hồ sơ thành công!");
         setEditableUser(data.user);
         dispatch(setUser(data.user));
         setIsEditable(false);
       } else {
-        console.error(data.message || "❌ Cập nhật thất bại.");
+        console.error("❌ Cập nhật thất bại:", data.message);
+        messageApi.error(data.message || "Cập nhật hồ sơ thật bại!");
       }
     } catch (error) {
       console.error("❌ Lỗi khi cập nhật hồ sơ:", error);
+      messageApi.error("Lỗi hệ thống, vui lòng thử lại sau!");
     }
   };
+
 
   return (
     <div style={{ width: '70%', margin: 'auto', padding: 20 }}>
@@ -414,6 +430,7 @@ const CVManager = () => {
                 alt="Avatar"
                 width={200}
                 height={200}
+                priority
                 style={{
                   width: 200,
                   height: 200,
@@ -660,6 +677,7 @@ const CVManager = () => {
       {/* Button update */}
       <Row justify="center" style={{ marginTop: 24 }}>
         <Col>
+          {contextHolder}
           <CustomButton
             text="Cập nhật"
             onClick={() => handleUpdateProfile()} // Thêm logic cập nhật nếu có
