@@ -228,8 +228,8 @@ const WorkApplied = () => {
                                                 <CustomButton
                                                     text="Đã ứng tuyển"
                                                     onClick={() => { }}
-                                                    backgroundColor="#D4421E"
-                                                    hoverColor="#E9552D"
+                                                    backgroundColor="#4CAF50"
+                                                    hoverColor="#4CAF50"
                                                     textColor="white"
                                                     style={{
                                                         alignSelf: "flex-start",
@@ -240,7 +240,9 @@ const WorkApplied = () => {
                                                         alignItems: "center",
                                                         gap: "8px",
                                                         borderRadius: "8px",
-                                                        fontSize: "14px"
+                                                        fontSize: "14px",
+                                                        cursor: "not-allowed",         // Hiển thị chuột bị khóa
+                                                        
                                                     }}
                                                 >
                                                     <SendOutlined />
