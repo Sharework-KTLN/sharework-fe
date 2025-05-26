@@ -39,7 +39,7 @@ const ManageSuitableCandidates = () => {
                 const validCandidates = Array.isArray(data.candidates) ? data.candidates : [];
 
                 // Lọc những ứng viên có tfidf_score > 0
-                const filtered = validCandidates.filter((c: User) => (c.tfidf_score ?? 0) > 0);
+                const filtered = validCandidates.filter((c: User) => (c.total_score ?? 0) > 0.2);
 
                 setCandidates(filtered);
             } catch (err) {
