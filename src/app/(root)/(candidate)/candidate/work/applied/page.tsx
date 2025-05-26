@@ -71,7 +71,7 @@ const WorkApplied = () => {
                     }
 
                     const data = await res.json();
-                    console.log("Applications:", data.applications);
+                    console.log("Danh sách công việc đã ứng tuyển:", data.applications);
                     setAppliedJobs(data.applications); // Đổi tên state tương ứng
                 } catch (error) {
                     console.error("Lỗi khi lấy công việc đã ứng tuyển:", error);
@@ -88,13 +88,14 @@ const WorkApplied = () => {
     
             const fetchRecommendedJobs = async () => {
                 try {
-                const res = await fetch("http://localhost:8080/jobs/recommended", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/recommended`, {
                     headers: {
                     Authorization: `Bearer ${token}`,
                     },
                 });
     
                 const data = await res.json();
+                console.log("Danh sách công việc gợi ý:", data);
                 setRecommendedJobs(data || []); // đảm bảo luôn là mảng
                 } catch (error) {
                 console.error("Lỗi khi lấy danh sách gợi ý:", error);
@@ -131,7 +132,7 @@ const WorkApplied = () => {
                 headers["Authorization"] = `Bearer ${token}`;
             }
 
-            const response = await fetch(`http://localhost:8080/jobs/detail/${jobId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/detail/${jobId}`, {
                 method: "GET",
                 headers,
             });
