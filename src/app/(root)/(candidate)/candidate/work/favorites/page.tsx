@@ -92,7 +92,7 @@ const WorkFavorites = () => {
 
         const fetchRecommendedJobs = async () => {
             try {
-            const res = await fetch("http://localhost:8080/jobs/recommended", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/recommended`, {
                 headers: {
                 Authorization: `Bearer ${token}`,
                 },
@@ -114,7 +114,7 @@ const WorkFavorites = () => {
             const token = localStorage.getItem("userToken");
             if (!token) return;
             try {
-                const res = await fetch("http://localhost:8080/user/applies", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/applies`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -173,7 +173,7 @@ const WorkFavorites = () => {
                 headers["Authorization"] = `Bearer ${token}`;
             }
 
-            const response = await fetch(`http://localhost:8080/jobs/detail/${jobId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/detail/${jobId}`, {
                 method: "GET",
                 headers,
             });
