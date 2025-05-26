@@ -16,5 +16,5 @@ export interface User {
     file_url?: string;
     introduce_yourself?: string;
     companies?: Company[]; // Danh sách công ty mà người dùng đã tham gia
-    tfidf_score?: number;
+    total_score?: number;
 }
